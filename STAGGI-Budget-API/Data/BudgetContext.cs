@@ -7,5 +7,7 @@ namespace STAGGI_Budget_API.Data
     {
         public BudgetContext(DbContextOptions<BudgetContext> options) : base(options) { }
         public DbSet<BudUser> BudUsers { get; set; }
+        public DbSet<Categories> Categories { get; set; }
+        public DbSet<Budgets> Budgets { get; set; }
     }
 }
