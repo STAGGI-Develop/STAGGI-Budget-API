@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using System.Linq;
 using System;
 
-namespace STAGGI_Budget_API.Repositories
+namespace STAGGI_Budget_API.Repositories.Interfaces
 {
     public interface IRepositoryBase<T>
     {

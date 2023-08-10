@@ -10,5 +10,6 @@ namespace STAGGI_Budget_API.Data
         public DbSet<Transaction> Transaction { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<TransactionCategory> TransactionCategory { get; set; }
+        public DbSet<Account> Account { get; set; }
     }
 }

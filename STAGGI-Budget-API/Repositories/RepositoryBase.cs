@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using STAGGI_Budget_API.Repositories;
 using System.Linq.Expressions;
 using System.Linq;
 using System;
 using STAGGI_Budget_API.Data;
+using STAGGI_Budget_API.Repositories.Interfaces;
 
 namespace STAGGI_Budget_API.Repositories
 {
