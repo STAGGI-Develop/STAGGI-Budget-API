@@ -21,6 +21,10 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 
 builder.Services.AddScoped<IBudUserRepository, BudUserRepository>();
 
+builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+
+builder.Services.AddScoped<IBudgetsRepository, BudgetsRepository>();
+
 
 //builder.Services.AddCors(options =>
 //{
