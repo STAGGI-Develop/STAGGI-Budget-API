@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories;
+using STAGGI_Budget_API.Repositories.Interfaces;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
