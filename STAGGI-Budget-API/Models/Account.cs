@@ -6,7 +6,7 @@
         public string? Name { get; set; }
         public double Balance { get; set; }
         public bool isPrincipal { get; set; }
-        public BudUser? BudUser { get; set; }
-        public long BudUserId { get; set; }
+        public BUser? BUser { get; set; }
+        public long BUserId { get; set; }
     }
 }
