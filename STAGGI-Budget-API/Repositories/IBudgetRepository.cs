@@ -1,8 +1,8 @@
 ﻿using STAGGI_Budget_API.Models;
 
-namespace STAGGI_Budget_API.Repositories.Interfaces
+namespace STAGGI_Budget_API.Repositories
 {
-    public interface IBudUserRepository
+    public interface IBudgetRepository
     {
         IEnumerable<BUser> GetAll();
         void Save(BUser budUser);

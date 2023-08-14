@@ -5,6 +5,6 @@
         public long Id { get; set; }
         public string? Name { get; set; }
         public string? ImageUrl { get; set; }
-        public ICollection<TransactionCategory>? TransactionCategories { get; set; }
+        public ICollection<TransactionCategory>? TransactionsPerCategory { get; set; }
     }
 }

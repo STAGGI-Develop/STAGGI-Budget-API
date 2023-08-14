@@ -3,12 +3,12 @@ using STAGGI_Budget_API.Models;
 
 namespace STAGGI_Budget_API.Repositories
 {
-    public class CategoriesRepository: RepositoryBase<BudUser>,ICategoriesRepository
+    public class BudgetRepository: RepositoryBase<BUser>, IBudgetRepository
     {
-        public CategoriesRepository(BudgetContext repositoryContext):base(repositoryContext) 
+        public BudgetRepository(BudgetContext repositoryContext) : base(repositoryContext)
         {
         }
-        public IEnumerable<BudUser> GetAll()
+        public IEnumerable<BUser> GetAll()
         {
             return FindAll()
                 //.Include(client => client.Accounts)
@@ -17,7 +17,7 @@ namespace STAGGI_Budget_API.Repositories
                 //    .ThenInclude(cl => cl.Loan)
                 .ToList();
         }
-        public BudUser? FindById(long id)
+        public BUser? FindById(long id)
         {
             return FindByCondition(budUser => budUser.Id == id)
                 //.Include(client => client.Accounts)
@@ -26,7 +26,7 @@ namespace STAGGI_Budget_API.Repositories
                 //    .ThenInclude(cl => cl.Loan)
                 .FirstOrDefault();
         }
-        public BudUser? FindByEmail(string email)
+        public BUser? FindByEmail(string email)
         {
             return FindByCondition(budUser => budUser.Email.ToUpper() == email.ToUpper())
             //.Include(client => client.Accounts)
@@ -35,10 +35,11 @@ namespace STAGGI_Budget_API.Repositories
             //    .ThenInclude(cl => cl.Loan)
             .FirstOrDefault();
         }
-        public void Save(BudUser budUser)
+        public void Save(BUser budUser)
         {
             Create(budUser);
             SaveChanges();
         }
+
     }
 }

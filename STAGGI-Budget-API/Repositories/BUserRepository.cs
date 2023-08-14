@@ -1,14 +1,16 @@
-﻿using STAGGI_Budget_API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.Models;
+using STAGGI_Budget_API.Repositories.Interfaces;
 
 namespace STAGGI_Budget_API.Repositories
 {
-    public class BudgetsRepository: RepositoryBase<BudUser>, IBudgetsRepository
+    public class BUserRepository : RepositoryBase<BUser>, IBudUserRepository
     {
-        public BudgetsRepository(BudgetContext repositoryContext) : base(repositoryContext)
+        public BUserRepository(BudgetContext repositoryContext) : base(repositoryContext)
         {
         }
-        public IEnumerable<BudUser> GetAll()
+        public IEnumerable<BUser> GetAll()
         {
             return FindAll()
                 //.Include(client => client.Accounts)
@@ -17,7 +19,7 @@ namespace STAGGI_Budget_API.Repositories
                 //    .ThenInclude(cl => cl.Loan)
                 .ToList();
         }
-        public BudUser? FindById(long id)
+        public BUser? FindById(long id)
         {
             return FindByCondition(budUser => budUser.Id == id)
                 //.Include(client => client.Accounts)
@@ -26,7 +28,7 @@ namespace STAGGI_Budget_API.Repositories
                 //    .ThenInclude(cl => cl.Loan)
                 .FirstOrDefault();
         }
-        public BudUser? FindByEmail(string email)
+        public BUser? FindByEmail(string email)
         {
             return FindByCondition(budUser => budUser.Email.ToUpper() == email.ToUpper())
             //.Include(client => client.Accounts)
@@ -35,11 +37,10 @@ namespace STAGGI_Budget_API.Repositories
             //    .ThenInclude(cl => cl.Loan)
             .FirstOrDefault();
         }
-        public void Save(BudUser budUser)
+        public void Save(BUser budUser)
         {
             Create(budUser);
             SaveChanges();
         }
-
     }
 }

@@ -4,6 +4,7 @@ using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories;
 using STAGGI_Budget_API.Repositories.Interfaces;
+using STAGGI_Budget_API.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,11 +21,15 @@ builder.Services.AddDbContext<BudgetContext>(opt => opt.UseSqlServer(builder.Con
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
-builder.Services.AddScoped<IBudUserRepository, BudUserRepository>();
+//Repositories
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
+builder.Services.AddScoped<IBudUserRepository, BUserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
-builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
-
-builder.Services.AddScoped<IBudgetsRepository, BudgetsRepository>();
+//Services
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 
 //builder.Services.AddCors(options =>

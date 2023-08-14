@@ -10,10 +10,10 @@ namespace STAGGI_Budget_API.Models
         public double Amount { get; set; }
         public DateTime CreateDate { get; set; }
         public string? Type { get; set; }
-        public BudUser? BudUser { get; set; }
-        public long BudUserId { get; set; }
+        //public BUser? BudUser { get; set; }
+        //public long BudUserId { get; set; }
         public Account? Account { get; set; }
         public long AccountId { get; set; }
-        public ICollection<TransactionCategory>? TransactionCategories { get; set; }
+        public ICollection<TransactionCategory>? TransactionsPerCategory { get; set; }
     }
 }
