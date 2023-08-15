@@ -24,12 +24,13 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 //Repositories
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
-builder.Services.AddScoped<IBudUserRepository, BUserRepository>();
+builder.Services.AddScoped<IBUserRepository, BUserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 //Services
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IBUserService, BUserService>();
 
 
 //builder.Services.AddCors(options =>

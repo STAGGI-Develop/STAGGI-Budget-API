@@ -2,7 +2,7 @@
 
 namespace STAGGI_Budget_API.Repositories.Interfaces
 {
-    public interface IBudUserRepository
+    public interface IBUserRepository
     {
         IEnumerable<BUser> GetAll();
         void Save(BUser budUser);
