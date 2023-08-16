@@ -24,13 +24,14 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 //Repositories
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
-builder.Services.AddScoped<IBudUserRepository, BUserRepository>();
+builder.Services.AddScoped<IBUserRepository, BUserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 //Services
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IBUserService, BUserService>();
 
 
 //builder.Services.AddCors(options =>
@@ -62,7 +63,7 @@ app.UseCors(builder =>
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials()
-); // Habilita el envío de credenciales}
+); // Habilita el envÃ­o de credenciales}
 
 app.UseAuthorization();
 
