@@ -30,6 +30,7 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 //Services
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 
 //builder.Services.AddCors(options =>

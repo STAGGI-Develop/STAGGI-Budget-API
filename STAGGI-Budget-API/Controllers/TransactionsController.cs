@@ -15,6 +15,19 @@ namespace STAGGI_Budget_API.Controllers
             _transactionService = transactionService;
         }
 
+        [HttpPost]
+        public IActionResult CreateTransaction([FromBody] TransactionDTO transactionDTO)
+        {
+            var result = _transactionService.CreateTransaction(transactionDTO);
+
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+
+            return StatusCode(201, result.Ok);
+        }
+
         [HttpPut]
         public IActionResult ModifyTransaction(long transactionId, [FromBody] TransactionDTO transactionDTO)
         {

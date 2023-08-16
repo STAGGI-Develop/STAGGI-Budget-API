@@ -6,9 +6,7 @@
         public string? Description { get; set; }
         public double Amount { get; set; }
         public string Type { get; set; }
-
+        public DateTime? CreateDate { get; set; } //Actual por defecto
         public long CategoryId { get; set; }
-
-        //TODO - Faltaría agregar la posibilidad de modificar la categoria de la transacción
     }
 }
