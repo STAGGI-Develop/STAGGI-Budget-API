@@ -16,6 +16,26 @@ namespace STAGGI_Budget_API.Services
             _transactionRepository = transactionRepository;
         }
 
+        public Result<List<TransactionDTO>> GetAll()
+        { 
+            var result = _transactionRepository.GetAll();
+            var transactionsDTO = new List<TransactionDTO>();
+            foreach (var transaction in result) 
+            {
+                transactionsDTO.Add(new TransactionDTO 
+                { 
+                    Title = transaction.Title,
+                    Description = transaction.Description,
+                    Amount = transaction.Amount,
+                    Type = transaction.Type,
+                    CreateDate = DateTime.Now,
+                    CategoryId = transaction.CategoryId,
+                });
+            }
+
+            return Result<List<AccountDTO>>.Success(TransactionDTO);
+        }
+
         public Result<TransactionDTO> CreateTransaction(TransactionDTO transactionDTO)
         {
             try
