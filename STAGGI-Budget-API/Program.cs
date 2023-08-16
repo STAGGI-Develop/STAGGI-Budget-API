@@ -30,6 +30,7 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 //Services
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IBUserService, BUserService>();
 
 
@@ -62,7 +63,7 @@ app.UseCors(builder =>
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials()
-); // Habilita el envío de credenciales}
+); // Habilita el envÃ­o de credenciales}
 
 app.UseAuthorization();
 

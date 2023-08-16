@@ -14,6 +14,9 @@ namespace STAGGI_Budget_API.Models
         //public long BudUserId { get; set; }
         public Account? Account { get; set; }
         public long AccountId { get; set; }
-        public ICollection<TransactionCategory>? TransactionsPerCategory { get; set; }
+
+        public long CategoryId { get; set; }
+        public Category Category { get; set; }
+        //public ICollection<TransactionCategory>? TransactionsPerCategory { get; set; }
     }
 }
