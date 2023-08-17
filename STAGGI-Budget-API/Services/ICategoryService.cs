@@ -6,9 +6,8 @@ namespace STAGGI_Budget_API.Services
     public interface ICategoryService
     {
         public Result<List<CategoryDTO>> GetAll();
-        public Result<CategoryDTO> GetById(long id);
-        public Result<CategoryDTO> CreateCategoryForCurrentClient();
-
-        public Result<List<CategoryDTO>> GetCurrentClientCategory();
+        public Result<CategoryDTO> DeleteCategory();
+        public Result<CategoryDTO> UpdateCategory();
+        public Result<CategoryDTO> CreateCategory();
     }
 }

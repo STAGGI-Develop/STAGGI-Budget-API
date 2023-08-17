@@ -9,6 +9,6 @@ namespace STAGGI_Budget_API.DTOs
         public long Id { get; set; }
         public string? Name { get; set; }
         public string? ImageUrl { get; set; }
-        public ICollection<TransactionCategory>? TransactionsPerCategory { get; set; }
+        //public List<TransactionCategory>? TransactionsPerCategory { get; set; }
     }
 }

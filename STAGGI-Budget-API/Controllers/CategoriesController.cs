@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Services;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace STAGGI_Budget_API.Controllers
@@ -19,8 +22,12 @@ namespace STAGGI_Budget_API.Controllers
 
         public IActionResult GetAll()
         {
-            var categories = _categoryService.GetAll();
-            return Ok();
+            var result = _categoryService.GetAll();
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+            return Ok(result.Ok);                       
         }
 
         [HttpPost]
@@ -33,22 +40,22 @@ namespace STAGGI_Budget_API.Controllers
             {
                 return Forbid("La longitud de la categoria supera el maximo");
             }
-            
+
             if (!categoryMatch.Success)
             {
                 return Forbid("La categoria solo acepta letras");
-            }           
+            }
             return Created("", category);
         }
 
-        [HttpPut]
-        public IActionResult UpdateCategory()
+        [HttpPut("{id}")]
+        public IActionResult UpdateCategory([FromBody] CategoryDTO category, long id)
         {
             return Ok();
         }
 
         [HttpDelete]
-        public IActionResult DeleteCategory()
+        public IActionResult DeleteCategory(long id)
         {
             return Ok();
         }

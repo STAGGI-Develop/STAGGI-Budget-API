@@ -24,24 +24,24 @@ namespace STAGGI_Budget_API.Services
                 {
                     Name = category.Name,
                     ImageUrl = category.ImageUrl,
-                    TransactionsPerCategory= category.TransactionsPerCategory
-                
+                    //TransactionsPerCategory= category.TransactionsPerCategory                
                 });
             }
             return Result<List<CategoryDTO>>.Success(categoriesDTO);
         }
 
-        public Result<CategoryDTO> GetById(long id)
+
+        public Result<CategoryDTO> CreateCategory()
         {
             throw new NotImplementedException();
         }
 
-        public Result<CategoryDTO> CreateCategoryForCurrentClient()
+        public Result<CategoryDTO> DeleteCategory()
         {
             throw new NotImplementedException();
         }
 
-        public Result<List<CategoryDTO>> GetCurrentClientCategory()
+        public Result<CategoryDTO> UpdateCategory()
         {
             throw new NotImplementedException();
         }
