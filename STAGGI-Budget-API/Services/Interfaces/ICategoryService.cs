@@ -1,7 +1,7 @@
 ﻿using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Helpers;
 
-namespace STAGGI_Budget_API.Services
+namespace STAGGI_Budget_API.Services.Interfaces
 {
     public interface ICategoryService
     {
