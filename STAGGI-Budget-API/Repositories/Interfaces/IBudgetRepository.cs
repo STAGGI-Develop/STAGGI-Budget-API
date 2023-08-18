@@ -7,6 +7,6 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         IEnumerable<BUser> GetAll();
         void Save(BUser budUser);
         BUser FindById(string id);
-        BUser FindByEmail(string email);
+        BUser FindByEmail(string email); 
     }
 }
