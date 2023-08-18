@@ -16,7 +16,7 @@ namespace STAGGI_Budget_API.Repositories
                 //.Include(client => client.Accounts)
                 .ToList();
         }
-        public BUser? FindById(long id)
+        public BUser? FindById(string id)
         {
             return FindByCondition(budUser => budUser.Id == id)
                 //.Include(client => client.Accounts)
