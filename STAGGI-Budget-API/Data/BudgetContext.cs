@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using STAGGI_Budget_API.Models;
 
 namespace STAGGI_Budget_API.Data
 {
-    public class BudgetContext  : DbContext
+    public class BudgetContext  : IdentityDbContext<BUser>
     {
         public BudgetContext(DbContextOptions<BudgetContext> options) : base(options) { }
         public DbSet<Account> Accounts { get; set; }
