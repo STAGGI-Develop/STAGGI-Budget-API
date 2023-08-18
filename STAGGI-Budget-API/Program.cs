@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Models;
@@ -57,7 +58,34 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers();
 // Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Auhtorization",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type= ReferenceType.SecurityScheme,
+                    Id="Bearer",
+                }
+            },
+            new string[] {}
+        }
+    });
+
+});
 
 // 
 builder.Services.AddControllers().AddJsonOptions(x =>
@@ -72,6 +100,11 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 // Services
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
+builder.Services.AddScoped<IBUserService, BUserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 
 //builder.Services.AddCors(options =>

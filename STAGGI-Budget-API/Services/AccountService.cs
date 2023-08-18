@@ -26,7 +26,7 @@ namespace STAGGI_Budget_API.Services
                     Name = account.Name,
                     Balance = account.Balance,
                     IsPrincipal = account.isPrincipal,
-                    BUserId = account.BUserId,
+                    //BUserId = account.BUserId,
                 });
             }
 

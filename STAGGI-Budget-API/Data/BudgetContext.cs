@@ -14,6 +14,5 @@ namespace STAGGI_Budget_API.Data
         public DbSet<Saving> Savings { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-        public DbSet<TransactionCategory> TransactionsPerCategory { get; set; }
     }
 }

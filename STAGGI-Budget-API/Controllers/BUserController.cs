@@ -17,7 +17,12 @@ namespace STAGGI_Budget_API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok();
+            var result = _buserService.GetAll();
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+            return StatusCode(200, result.Ok);
         }
 
         [HttpPost]

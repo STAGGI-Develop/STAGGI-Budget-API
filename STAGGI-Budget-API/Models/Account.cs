@@ -1,4 +1,6 @@
-﻿namespace STAGGI_Budget_API.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace STAGGI_Budget_API.Models
 {
     public class Account
     {
@@ -6,7 +8,11 @@
         public string? Name { get; set; }
         public double Balance { get; set; }
         public bool isPrincipal { get; set; }
-        public BUser? BUser { get; set; }
-        public long BUserId { get; set; }
+
+        [ForeignKey("BUserId")]
+        public virtual BUser? BUser { get; set; }
+
+        //[ForeignKey("SavingId")]
+        public virtual Saving? Saving { get; set; }
     }
 }
