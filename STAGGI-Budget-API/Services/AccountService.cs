@@ -1,6 +1,7 @@
 ﻿using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Repositories.Interfaces;
+using STAGGI_Budget_API.Services.Interfaces;
 
 namespace STAGGI_Budget_API.Services
 {
@@ -25,7 +26,7 @@ namespace STAGGI_Budget_API.Services
                     Name = account.Name,
                     Balance = account.Balance,
                     IsPrincipal = account.isPrincipal,
-                    BUserId = account.BUserId,
+                    //BUserId = account.BUserId,
                 });
             }
 

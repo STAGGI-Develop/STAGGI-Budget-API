@@ -25,7 +25,6 @@ namespace STAGGI_Budget_API.Services
                 {
                     Name = category.Name,
                     ImageUrl = category.ImageUrl,
-                    //TransactionsPerCategory= category.TransactionsPerCategory                
                 });
             }
             return Result<List<CategoryDTO>>.Success(categoriesDTO);

@@ -1,4 +1,5 @@
-﻿using System.Security.Principal;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Principal;
 
 namespace STAGGI_Budget_API.Models
 {
@@ -12,11 +13,9 @@ namespace STAGGI_Budget_API.Models
         public string? Type { get; set; }
         //public BUser? BudUser { get; set; }
         //public long BudUserId { get; set; }
-        public Account? Account { get; set; }
-        public long AccountId { get; set; }
 
-        public long CategoryId { get; set; }
-        public Category Category { get; set; }
-        //public ICollection<TransactionCategory>? TransactionsPerCategory { get; set; }
+        [ForeignKey("AccountId")]
+        public Account? Account { get; set; }
+        //public long AccountId { get; set; }
     }
 }

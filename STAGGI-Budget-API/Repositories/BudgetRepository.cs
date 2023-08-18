@@ -4,12 +4,12 @@ using STAGGI_Budget_API.Repositories.Interfaces;
 
 namespace STAGGI_Budget_API.Repositories
 {
-    public class BudgetRepository: RepositoryBase<BUser>, IBudgetRepository
+    public class BudgetRepository: RepositoryBase<Budget>, IBudgetRepository
     {
         public BudgetRepository(BudgetContext repositoryContext) : base(repositoryContext)
         {
         }
-        public IEnumerable<BUser> GetAll()
+        public IEnumerable<Budget> GetAll()
         {
             return FindAll()
                 //.Include(client => client.Accounts)
@@ -18,27 +18,18 @@ namespace STAGGI_Budget_API.Repositories
                 //    .ThenInclude(cl => cl.Loan)
                 .ToList();
         }
-        public BUser? FindById(long id)
+        public Budget? FindById(long id)
         {
-            return FindByCondition(budUser => budUser.Id == id)
+            return FindByCondition(budget => budget.Id == id)
                 //.Include(client => client.Accounts)
                 //.Include(client => client.Cards)
                 //.Include(client => client.BudUserLoans)
                 //    .ThenInclude(cl => cl.Loan)
                 .FirstOrDefault();
         }
-        public BUser? FindByEmail(string email)
+        public void Save(Budget budget)
         {
-            return FindByCondition(budUser => budUser.Email.ToUpper() == email.ToUpper())
-            //.Include(client => client.Accounts)
-            //.Include(client => client.Cards)
-            //.Include(client => client.BudUserLoans)
-            //    .ThenInclude(cl => cl.Loan)
-            .FirstOrDefault();
-        }
-        public void Save(BUser budUser)
-        {
-            Create(budUser);
+            Create(budget);
             SaveChanges();
         }
 

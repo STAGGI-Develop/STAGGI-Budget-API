@@ -2,7 +2,7 @@
 using STAGGI_Budget_API.Helpers;
 using System.Collections.Generic;
 
-namespace STAGGI_Budget_API.Services
+namespace STAGGI_Budget_API.Services.Interfaces
 {
     public interface IAccountService
     {

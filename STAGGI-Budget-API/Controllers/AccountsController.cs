@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using STAGGI_Budget_API.Services;
+using STAGGI_Budget_API.Services.Interfaces;
 
 namespace STAGGI_Budget_API.Controllers
 {
@@ -14,6 +15,7 @@ namespace STAGGI_Budget_API.Controllers
             _accountService = accountService;
         }
 
+        [Authorize]
         [HttpGet()]
         public IActionResult Get()
         {
