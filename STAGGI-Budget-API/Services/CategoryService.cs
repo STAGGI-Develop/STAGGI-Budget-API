@@ -1,7 +1,11 @@
-﻿using STAGGI_Budget_API.DTOs;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Helpers;
+using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace STAGGI_Budget_API.Services
 {
@@ -30,20 +34,57 @@ namespace STAGGI_Budget_API.Services
             return Result<List<CategoryDTO>>.Success(categoriesDTO);
         }
 
-
-        public Result<CategoryDTO> CreateCategory()
+        public Result<CategoryDTO> FindById(long id)
         {
-            throw new NotImplementedException();
+            var category = _categoryRepository.FindById(id);
+
+            var categoryDTO = new CategoryDTO
+            {
+                Name = category.Name,
+                ImageUrl = category.ImageUrl
+            };
+
+            return Result<CategoryDTO>.Success(categoryDTO);
         }
 
-        public Result<CategoryDTO> DeleteCategory()
+        public Result<string> CreateCategory(CategoryDTO categoryDTO)
         {
-            throw new NotImplementedException();
-        }
+            Regex regexName = new Regex("[a-zA-Z ]");
+            Match categoryMatch = regexName.Match(categoryDTO.Name);
 
-        public Result<CategoryDTO> UpdateCategory()
-        {
-            throw new NotImplementedException();
+            Category newCategory = new Category
+            {
+                Name = categoryDTO.Name,
+                ImageUrl = categoryDTO.ImageUrl,
+            };
+
+            if (categoryDTO.Name.Length > 15)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Error = "Server Error",
+                    Message = "La longitud de la categoria supera el maximo",
+                    Status = 500
+                };
+                               
+                return Result<string>.Failure(newErrorResponse);
+            }
+
+            if (!categoryMatch.Success)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Error = "Server Error",
+                    Message = "La categoria solo acepta letras",
+                    Status = 500
+                };
+
+                return Result<string>.Failure(newErrorResponse);
+            }
+
+            _categoryRepository.Save(newCategory);
+
+            return Result<string>.Success("Creacion exitosa");
         }
     }
 }

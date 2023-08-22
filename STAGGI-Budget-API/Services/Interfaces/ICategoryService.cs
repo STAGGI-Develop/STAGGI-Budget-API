@@ -1,13 +1,15 @@
-﻿using STAGGI_Budget_API.DTOs;
+﻿using Microsoft.AspNetCore.Mvc;
+using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Helpers;
+using STAGGI_Budget_API.Models;
 
 namespace STAGGI_Budget_API.Services.Interfaces
 {
     public interface ICategoryService
     {
         public Result<List<CategoryDTO>> GetAll();
-        public Result<CategoryDTO> DeleteCategory();
-        public Result<CategoryDTO> UpdateCategory();
-        public Result<CategoryDTO> CreateCategory();
+        public Result<CategoryDTO> FindById(long id);
+        public Result<string> CreateCategory(CategoryDTO categoryDTO);
+
     }
 }
