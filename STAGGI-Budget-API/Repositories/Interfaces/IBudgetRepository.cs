@@ -1,12 +1,15 @@
-﻿using STAGGI_Budget_API.Models;
+﻿using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.Models;
 
 namespace STAGGI_Budget_API.Repositories.Interfaces
 {
     public interface IBudgetRepository
     {
-        IEnumerable<BUser> GetAll();
-        void Save(BUser budUser);
-        BUser FindById(long id);
-        BUser FindByEmail(string email);
+        IEnumerable<Budget> GetAll();
+        void Save(Budget budget);
+        void Delete(Budget budget);
+        Budget GetById(long id);
+        
+        
     }
 }

@@ -1,46 +1,45 @@
-﻿using STAGGI_Budget_API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using STAGGI_Budget_API.Data;
+using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
 
 namespace STAGGI_Budget_API.Repositories
 {
-    public class BudgetRepository: RepositoryBase<BUser>, IBudgetRepository
+    public class BudgetRepository: RepositoryBase<Budget>, IBudgetRepository
     {
         public BudgetRepository(BudgetContext repositoryContext) : base(repositoryContext)
         {
         }
-        public IEnumerable<BUser> GetAll()
+
+
+        public Budget GetById(long id)
+
         {
-            return FindAll()
-                //.Include(client => client.Accounts)
-                //.Include(client => client.Cards)
-                //.Include(client => client.BudUserLoans)
-                //    .ThenInclude(cl => cl.Loan)
-                .ToList();
-        }
-        public BUser? FindById(long id)
-        {
-            return FindByCondition(budUser => budUser.Id == id)
-                //.Include(client => client.Accounts)
+            return FindByCondition(budget => budget.Id == id)
+                .Include(budget => budget.Category)
                 //.Include(client => client.Cards)
                 //.Include(client => client.BudUserLoans)
                 //    .ThenInclude(cl => cl.Loan)
                 .FirstOrDefault();
         }
-        public BUser? FindByEmail(string email)
+
+
+        public IEnumerable<Budget> GetAll()
         {
-            return FindByCondition(budUser => budUser.Email.ToUpper() == email.ToUpper())
+            return FindAll()
             //.Include(client => client.Accounts)
             //.Include(client => client.Cards)
             //.Include(client => client.BudUserLoans)
             //    .ThenInclude(cl => cl.Loan)
-            .FirstOrDefault();
-        }
-        public void Save(BUser budUser)
-        {
-            Create(budUser);
-            SaveChanges();
+            .ToList();
         }
 
+
+        public void Save(Budget budget)
+        {
+            Create(budget);
+            SaveChanges();
+        }
     }
 }

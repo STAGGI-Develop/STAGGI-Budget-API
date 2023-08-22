@@ -5,6 +5,7 @@ using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services;
+using STAGGI_Budget_API.Services.Interfaces;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,8 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IBUserService, BUserService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
 //builder.Services.AddCors(options =>
