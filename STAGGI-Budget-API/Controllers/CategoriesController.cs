@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Models;
+using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services.Interfaces;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -31,21 +32,15 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostCategory(string category)
+        public IActionResult PostCategory(CategoryDTO categoryDTO)
         {
-            Regex regexName = new Regex("[a-zA-Z ]");
-            Match categoryMatch = regexName.Match(category);
-
-            if (category.Length > 15)
+            var result = _categoryService.CreateCategory(categoryDTO);
+            if (!result.IsSuccess)
             {
-                return Forbid("La longitud de la categoria supera el maximo");
+                return StatusCode(result.Error.Status, result.Error);
             }
+            return Ok(result.Ok);
 
-            if (!categoryMatch.Success)
-            {
-                return Forbid("La categoria solo acepta letras");
-            }
-            return Created("", category);
         }
 
         [HttpPut("{id}")]
