@@ -58,7 +58,7 @@ namespace STAGGI_Budget_API.Controllers
             {
                 return StatusCode(result.Error.Status, result.Error);
             }
-
+             
             return StatusCode(201, result.Ok);
         }
         //    [HttpDelete("{id}")]
