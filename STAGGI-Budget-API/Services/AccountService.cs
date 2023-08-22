@@ -16,6 +16,8 @@ namespace STAGGI_Budget_API.Services
 
         public Result<List<AccountDTO>> GetAll()
         {
+            string userEmail = "gr@mail.com"; // TO DO: reemplazar cuando exista el servicio
+
             var result = _accountRepository.GetAll();
 
             var accountsDTO = new List<AccountDTO>();
@@ -23,9 +25,7 @@ namespace STAGGI_Budget_API.Services
             {
                 accountsDTO.Add(new AccountDTO
                 { 
-                    Name = account.Name,
                     Balance = account.Balance,
-                    IsPrincipal = account.isPrincipal,
                     //BUserId = account.BUserId,
                 });
             }

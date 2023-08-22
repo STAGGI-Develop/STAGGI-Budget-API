@@ -10,7 +10,7 @@ namespace STAGGI_Budget_API.Models
         public double TargetAmount { get; set; }
         public DateTime? DueDate { get; set; }
 
-        [ForeignKey("AccountId")]
-        public virtual Account Account { get; set; }
+        [ForeignKey("BUserId")]
+        public virtual BUser BUser { get; set; }
     }
 }
