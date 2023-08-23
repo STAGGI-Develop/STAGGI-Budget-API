@@ -66,5 +66,12 @@ namespace STAGGI_Budget_API.Controllers
 
             return StatusCode(201, result.Ok);
         }
+
+        [HttpGet("/search")]
+        
+        public IActionResult GetSearch()
+        {
+
+        }
     }
 }
