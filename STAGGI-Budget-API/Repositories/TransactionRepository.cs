@@ -26,5 +26,11 @@ namespace STAGGI_Budget_API.Repositories
             Create(transaction);
             SaveChanges();
         }
+
+        public IEnumerable<Transaction> Search(string searchParameter)
+        {
+            return FindByCondition(tr => tr.Title.Contains(searchParameter))
+            .ToList();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using STAGGI_Budget_API.DTOs;
+﻿using Microsoft.AspNetCore.Mvc;
+using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
@@ -88,6 +89,39 @@ namespace STAGGI_Budget_API.Services
                     Message = "No se pudo actualizar la transacción."
                 });
             }
+        }
+
+        public Result<TransactionDTO> Search(string searchParameter)
+        {
+            var transactionSearch = _transactionRepository.Search(searchParameter);
+
+            var transactionSearchDTO = new List<TransactionDTO>();
+            foreach(Transaction transaction in transactionSearch)
+            {
+                TransactionDTO newTransactionSearchDTO = new TransactionDTO
+                {
+                    Title = transaction.Title,
+                    Description = transaction.Description,
+                    Amount = transaction.Amount,
+                    Type = transaction.Type,
+                    CreateDate = transaction.CreateDate,
+                    CategoryId = transaction.CategoryId
+                };
+
+                transactionSearchDTO.Add(newTransactionSearchDTO);
+            }
+
+            if (transactionSearchDTO == null)
+            {
+                return Result<TransactionDTO>.Failure(new ErrorResponseDTO
+                {
+                    Status = 204,
+                    Error = "Error en la busqueda",
+                    Message = "No se pudo encontrar la transaccion buscada."
+                });
+            }
+
+            return Result<TransactionDTO>.Success(transactionSearchDTO);
         }
     }
 }

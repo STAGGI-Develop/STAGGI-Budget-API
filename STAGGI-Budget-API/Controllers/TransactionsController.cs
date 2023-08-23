@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Services.Interfaces;
 
 namespace STAGGI_Budget_API.Controllers
@@ -71,7 +72,9 @@ namespace STAGGI_Budget_API.Controllers
         
         public IActionResult GetSearch()
         {
+            string request = HttpContext.Request.Query["title"];
 
+            
         }
     }
 }
