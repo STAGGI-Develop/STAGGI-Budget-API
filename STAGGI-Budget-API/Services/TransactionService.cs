@@ -91,7 +91,7 @@ namespace STAGGI_Budget_API.Services
             }
         }
 
-        public Result<TransactionDTO> Search(string searchParameter)
+        public Result<List<TransactionDTO>> SearchTransaction(string searchParameter)
         {
             var transactionSearch = _transactionRepository.Search(searchParameter);
 
@@ -105,7 +105,6 @@ namespace STAGGI_Budget_API.Services
                     Amount = transaction.Amount,
                     Type = transaction.Type,
                     CreateDate = transaction.CreateDate,
-                    CategoryId = transaction.CategoryId
                 };
 
                 transactionSearchDTO.Add(newTransactionSearchDTO);
@@ -113,7 +112,7 @@ namespace STAGGI_Budget_API.Services
 
             if (transactionSearchDTO == null)
             {
-                return Result<TransactionDTO>.Failure(new ErrorResponseDTO
+                return Result<List<TransactionDTO>>.Failure(new ErrorResponseDTO
                 {
                     Status = 204,
                     Error = "Error en la busqueda",
@@ -121,7 +120,7 @@ namespace STAGGI_Budget_API.Services
                 });
             }
 
-            return Result<TransactionDTO>.Success(transactionSearchDTO);
+            return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
         }
     }
 }

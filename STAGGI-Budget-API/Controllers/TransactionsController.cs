@@ -29,18 +29,18 @@ namespace STAGGI_Budget_API.Controllers
             return StatusCode(201, result.Ok);
         }
 
-        //[HttpGet("{id}")]
-        //public IActionResult GetById(long id)
-        //{ 
-        //    var result = _transactionService.GetById(id);
+        [HttpGet("{id}")]
+        public IActionResult GetById(long id)
+        { 
+           var result = _transactionService.
 
-        //    if (!result.IsSuccess)
-        //    {
-        //        return StatusCode(result.Error.Status, result.Error);
-        //    }
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
 
-        //    return StatusCode(201, result.Ok);
-        //}
+            return StatusCode(201, result.Ok);
+        }
 
         [HttpPost]
         public IActionResult CreateTransaction([FromBody] TransactionDTO transactionDTO)
