@@ -9,6 +9,7 @@ namespace STAGGI_Budget_API.Models
 
         [ForeignKey("BUserId")]
         public virtual BUser? BUser { get; set; }
+        public ICollection<Transaction> Transactions { get; set; }
 
     }
 }

@@ -12,7 +12,7 @@ using STAGGI_Budget_API.Data;
 namespace STAGGI_Budget_API.Migrations
 {
     [DbContext(typeof(BudgetContext))]
-    [Migration("20230822130235_Initial")]
+    [Migration("20230824202300_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -405,8 +405,8 @@ namespace STAGGI_Budget_API.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -536,13 +536,13 @@ namespace STAGGI_Budget_API.Migrations
             modelBuilder.Entity("STAGGI_Budget_API.Models.Transaction", b =>
                 {
                     b.HasOne("STAGGI_Budget_API.Models.Account", "Account")
-                        .WithMany()
+                        .WithMany("Transactions")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("STAGGI_Budget_API.Models.Budget", "Budget")
-                        .WithMany()
+                        .WithMany("Transactions")
                         .HasForeignKey("BudgetId");
 
                     b.HasOne("STAGGI_Budget_API.Models.Category", "Category")
@@ -552,7 +552,7 @@ namespace STAGGI_Budget_API.Migrations
                         .IsRequired();
 
                     b.HasOne("STAGGI_Budget_API.Models.Saving", "Saving")
-                        .WithMany()
+                        .WithMany("Transactions")
                         .HasForeignKey("SavingId");
 
                     b.Navigation("Account");
@@ -562,6 +562,16 @@ namespace STAGGI_Budget_API.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Saving");
+                });
+
+            modelBuilder.Entity("STAGGI_Budget_API.Models.Account", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("STAGGI_Budget_API.Models.Budget", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("STAGGI_Budget_API.Models.BUser", b =>
@@ -579,6 +589,11 @@ namespace STAGGI_Budget_API.Migrations
                 });
 
             modelBuilder.Entity("STAGGI_Budget_API.Models.Category", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("STAGGI_Budget_API.Models.Saving", b =>
                 {
                     b.Navigation("Transactions");
                 });
