@@ -31,8 +31,8 @@ namespace STAGGI_Budget_API.Controllers
 
         [HttpGet("{id}")]
         public IActionResult GetById(long id)
-        { 
-           var result = _transactionService.
+        {
+            var result = _transactionService.GetTransactionById(id);
 
             if (!result.IsSuccess)
             {

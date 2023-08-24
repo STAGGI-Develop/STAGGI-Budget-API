@@ -122,5 +122,22 @@ namespace STAGGI_Budget_API.Services
 
             return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
         }
+
+        public Result<TransactionDTO> GetTransactionById(long id)
+        {
+            var transaction = _transactionRepository.FindById(id);
+
+            var transactionDTO = new TransactionDTO
+            {
+                Title = transaction.Title,
+                Description = transaction.Description,
+                Amount = transaction.Amount,
+                Type = transaction.Type,
+                CreateDate = transaction.CreateDate
+            };
+
+            return Result<TransactionDTO>.Success(transactionDTO);
+
+        }
     }
 }
