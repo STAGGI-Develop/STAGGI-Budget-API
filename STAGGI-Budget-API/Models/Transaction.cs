@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using STAGGI_Budget_API.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
 
 namespace STAGGI_Budget_API.Models
@@ -10,7 +11,7 @@ namespace STAGGI_Budget_API.Models
         public string? Description { get; set; }
         public double Amount { get; set; }
         public DateTime CreateDate { get; set; }
-        public string? Type { get; set; }
+        public TransactionType Type { get; set; }
 
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }

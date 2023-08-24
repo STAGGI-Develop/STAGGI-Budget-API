@@ -193,8 +193,8 @@ namespace STAGGI_Budget_API.Migrations
                         name: "FK_Categories_AspNetUsers_BUserId",
                         column: x => x.BUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                        //onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -281,7 +281,7 @@ namespace STAGGI_Budget_API.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<long>(type: "bigint", nullable: false),
                     AccountId = table.Column<long>(type: "bigint", nullable: false),
                     SavingId = table.Column<long>(type: "bigint", nullable: true),
