@@ -22,8 +22,20 @@ namespace STAGGI_Budget_API.Repositories
 
         public void Save(Category category)
         {
-            Create(category);
+            if (category.Id == 0)
+            {
+                Create(category);
+            } 
+            else
+            {
+                Update(category);
+            }
             SaveChanges();
+        }
+
+        public void Delete(long id)
+        {
+            Delete(id);
         }
     }
 }

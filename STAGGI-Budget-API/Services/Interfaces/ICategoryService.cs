@@ -10,6 +10,7 @@ namespace STAGGI_Budget_API.Services.Interfaces
         public Result<List<CategoryDTO>> GetAll();
         public Result<CategoryDTO> FindById(long id);
         public Result<string> CreateCategory(CategoryDTO categoryDTO);
-
+        public Result<string> UpdateCategory(long Id, CategoryDTO categoryDTO);
+        public Result<string> DeleteCategory(long id);
     }
 }

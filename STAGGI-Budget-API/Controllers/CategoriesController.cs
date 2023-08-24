@@ -44,15 +44,27 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateCategory([FromBody] CategoryDTO category, long id)
+        public IActionResult UpdateCategory(long id, [FromBody] CategoryDTO category)
         {
-            return Ok();
+            var result = _categoryService.UpdateCategory(id, category);
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+            return Ok(result.Ok);
         }
 
         [HttpDelete]
         public IActionResult DeleteCategory(long id)
         {
-            return Ok();
+            var result = _categoryService.DeleteCategory(id);
+            
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+
+            return NoContent();
         }
     }
 }
