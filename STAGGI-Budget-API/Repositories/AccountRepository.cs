@@ -18,10 +18,16 @@ namespace STAGGI_Budget_API.Repositories
             return FindByCondition(acc => acc.Id == id)
                 .FirstOrDefault();
         }
+
         public void Save(Account account)
         {
             Create(account);
             SaveChanges();
+        }
+
+        public IEnumerable<Account> GetAccountsByBUser(string BUserId)
+        {
+            return FindByCondition(account => account.BUser.Id == BUserId);
         }
     }
 }

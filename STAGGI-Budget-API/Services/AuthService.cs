@@ -95,5 +95,23 @@ namespace STAGGI_Budget_API.Services
 
             return Result<string>.Success("User created successfully!");
         }
+
+        public string GetEmailFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var decodedToken = tokenHandler.ReadJwtToken(token);
+
+            var emailClaim = decodedToken.Claims.FirstOrDefault(claim => claim.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress");
+
+            if (emailClaim != null)
+            {
+                var email = emailClaim.Value;
+                return email;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }
