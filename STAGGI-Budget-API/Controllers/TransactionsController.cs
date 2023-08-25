@@ -74,7 +74,14 @@ namespace STAGGI_Budget_API.Controllers
         {
             string request = HttpContext.Request.Query["title"];
 
-            
+            var result = _transactionService.SearchTransaction(request);
+
+            if (!result.IsSuccess) 
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+
+            return StatusCode(201, result.Ok);
         }
     }
 }
