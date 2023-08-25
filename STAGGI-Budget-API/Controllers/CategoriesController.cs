@@ -54,10 +54,10 @@ namespace STAGGI_Budget_API.Controllers
             return Ok(result.Ok);
         }
 
-        [HttpDelete]
-        public IActionResult DeleteCategory(long id)
+        [HttpPut("disable/{id}")]
+        public IActionResult DisableCategory(long id)
         {
-            var result = _categoryService.DeleteCategory(id);
+            var result = _categoryService.DisableCategory(id);
             
             if (!result.IsSuccess)
             {

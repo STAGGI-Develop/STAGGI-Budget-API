@@ -29,6 +29,7 @@ namespace STAGGI_Budget_API.Services
                 {
                     Name = category.Name,
                     ImageUrl = category.ImageUrl,
+                    IsDisabled = category.IsDisabled,
                 });
             }
             return Result<List<CategoryDTO>>.Success(categoriesDTO);
@@ -41,7 +42,8 @@ namespace STAGGI_Budget_API.Services
             var categoryDTO = new CategoryDTO
             {
                 Name = category.Name,
-                ImageUrl = category.ImageUrl
+                ImageUrl = category.ImageUrl,
+                IsDisabled = category.IsDisabled
             };
 
             return Result<CategoryDTO>.Success(categoryDTO);
@@ -52,10 +54,13 @@ namespace STAGGI_Budget_API.Services
             Regex regexName = new Regex("[a-zA-Z ]");
             Match categoryMatch = regexName.Match(categoryDTO.Name);
 
+            var user = new BUser { };
+
             Category newCategory = new Category
             {
                 Name = categoryDTO.Name,
                 ImageUrl = categoryDTO.ImageUrl,
+                BUser = user
             };
 
             if (categoryDTO.Name.Length > 15)
@@ -137,7 +142,7 @@ namespace STAGGI_Budget_API.Services
             return Result<string>.Success("Actualización exitosa");
         }
 
-        public Result<string> DeleteCategory(long id)
+        public Result<string> DisableCategory(long id)
         {
             var category = _categoryRepository.FindById(id);
 
@@ -153,8 +158,10 @@ namespace STAGGI_Budget_API.Services
                 return Result<string>.Failure(newErrorResponse);
             }
 
-            _categoryRepository.DeleteCategory(category);
-            return Result<string>.Success("");
+            category.IsDisabled = true;
+
+            _categoryRepository.Save(category);
+            return Result<string>.Success("Categoría deshabilitada correctamente");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace STAGGI_Budget_API.Models
 {
@@ -7,6 +8,7 @@ namespace STAGGI_Budget_API.Models
         public long Id { get; set; }
         public string? Name { get; set; }
         public string? ImageUrl { get; set; }
+        public bool IsDisabled { get; set; }
 
         [ForeignKey("BUserId")]
         public virtual BUser BUser { get; set; }
