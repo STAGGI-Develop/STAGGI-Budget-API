@@ -27,6 +27,20 @@ namespace STAGGI_Budget_API.Services
 
         public Result<List<BudgetDTO>> GetAll()
         {
+
+            //var result = _budgetRepository.GetAll();
+
+            //var budgetsDTO = new List<BudgetDTO>();
+            //foreach (var budget in result)
+            //{
+            //    budgetsDTO.Add(new BudgetDTO
+            //    {
+            //        Name = budget.Name,
+
+            //    });
+                
+            //}
+
             var result = _budgetRepository.GetAll();
             var budgetDTOs = new List<BudgetDTO>();
 
@@ -71,12 +85,8 @@ namespace STAGGI_Budget_API.Services
                 }
             };
             return Result<BudgetDTO>.Success(budgetDTO);
-
-
         }
        
-
-        
         //CreateBudget
 
         public Result<BudgetDTO> CreateBudget(BudgetDTO budgetDTO)

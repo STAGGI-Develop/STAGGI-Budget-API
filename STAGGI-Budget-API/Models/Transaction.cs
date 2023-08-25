@@ -1,4 +1,6 @@
-﻿using System.Security.Principal;
+﻿using STAGGI_Budget_API.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Principal;
 
 namespace STAGGI_Budget_API.Models
 {
@@ -9,14 +11,19 @@ namespace STAGGI_Budget_API.Models
         public string? Description { get; set; }
         public double Amount { get; set; }
         public DateTime CreateDate { get; set; }
-        public string? Type { get; set; }
-        //public BUser? BudUser { get; set; }
-        //public long BudUserId { get; set; }
-        public Account? Account { get; set; }
-        public long AccountId { get; set; }
+        public TransactionType Type { get; set; }
 
-        public long CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
         public Category Category { get; set; }
-        //public ICollection<TransactionCategory>? TransactionsPerCategory { get; set; }
+
+        [ForeignKey("AccountId")]
+        public Account Account { get; set; }
+
+        [ForeignKey("SavingId")]
+        public Saving? Saving { get; set; }
+        // uno u otro
+
+        [ForeignKey("BudgetId")]
+        public Budget? Budget { get; set; }
     }
 }

@@ -7,5 +7,6 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         IEnumerable<Category> GetAll();
         void Save(Category category);
         Category? FindById(long id);
+        void Delete(long id);
     }
 }

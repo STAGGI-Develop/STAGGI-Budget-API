@@ -21,6 +21,7 @@ namespace STAGGI_Budget_API.Services
         { 
             var result = _transactionRepository.GetAll();
             var transactionsDTO = new List<TransactionDTO>();
+
             foreach (var transaction in result) 
             {
                 transactionsDTO.Add(new TransactionDTO 
@@ -30,11 +31,11 @@ namespace STAGGI_Budget_API.Services
                     Amount = transaction.Amount,
                     Type = transaction.Type,
                     CreateDate = DateTime.Now,
-                    CategoryId = transaction.CategoryId,
+                    //CategoryId = transaction.CategoryId,
                 });
             }
 
-            return Result<List<AccountDTO>>.Success(TransactionDTO);
+            return Result<List<TransactionDTO>>.Success(transactionsDTO);
         }
 
         public Result<TransactionDTO> CreateTransaction(TransactionDTO transactionDTO)
@@ -48,7 +49,7 @@ namespace STAGGI_Budget_API.Services
                     Amount = transactionDTO.Amount,
                     Type = transactionDTO.Type,
                     CreateDate = DateTime.Now,
-                    CategoryId = transactionDTO.CategoryId,
+                    //CategoryId = transactionDTO.CategoryId,
                 });
 
                 return Result<TransactionDTO>.Success(transactionDTO);
@@ -73,7 +74,7 @@ namespace STAGGI_Budget_API.Services
                 transaction.Description = transactionDTO.Description;
                 transaction.Amount = transactionDTO.Amount;
                 transaction.Type = transactionDTO.Type;
-                transaction.CategoryId = transactionDTO.CategoryId;
+                //transaction.CategoryId = transactionDTO.CategoryId;
 
                 return Result<TransactionDTO>.Success(transactionDTO);
 

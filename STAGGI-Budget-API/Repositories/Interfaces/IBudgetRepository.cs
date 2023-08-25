@@ -6,10 +6,9 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
     public interface IBudgetRepository
     {
         IEnumerable<Budget> GetAll();
-        void Save(Budget budget);
-        void Delete(Budget budget);
+        IEnumerable<Budget> GetAllByUserEmail(string email)
         Budget GetById(long id);
-        
-        
+        void Save(Budget budget);
+        //void Delete(Budget budget);
     }
 }
