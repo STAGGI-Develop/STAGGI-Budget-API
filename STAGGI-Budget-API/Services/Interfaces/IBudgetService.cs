@@ -1,5 +1,6 @@
 ﻿using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Helpers;
+using STAGGI_Budget_API.Models;
 
 namespace STAGGI_Budget_API.Services.Interfaces
 {
@@ -7,8 +8,12 @@ namespace STAGGI_Budget_API.Services.Interfaces
     {
         public Result<List<BudgetDTO>> GetAll();
         public Result<BudgetDTO> GetById(long id);
-        public Result<BudgetDTO> CreateBudgetForCurrentClient();
+        public Result<BudgetDTO> CreateBudget(BudgetDTO budgetDTO);
+        public Result<Budget> DeleteBudget(long budgetId);
+        public Result<BudgetDTO> UpdateBudget(int budgetId, BudgetDTO updatedBudgetDTO);
 
-        public Result<List<BudgetDTO>> GetCurrentClientBudgets();
+        //public Result<List<BudgetDTO>> GetCurrentClientBudgets();
+     
+
     }
 }

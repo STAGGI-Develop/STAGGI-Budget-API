@@ -147,7 +147,7 @@ app.UseCors(builder =>
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials()
-); // Habilita el envío de credenciales}
+); // Habilita el envÃ­o de credenciales}
 
 app.UseAuthentication();
 app.UseAuthorization();
