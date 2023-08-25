@@ -1,10 +1,12 @@
-﻿using STAGGI_Budget_API.DTOs;
+﻿using Microsoft.AspNetCore.Mvc;
+using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace STAGGI_Budget_API.Services
 {
@@ -88,6 +90,93 @@ namespace STAGGI_Budget_API.Services
                     Message = "No se pudo actualizar la transacción."
                 });
             }
+        }
+
+        public Result<List<TransactionDTO>> SearchTransaction(string searchParameter)
+        {
+            Regex regexName = new Regex("[A-Z0-9]");
+
+            if (searchParameter == null)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Error = "Server Error",
+                    Message = "Usted no ingreso ningun dato a buscar.",
+                    Status = 500
+                };
+
+                return Result<List<TransactionDTO>>.Failure(newErrorResponse);
+            }
+                       
+            if (searchParameter.Length > 15)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Error = "Server Error",
+                    Message = "La longitud de la busqueda supera el maximo de caracteres.",
+                    Status = 500
+                };
+
+                return Result<List<TransactionDTO>>.Failure(newErrorResponse);
+            }
+
+            Match searchMatch = regexName.Match(searchParameter);
+            if (!searchMatch.Success)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Error = "Server Error",
+                    Message = "Usted no puede utilizar caracteres especiales para buscar.",
+                    Status = 500
+                };
+
+                return Result<List<TransactionDTO>>.Failure(newErrorResponse);
+            }
+
+            var transactionSearch = _transactionRepository.Search(searchParameter);
+            var transactionSearchDTO = new List<TransactionDTO>();
+            foreach(Transaction transaction in transactionSearch)
+            {
+                TransactionDTO newTransactionSearchDTO = new TransactionDTO
+                {
+                    Title = transaction.Title,
+                    Description = transaction.Description,
+                    Amount = transaction.Amount,
+                    Type = transaction.Type,
+                    CreateDate = transaction.CreateDate,
+                };
+
+                transactionSearchDTO.Add(newTransactionSearchDTO);
+            }
+
+            if (transactionSearchDTO == null)
+            {
+                return Result<List<TransactionDTO>>.Failure(new ErrorResponseDTO
+                {
+                    Status = 204,
+                    Error = "Error en la busqueda",
+                    Message = "No se pudo encontrar la transaccion buscada."
+                });
+            }            
+
+            return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
+        }
+
+        public Result<TransactionDTO> GetTransactionById(long id)
+        {
+            var transaction = _transactionRepository.FindById(id);
+
+            var transactionDTO = new TransactionDTO
+            {
+                Title = transaction.Title,
+                Description = transaction.Description,
+                Amount = transaction.Amount,
+                Type = transaction.Type,
+                CreateDate = transaction.CreateDate
+            };
+
+            return Result<TransactionDTO>.Success(transactionDTO);
+
         }
     }
 }

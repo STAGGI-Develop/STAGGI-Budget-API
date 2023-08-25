@@ -26,5 +26,12 @@ namespace STAGGI_Budget_API.Repositories
             Create(transaction);
             SaveChanges();
         }
+
+        public IEnumerable<Transaction> Search(string searchParameter)
+        {
+            var upperSearch = searchParameter.ToUpper();
+            return FindByCondition(tr =>tr.Title.ToUpper().Contains(upperSearch))
+            .ToList();
+        }
     }
 }
