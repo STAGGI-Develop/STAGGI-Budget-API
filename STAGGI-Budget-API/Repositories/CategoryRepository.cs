@@ -33,9 +33,9 @@ namespace STAGGI_Budget_API.Repositories
             SaveChanges();
         }
 
-        public void Delete(long id)
+        public void DeleteCategory(Category category)
         {
-            Delete(id);
+            Delete(category);
         }
     }
 }

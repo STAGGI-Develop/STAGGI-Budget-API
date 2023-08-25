@@ -153,7 +153,7 @@ namespace STAGGI_Budget_API.Services
                 return Result<string>.Failure(newErrorResponse);
             }
 
-            _categoryRepository.Delete(id);
+            _categoryRepository.DeleteCategory(category);
             return Result<string>.Success("");
         }
     }
