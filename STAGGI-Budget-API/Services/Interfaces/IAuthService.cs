@@ -8,5 +8,7 @@ namespace STAGGI_Budget_API.Services.Interfaces
         Task<Result<string>> Login(LoginRequestDTO request);
         Task<Result<string>> Register(RegisterRequestDTO request);
 
+        string GetEmailFromToken(string token); 
+
     }
 }
