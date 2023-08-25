@@ -68,20 +68,20 @@ namespace STAGGI_Budget_API.Controllers
             return StatusCode(201, result.Ok);
         }
 
-        [HttpGet("/search")]
+        [HttpGet("api/search")]
         
-        public IActionResult GetSearch()
+        public IActionResult GetSearch(string searchParameter)
         {
-            string request = HttpContext.Request.Query["title"];
+            //string request = HttpContext.Request.Query["title"]; //Comente esto y le agregue un parametro al metodo para probar swagger
 
-            var result = _transactionService.SearchTransaction(request);
+            var result = _transactionService.SearchTransaction(searchParameter);
 
             if (!result.IsSuccess) 
             {
                 return StatusCode(result.Error.Status, result.Error);
             }
 
-            return StatusCode(201, result.Ok);
+            return StatusCode(200, result.Ok);
         }
     }
 }

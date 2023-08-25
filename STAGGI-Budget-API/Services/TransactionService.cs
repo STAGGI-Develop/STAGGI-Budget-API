@@ -6,6 +6,7 @@ using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace STAGGI_Budget_API.Services
 {
@@ -93,8 +94,46 @@ namespace STAGGI_Budget_API.Services
 
         public Result<List<TransactionDTO>> SearchTransaction(string searchParameter)
         {
-            var transactionSearch = _transactionRepository.Search(searchParameter);
+            Regex regexName = new Regex("[A-Z0-9]");
 
+            if (searchParameter == null)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Error = "Server Error",
+                    Message = "Usted no ingreso ningun dato a buscar.",
+                    Status = 500
+                };
+
+                return Result<List<TransactionDTO>>.Failure(newErrorResponse);
+            }
+                       
+            if (searchParameter.Length > 15)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Error = "Server Error",
+                    Message = "La longitud de la busqueda supera el maximo de caracteres.",
+                    Status = 500
+                };
+
+                return Result<List<TransactionDTO>>.Failure(newErrorResponse);
+            }
+
+            Match searchMatch = regexName.Match(searchParameter);
+            if (!searchMatch.Success)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Error = "Server Error",
+                    Message = "Usted no puede utilizar caracteres especiales para buscar.",
+                    Status = 500
+                };
+
+                return Result<List<TransactionDTO>>.Failure(newErrorResponse);
+            }
+
+            var transactionSearch = _transactionRepository.Search(searchParameter);
             var transactionSearchDTO = new List<TransactionDTO>();
             foreach(Transaction transaction in transactionSearch)
             {
@@ -118,7 +157,7 @@ namespace STAGGI_Budget_API.Services
                     Error = "Error en la busqueda",
                     Message = "No se pudo encontrar la transaccion buscada."
                 });
-            }
+            }            
 
             return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
         }
