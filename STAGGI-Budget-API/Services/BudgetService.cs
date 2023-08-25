@@ -28,19 +28,6 @@ namespace STAGGI_Budget_API.Services
         public Result<List<BudgetDTO>> GetAll()
         {
 
-            //var result = _budgetRepository.GetAll();
-
-            //var budgetsDTO = new List<BudgetDTO>();
-            //foreach (var budget in result)
-            //{
-            //    budgetsDTO.Add(new BudgetDTO
-            //    {
-            //        Name = budget.Name,
-
-            //    });
-                
-            //}
-
             var result = _budgetRepository.GetAll();
             var budgetDTOs = new List<BudgetDTO>();
 
@@ -77,8 +64,8 @@ namespace STAGGI_Budget_API.Services
                 Name = result.Name,
                 LimitAmount = result.LimitAmount,
                 Period = result.Period,
-                //  Balance = result.Balance,
-                Category = new CategoryDTO
+                Balance = result.Balance,
+                Category = new Category
                 {
                     Name = result.Category.Name,
                     ImageUrl = result.Category.ImageUrl,
@@ -113,7 +100,7 @@ namespace STAGGI_Budget_API.Services
             }
         }
         //DeleteBudget
-        public Result<Budget> DeleteBudget(int budgetId)
+        public Result<Budget> DeleteBudget(long budgetId)
         {
             try
             {

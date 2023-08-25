@@ -61,18 +61,17 @@ namespace STAGGI_Budget_API.Controllers
              
             return StatusCode(201, result.Ok);
         }
-        //    [HttpDelete("{id}")]
-        //    public IActionResult DeleteBudget(long id)
-        //    {
-        //        var result = _budgetService.DeleteBudget(id);
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBudget(long id)
+        {
+            var result = _budgetService.DeleteBudget(id);
 
-        //        if (!result.IsSuccess)
-        //        {
-        //            return StatusCode(result.Error.Status, result.Error);
-        //        }
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
 
-        //        return StatusCode(204); // 204 No Content for successful deletion
-        //    }
-        //}
+            return StatusCode(204); // 204 No Content for successful deletion
+        }
     }
 }
