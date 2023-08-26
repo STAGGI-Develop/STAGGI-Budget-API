@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
@@ -13,10 +14,12 @@ namespace STAGGI_Budget_API.Services
     public class TransactionService : ITransactionService
     {
         private readonly ITransactionRepository _transactionRepository;
+        private readonly IBUserRepository _bUserRepository;
 
-        public TransactionService(ITransactionRepository transactionRepository)
+        public TransactionService(ITransactionRepository transactionRepository, IBUserRepository bUserRepository)
         {
             _transactionRepository = transactionRepository;
+            _bUserRepository = bUserRepository;
         }
 
         public Result<List<TransactionDTO>> GetAllByUserEmail(string userEmail)
@@ -48,17 +51,24 @@ namespace STAGGI_Budget_API.Services
                 //Tengo que pasarme el email para buscar el usuario y sacarle el account completo,
                 //El budget, el saving y la categoria tengo que buscar que coincidan con el nombre filtrandolo ver linea 161 a 176 del dbinitializer
 
+                var userEmail = "sf@mail.com"; //Hardcodeado, encontrar la manera de conseguir el mail del usuario loggeado.
+                
+                var user = _bUserRepository.FindByEmail(userEmail);               
+                var category =  user.Categories.FirstOrDefault(c => c.Name == transactionDTO.Category);
+                var budget = user.Budgets.FirstOrDefault(b => b.Name == transactionDTO.Saving);
+                //var saving = user.Savings.First(s => s.Category.Name == transactionDTO.Category);
+
                 var newTransaction = new Transaction
                 {
                     Title = transactionDTO.Title,
                     Description = transactionDTO.Description,
                     Amount = transactionDTO.Amount,
                     Type = (TransactionType)transactionDTO.Type,
-                    CreateDate = DateTime.Now,                   
-                    //Account =
-                    //Budget =
+                    CreateDate = DateTime.Now,
+                    Account = user.Account,
+                    Budget = budget,
+                    Category = category
                     //Saving =
-                    //Category =
                 };
 
                 _transactionRepository.Save(newTransaction);
