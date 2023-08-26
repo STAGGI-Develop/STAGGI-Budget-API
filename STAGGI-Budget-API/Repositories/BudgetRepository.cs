@@ -25,6 +25,7 @@ namespace STAGGI_Budget_API.Repositories
             return FindAll()
                 .Include(budget => budget.Category)
                 .Include(budget => budget.BUser)
+                .Include(budget =>budget.Transactions)
                 .Where(budget => budget.BUser.Email == email)
                 //    .ThenInclude(cl => cl.Loan)
                 .ToList();
@@ -34,6 +35,7 @@ namespace STAGGI_Budget_API.Repositories
         {
             return FindByCondition(budget => budget.Id == id)
                 .Include(budget => budget.Category)
+                .Include(budget =>budget.Transactions)
                 //    .ThenInclude(cl => cl.Loan)
                 .FirstOrDefault();
         }

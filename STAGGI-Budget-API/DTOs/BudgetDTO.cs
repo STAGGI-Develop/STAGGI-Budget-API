@@ -10,5 +10,7 @@ namespace STAGGI_Budget_API.DTOs
         public BudgetPeriod Period { get; set; }
         public virtual Category Category { get; set; }
         public double Balance { get; set; }
+        public ICollection<Transaction> Transactions { get; set; }
     }
+
 }

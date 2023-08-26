@@ -17,11 +17,13 @@ namespace STAGGI_Budget_API.Services
     public class BudgetService: IBudgetService
     {
         private readonly IBudgetRepository _budgetRepository;
+        private readonly ITransactionRepository _transactionRepository;
        
         //constructor
-        public BudgetService(IBudgetRepository budgetRepository)
+        public BudgetService(IBudgetRepository budgetRepository, ITransactionRepository transactionRepository)
         {
             _budgetRepository = budgetRepository;
+            _transactionRepository = transactionRepository;
         }
         //getAll
 
@@ -30,7 +32,7 @@ namespace STAGGI_Budget_API.Services
 
             var result = _budgetRepository.GetAll();
             var budgetDTOs = new List<BudgetDTO>();
-
+            var TDO = _transactionRepository.GetAll();
             foreach (var budget in result)
             {
                 budgetDTOs.Add(new BudgetDTO
@@ -38,8 +40,10 @@ namespace STAGGI_Budget_API.Services
                     Name = budget.Name,
                     LimitAmount = budget.LimitAmount,
                     Period = budget.Period,
-                   
-                });
+                    Category = budget.Category,
+                    Balance = budget.Balance,
+                  
+                }); ;
             }
 
             return Result<List<BudgetDTO>>.Success(budgetDTOs);
@@ -69,8 +73,10 @@ namespace STAGGI_Budget_API.Services
                 {
                     Name = result.Category.Name,
                     ImageUrl = result.Category.ImageUrl,
-                }
+                },
+                Transactions = result.Transactions,
             };
+            
             return Result<BudgetDTO>.Success(budgetDTO);
         }
        
@@ -84,7 +90,9 @@ namespace STAGGI_Budget_API.Services
                 {
                     Name = budgetDTO.Name,
                     LimitAmount = budgetDTO.LimitAmount,
-                    Period = budgetDTO.Period,               
+                    Period = budgetDTO.Period,   
+                    Category = budgetDTO.Category,
+                    Balance=budgetDTO.Balance,
                 });
 
                 return Result<BudgetDTO>.Success(budgetDTO);
@@ -159,8 +167,11 @@ namespace STAGGI_Budget_API.Services
                     Name = existingBudget.Name,
                     LimitAmount = existingBudget.LimitAmount,
                     Period = existingBudget.Period,
-                    
+                    Category = existingBudget.Category,
+                                
+                                    
                 };
+       
 
                 return Result<BudgetDTO>.Success(updatedBudget);
             }

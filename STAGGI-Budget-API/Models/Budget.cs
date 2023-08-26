@@ -16,6 +16,6 @@ namespace STAGGI_Budget_API.Models
 
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
-        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection <Transaction> Transactions { get; set; }
     }
 }
