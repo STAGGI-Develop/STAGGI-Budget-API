@@ -19,9 +19,9 @@ namespace STAGGI_Budget_API.Services
             _transactionRepository = transactionRepository;
         }
 
-        public Result<List<TransactionDTO>> GetAll()
+        public Result<List<TransactionDTO>> GetAllByUserEmail(string userEmail)
         { 
-            var result = _transactionRepository.GetAll();
+            var result = _transactionRepository.FindByUserEmail(userEmail);
             var transactionsDTO = new List<TransactionDTO>();
 
             foreach (var transaction in result) 
@@ -41,21 +41,39 @@ namespace STAGGI_Budget_API.Services
             return Result<List<TransactionDTO>>.Success(transactionsDTO);
         }
 
-        public Result<TransactionDTO> CreateTransaction(TransactionDTO transactionDTO)
+        public Result<TransactionDTO> CreateTransaction(CreateTransactionDTO transactionDTO)
         {
             try
             {
-                _transactionRepository.Save(new Transaction
+                //Tengo que pasarme el email para buscar el usuario y sacarle el account completo,
+                //El budget, el saving y la categoria tengo que buscar que coincidan con el nombre filtrandolo ver linea 161 a 176 del dbinitializer
+
+                var newTransaction = new Transaction
                 {
                     Title = transactionDTO.Title,
                     Description = transactionDTO.Description,
                     Amount = transactionDTO.Amount,
-                    Type = transactionDTO.Type,
+                    Type = (TransactionType)transactionDTO.Type,
+                    CreateDate = DateTime.Now,                   
+                    //Account =
+                    //Budget =
+                    //Saving =
+                    //Category =
+                };
+
+                _transactionRepository.Save(newTransaction);
+
+                var newTransactionDTO = new TransactionDTO
+                {
+                    Title = newTransaction.Title,
+                    Description = newTransaction.Description,
+                    Amount = newTransaction.Amount,
+                    Type = (TransactionType)newTransaction.Type,
                     CreateDate = DateTime.Now,
                     //CategoryId = transactionDTO.CategoryId,
-                });
+                };
 
-                return Result<TransactionDTO>.Success(transactionDTO);
+                return Result<TransactionDTO>.Success(newTransactionDTO);
             }
             catch
             {
@@ -93,7 +111,7 @@ namespace STAGGI_Budget_API.Services
             }
         }
 
-        public Result<List<TransactionDTO>> SearchTransaction(string searchParameter)
+        public Result<List<TransactionDTO>> SearchTransaction(string searchParameter, string userEmail)
         {
             Regex regexName = new Regex("[a-zA-Z0-9]");
 
@@ -134,7 +152,7 @@ namespace STAGGI_Budget_API.Services
                 return Result<List<TransactionDTO>>.Failure(newErrorResponse);
             }
 
-            var transactionSearch = _transactionRepository.Search(searchParameter);
+            var transactionSearch = _transactionRepository.Search(searchParameter, userEmail);
             var transactionSearchDTO = new List<TransactionDTO>();
             foreach(Transaction transaction in transactionSearch)
             {
@@ -199,7 +217,6 @@ namespace STAGGI_Budget_API.Services
             };
 
             return Result<TransactionDTO>.Success(transactionDTO);
-
         }
     }
 }

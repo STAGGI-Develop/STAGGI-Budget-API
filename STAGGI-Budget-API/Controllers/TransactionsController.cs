@@ -27,9 +27,19 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll() 
+        public IActionResult GetAllByUserEmail() 
         {
-            var result = _transactionService.GetAll();
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authorizationHeader?.Substring(7);
+
+            var userEmail = _authService.GetEmailFromToken(token);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized();
+            }
+
+            var result = _transactionService.GetAllByUserEmail(userEmail);
 
             if (!result.IsSuccess)
             {
@@ -53,9 +63,9 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTransaction([FromBody] TransactionDTO transactionDTO)
+        public IActionResult CreateTransaction([FromBody] CreateTransactionDTO request)
         {
-            var result = _transactionService.CreateTransaction(transactionDTO);
+            var result = _transactionService.CreateTransaction(request);
 
             if (!result.IsSuccess)
             {
@@ -86,22 +96,16 @@ namespace STAGGI_Budget_API.Controllers
             var token = authorizationHeader?.Substring(7);
 
             var userEmail = _authService.GetEmailFromToken(token);
-            var currentMail = _bUserRepository.FindByEmail(userEmail);
 
             if (string.IsNullOrEmpty(userEmail))
             {
-                return BadRequest("Email no encontrado.");
+                return Unauthorized();
             }
 
-            //string request = HttpContext.Request.Query["title"];
-            
-            var result = _transactionService.SearchTransaction(searchParameter);
+            var result = _transactionService.SearchTransaction(searchParameter, userEmail);
 
-            if(currentMail == null)
-            {
-                return BadRequest("Usuario no encontrado.");
-            }
-            
+            //string request = HttpContext.Request.Query["title"];           
+
             if (!result.IsSuccess) 
             {
                 return StatusCode(result.Error.Status, result.Error);
