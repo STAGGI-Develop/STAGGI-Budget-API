@@ -5,6 +5,8 @@ using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 
@@ -15,11 +17,12 @@ namespace STAGGI_Budget_API.Services
         private readonly IConfiguration _configuration;
         private readonly UserManager<BUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+
         public AuthService(IConfiguration configuration, UserManager<BUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _configuration = configuration;
             _userManager = userManager;
-            _roleManager = roleManager;
+            _roleManager = roleManager;       
         }
 
         public async Task<Result<string>> Login(LoginRequestDTO request)
@@ -94,6 +97,21 @@ namespace STAGGI_Budget_API.Services
             }
 
             return Result<string>.Success("User created successfully!");
+        }
+
+        public void ForgotPasswordEmailSender(string recipient, string subject, string body)
+        {
+
+            string email = "ignacio.dibella.n@gmail.com"; //TODO - ACTUALIZAR
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("ignacio.dibella.n@gmail.com", "7781Dibella"),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send(email, recipient, subject, body);
         }
 
         public string GetEmailFromToken(string token)

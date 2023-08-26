@@ -28,6 +28,7 @@ namespace STAGGI_Budget_API.Data
                 new RegisterRequestDTO { FirstName="Andres", LastName="R", Email = "ar@mail.com", Password = "Pass-123"},
                 new RegisterRequestDTO { FirstName="Gonzalo", LastName="C", Email = "gc@mail.com", Password = "Pass-123"},
                 new RegisterRequestDTO { FirstName="Gaston", LastName="R", Email = "gr@mail.com", Password = "Pass-123"},
+                new RegisterRequestDTO { FirstName="Ignacio2", LastName="DiBella2", Email = "78871@sistemas.frc.utn.edu.ar", Password = "Pass-123"},
                 new RegisterRequestDTO { FirstName="Ignacio", LastName="D", Email = "id@mail.com", Password = "Pass-123"}
                 };
                 foreach (var user in newUsers)

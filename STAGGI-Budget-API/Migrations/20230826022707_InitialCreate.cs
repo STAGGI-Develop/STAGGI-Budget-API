@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace STAGGI_Budget_API.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -268,7 +268,6 @@ namespace STAGGI_Budget_API.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id");
-                        //onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -305,8 +304,7 @@ namespace STAGGI_Budget_API.Migrations
                         name: "FK_Transactions_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Transactions_Savings_SavingId",
                         column: x => x.SavingId,

@@ -10,5 +10,7 @@ namespace STAGGI_Budget_API.Services.Interfaces
         public Result<BUserDTO> GetById(long id);
         public Result<BUserDTO> CreateAccountForCurrentClient();
         public Result<List<BUserDTO>> GetCurrentClientAccounts();
+
+        public void RecoverPassword(string email);
     }
 }

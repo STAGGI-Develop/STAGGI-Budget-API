@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.Services.Interfaces;
 
@@ -9,9 +10,11 @@ namespace STAGGI_Budget_API.Controllers
     public class BUserController : ControllerBase
     {
         private readonly IBUserService _buserService;
-        public BUserController(IBUserService buserService)
+        private readonly IAuthService _authService;
+        public BUserController(IBUserService buserService, IAuthService authService)
         {
             _buserService = buserService;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -29,6 +32,13 @@ namespace STAGGI_Budget_API.Controllers
         public IActionResult Post()
         {
             return Ok();
+        }
+
+        [HttpPost("recovery")]
+        [AllowAnonymous]
+        public void RecoverPassword(string email)
+        {
+           _buserService.RecoverPassword(email);
         }
     }
 }

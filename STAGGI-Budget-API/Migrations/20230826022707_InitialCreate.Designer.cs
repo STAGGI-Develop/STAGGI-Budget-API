@@ -12,8 +12,8 @@ using STAGGI_Budget_API.Data;
 namespace STAGGI_Budget_API.Migrations
 {
     [DbContext(typeof(BudgetContext))]
-    [Migration("20230825122308_initialCreate")]
-    partial class initialCreate
+    [Migration("20230826022707_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
