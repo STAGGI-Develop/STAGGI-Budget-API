@@ -27,7 +27,8 @@ namespace STAGGI_Budget_API.Services
             foreach (var transaction in result) 
             {
                 transactionsDTO.Add(new TransactionDTO 
-                { 
+                {
+                    Id = transaction.Id,
                     Title = transaction.Title,
                     Description = transaction.Description,
                     Amount = transaction.Amount,
@@ -71,7 +72,7 @@ namespace STAGGI_Budget_API.Services
             try
             {
                 var transaction = _transactionRepository.FindById(transactionId) ?? throw new KeyNotFoundException($"Article with id: {transactionId} not found");
-
+                
                 transaction.Title = transactionDTO.Title;
                 transaction.Description = transactionDTO.Description;
                 transaction.Amount = transactionDTO.Amount;
@@ -94,7 +95,7 @@ namespace STAGGI_Budget_API.Services
 
         public Result<List<TransactionDTO>> SearchTransaction(string searchParameter)
         {
-            Regex regexName = new Regex("[A-Z0-9]");
+            Regex regexName = new Regex("[a-zA-Z0-9]");
 
             if (searchParameter == null)
             {
@@ -139,6 +140,7 @@ namespace STAGGI_Budget_API.Services
             {
                 TransactionDTO newTransactionSearchDTO = new TransactionDTO
                 {
+                    Id = transaction.Id,
                     Title = transaction.Title,
                     Description = transaction.Description,
                     Amount = transaction.Amount,
@@ -168,11 +170,32 @@ namespace STAGGI_Budget_API.Services
 
             var transactionDTO = new TransactionDTO
             {
+                Id = transaction.Id,
                 Title = transaction.Title,
                 Description = transaction.Description,
                 Amount = transaction.Amount,
                 Type = transaction.Type,
-                CreateDate = transaction.CreateDate
+                CreateDate = transaction.CreateDate,
+                Category = new CategoryDTO
+                {
+                    Id = transaction.Category.Id,
+                    Name = transaction.Category.Name,
+                    ImageUrl = transaction.Category.ImageUrl
+                },
+                /*Saving = new SavingDTO
+                {
+                    Name = transaction.Saving.Name,
+                    Balance = transaction.Saving.Balance,
+                    TargetAmount = transaction.Saving.TargetAmount,
+                    DueDate = transaction.Saving.DueDate
+                },
+                Budget = new BudgetDTO
+                {
+                    Name = transaction.Budget.Name,
+                    LimitAmount = transaction.Budget.LimitAmount,
+                    Period = transaction.Budget.Period,
+                    Balance = transaction.Budget.Balance
+                }*/
             };
 
             return Result<TransactionDTO>.Success(transactionDTO);

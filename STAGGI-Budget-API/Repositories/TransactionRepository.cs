@@ -18,6 +18,7 @@ namespace STAGGI_Budget_API.Repositories
         public Transaction? FindById(long id)
         {
             return FindByCondition(tr => tr.Id == id)
+                .Include(tr => tr.Category)
                 .FirstOrDefault();
         }
 
