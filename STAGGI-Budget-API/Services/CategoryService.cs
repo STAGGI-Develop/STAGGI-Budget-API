@@ -107,61 +107,40 @@ namespace STAGGI_Budget_API.Services
                 return Result<string>.Failure(newErrorResponse);
             }
 
-            Regex regexName = new Regex("[a-zA-Z ]");
-            Match categoryMatch = regexName.Match(categoryDTO.Name);
-
-            if (categoryDTO.Name == null || categoryDTO.ImageUrl == null)
+            if (categoryDTO.Name != null)
             {
-                var newErrorResponse = new ErrorResponseDTO
-                {
-                    Status = 400,
-                    Error = "Bad Request",
-                    Message = "No se encontró el nombre o la imagen"
-                };
+                Regex regexName = new Regex("[a-zA-Z ]");
+                Match categoryMatch = regexName.Match(categoryDTO.Name);
 
-                return Result<string>.Failure(newErrorResponse);
+                if (!categoryMatch.Success)
+                {
+                    var newErrorResponse = new ErrorResponseDTO
+                    {
+                        Error = "Internal Server Error",
+                        Message = "La categoria solo acepta letras",
+                        Status = 500
+                    };
+
+                    return Result<string>.Failure(newErrorResponse);
+                } else
+                {
+                    category.Name = categoryDTO.Name;
+                }
             }
 
-            if (!categoryMatch.Success)
+            if (categoryDTO.ImageUrl != null)
             {
-                var newErrorResponse = new ErrorResponseDTO
-                {
-                    Error = "Internal Server Error",
-                    Message = "La categoria solo acepta letras",
-                    Status = 500
-                };
-
-                return Result<string>.Failure(newErrorResponse);
+                category.ImageUrl = categoryDTO.ImageUrl;
             }
 
-            category.Name = categoryDTO.Name;
-            category.ImageUrl = categoryDTO.ImageUrl;
+            if (categoryDTO.IsDisabled != null)
+            {
+                category.IsDisabled = (bool)categoryDTO.IsDisabled;
+            }
 
             _categoryRepository.Save(category);
 
             return Result<string>.Success("Actualización exitosa");
-        }
-
-        public Result<string> DisableCategory(long id)
-        {
-            var category = _categoryRepository.FindById(id);
-
-            if (category == null)
-            {
-                var newErrorResponse = new ErrorResponseDTO
-                {
-                    Status = 404,
-                    Error = "Not Found",
-                    Message = "No se encontró la categoría"
-                };
-
-                return Result<string>.Failure(newErrorResponse);
-            }
-
-            category.IsDisabled = true;
-
-            _categoryRepository.Save(category);
-            return Result<string>.Success("Categoría deshabilitada correctamente");
         }
     }
 }

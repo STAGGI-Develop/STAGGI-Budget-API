@@ -43,7 +43,7 @@ namespace STAGGI_Budget_API.Controllers
 
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
         public IActionResult UpdateCategory(long id, [FromBody] CategoryDTO category)
         {
             var result = _categoryService.UpdateCategory(id, category);
@@ -52,19 +52,6 @@ namespace STAGGI_Budget_API.Controllers
                 return StatusCode(result.Error.Status, result.Error);
             }
             return Ok(result.Ok);
-        }
-
-        [HttpPut("disable/{id}")]
-        public IActionResult DisableCategory(long id)
-        {
-            var result = _categoryService.DisableCategory(id);
-            
-            if (!result.IsSuccess)
-            {
-                return StatusCode(result.Error.Status, result.Error);
-            }
-
-            return NoContent();
         }
     }
 }
