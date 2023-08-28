@@ -1,6 +1,5 @@
 ﻿using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Helpers;
-using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services.Interfaces;
@@ -38,11 +37,6 @@ namespace STAGGI_Budget_API.Services
         public Result<BUserDTO> GetById(long id)
         {
             throw new NotImplementedException();
-        }
-
-        public BUser GetByEmail(string email)
-        {
-            return _buserRepository.FindByEmail(email);
         }
 
         public Result<BUserDTO> CreateAccountForCurrentClient()

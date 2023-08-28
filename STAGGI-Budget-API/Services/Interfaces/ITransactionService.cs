@@ -5,10 +5,10 @@ namespace STAGGI_Budget_API.Services.Interfaces
 {
     public interface ITransactionService
     {
-        public Result<List<TransactionDTO>> GetAll();
+        public Result<List<TransactionDTO>> GetAllByUserEmail(string userEmail);
         public Result<TransactionDTO> GetTransactionById(long id);
-        public Result<TransactionDTO> CreateTransaction(TransactionDTO transactionDTO);
+        public Result<TransactionDTO> CreateTransaction(CreateTransactionDTO transactionDTO, string currentEmail);
         public Result<TransactionDTO> ModifyTransaction(long transactionId, TransactionDTO transactionDTO);
-        public Result<List<TransactionDTO>> SearchTransaction(string searchParameter);
+        public Result<List<TransactionDTO>> SearchTransaction(string searchParameter, string userEmail);
     }
 }

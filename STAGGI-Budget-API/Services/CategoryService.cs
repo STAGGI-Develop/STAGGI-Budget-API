@@ -12,11 +12,10 @@ namespace STAGGI_Budget_API.Services
     public class CategoryService: ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IBUserService _buserService;
-        public CategoryService(ICategoryRepository categoryRepository, IBUserService buserService)
+
+        public CategoryService(ICategoryRepository categoryRepository)
         {
-            _categoryRepository = categoryRepository;
-            _buserService = buserService;
+         _categoryRepository = categoryRepository;
         }
 
         public Result <List<CategoryDTO>> GetAll() 
@@ -28,23 +27,6 @@ namespace STAGGI_Budget_API.Services
             {
                 categoriesDTO.Add(new CategoryDTO 
                 {
-                    Name = category.Name,
-                    ImageUrl = category.ImageUrl,
-                    IsDisabled = category.IsDisabled,
-                });
-            }
-            return Result<List<CategoryDTO>>.Success(categoriesDTO);
-        }
-
-        public Result <List<CategoryDTO>> GetByUserEmail(string email)
-        {
-            var result = _categoryRepository.GetAllByUserEmail(email);
-
-            var categoriesDTO = new List<CategoryDTO>();
-            foreach (var category in result)
-            {
-                categoriesDTO.Add(new CategoryDTO 
-                { 
                     Name = category.Name,
                     ImageUrl = category.ImageUrl,
                     IsDisabled = category.IsDisabled,
@@ -67,23 +49,12 @@ namespace STAGGI_Budget_API.Services
             return Result<CategoryDTO>.Success(categoryDTO);
         }
 
-        public Result<string> CreateCategory(CategoryDTO categoryDTO, string email)
+        public Result<string> CreateCategory(CategoryDTO categoryDTO)
         {
             Regex regexName = new Regex("[a-zA-Z ]");
             Match categoryMatch = regexName.Match(categoryDTO.Name);
 
-            BUser user = _buserService.GetByEmail(email);
-
-            if (user == null)
-            {
-                var errorResponse = new ErrorResponseDTO
-                {
-                    Status = 404,
-                    Error = "Not found",
-                    Message = "No se encontró el usuario"
-                };
-                return Result<string>.Failure(errorResponse);
-            }
+            var user = new BUser { };
 
             Category newCategory = new Category
             {
@@ -121,7 +92,7 @@ namespace STAGGI_Budget_API.Services
             return Result<string>.Success("Creacion exitosa");
         }
 
-        public Result<string> UpdateCategory(long id, CategoryDTO categoryDTO, string email)
+        public Result<string> UpdateCategory(long id, CategoryDTO categoryDTO)
         {
             var category = _categoryRepository.FindById(id);
 
@@ -136,41 +107,61 @@ namespace STAGGI_Budget_API.Services
                 return Result<string>.Failure(newErrorResponse);
             }
 
+            Regex regexName = new Regex("[a-zA-Z ]");
+            Match categoryMatch = regexName.Match(categoryDTO.Name);
 
-            if (categoryDTO.Name != null)
+            if (categoryDTO.Name == null || categoryDTO.ImageUrl == null)
             {
-                Regex regexName = new Regex("[a-zA-Z ]");
-                Match categoryMatch = regexName.Match(categoryDTO.Name);
-
-                if (!categoryMatch.Success)
+                var newErrorResponse = new ErrorResponseDTO
                 {
-                    var newErrorResponse = new ErrorResponseDTO
-                    {
-                        Error = "Internal Server Error",
-                        Message = "La categoria solo acepta letras",
-                        Status = 500
-                    };
+                    Status = 400,
+                    Error = "Bad Request",
+                    Message = "No se encontró el nombre o la imagen"
+                };
 
-                    return Result<string>.Failure(newErrorResponse);
-                } else
+                return Result<string>.Failure(newErrorResponse);
+            }
+
+            if (!categoryMatch.Success)
+            {
+                var newErrorResponse = new ErrorResponseDTO
                 {
-                    category.Name = categoryDTO.Name;
-                }
+                    Error = "Internal Server Error",
+                    Message = "La categoria solo acepta letras",
+                    Status = 500
+                };
+
+                return Result<string>.Failure(newErrorResponse);
             }
 
-            if (categoryDTO.ImageUrl != null)
-            {
-                category.ImageUrl = categoryDTO.ImageUrl;
-            }
-
-            if (categoryDTO.IsDisabled != null)
-            {
-                category.IsDisabled = (bool)categoryDTO.IsDisabled;
-            }
+            category.Name = categoryDTO.Name;
+            category.ImageUrl = categoryDTO.ImageUrl;
 
             _categoryRepository.Save(category);
 
             return Result<string>.Success("Actualización exitosa");
+        }
+
+        public Result<string> DisableCategory(long id)
+        {
+            var category = _categoryRepository.FindById(id);
+
+            if (category == null)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Status = 404,
+                    Error = "Not Found",
+                    Message = "No se encontró la categoría"
+                };
+
+                return Result<string>.Failure(newErrorResponse);
+            }
+
+            category.IsDisabled = true;
+
+            _categoryRepository.Save(category);
+            return Result<string>.Success("Categoría deshabilitada correctamente");
         }
     }
 }
