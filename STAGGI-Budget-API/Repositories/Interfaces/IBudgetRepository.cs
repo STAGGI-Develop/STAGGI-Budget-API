@@ -6,7 +6,7 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
     public interface IBudgetRepository
     {
         IEnumerable<Budget> GetAll();
-        IEnumerable<Budget> GetAllByUserEmail(string email);
+        IEnumerable<Budget> GetAllByEmail(string email);
         public Budget GetById(long id);
         void Save(Budget budget);
         
