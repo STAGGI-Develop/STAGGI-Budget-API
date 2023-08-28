@@ -157,34 +157,11 @@ namespace STAGGI_Budget_API.Migrations
 
             modelBuilder.Entity("STAGGI_Budget_API.Models.Account", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("BUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<double>("Balance")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BUserId")
-                        .IsUnique()
-                        .HasFilter("[BUserId] IS NOT NULL");
-
-                    b.ToTable("Accounts");
-                });
-
-            modelBuilder.Entity("STAGGI_Budget_API.Models.Budget", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("BUserId")
                         .IsRequired()
@@ -193,8 +170,31 @@ namespace STAGGI_Budget_API.Migrations
                     b.Property<double>("Balance")
                         .HasColumnType("float");
 
-                    b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
+                    b.HasKey("Id");
+
+                    b.HasIndex("BUserId")
+                        .IsUnique();
+
+                    b.ToTable("Accounts");
+                });
+
+            modelBuilder.Entity("STAGGI_Budget_API.Models.Budget", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("BUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("Balance")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<double>("LimitAmount")
                         .HasColumnType("float");
@@ -209,7 +209,8 @@ namespace STAGGI_Budget_API.Migrations
 
                     b.HasIndex("BUserId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoryId")
+                        .IsUnique();
 
                     b.ToTable("Budgets");
                 });
@@ -290,11 +291,11 @@ namespace STAGGI_Budget_API.Migrations
 
             modelBuilder.Entity("STAGGI_Budget_API.Models.Category", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("BUserId")
                         .IsRequired()
@@ -318,11 +319,11 @@ namespace STAGGI_Budget_API.Migrations
 
             modelBuilder.Entity("STAGGI_Budget_API.Models.Saving", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("BUserId")
                         .IsRequired()
@@ -350,20 +351,23 @@ namespace STAGGI_Budget_API.Migrations
 
             modelBuilder.Entity("STAGGI_Budget_API.Models.Subscription", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("BUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -376,23 +380,23 @@ namespace STAGGI_Budget_API.Migrations
 
             modelBuilder.Entity("STAGGI_Budget_API.Models.Transaction", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<long?>("BudgetId")
-                        .HasColumnType("bigint");
+                    b.Property<int?>("BudgetId")
+                        .HasColumnType("int");
 
-                    b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -400,8 +404,8 @@ namespace STAGGI_Budget_API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("SavingId")
-                        .HasColumnType("bigint");
+                    b.Property<int?>("SavingId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -477,7 +481,9 @@ namespace STAGGI_Budget_API.Migrations
                 {
                     b.HasOne("STAGGI_Budget_API.Models.BUser", "BUser")
                         .WithOne("Account")
-                        .HasForeignKey("STAGGI_Budget_API.Models.Account", "BUserId");
+                        .HasForeignKey("STAGGI_Budget_API.Models.Account", "BUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("BUser");
                 });
@@ -491,8 +497,8 @@ namespace STAGGI_Budget_API.Migrations
                         .IsRequired();
 
                     b.HasOne("STAGGI_Budget_API.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .WithOne("Budget")
+                        .HasForeignKey("STAGGI_Budget_API.Models.Budget", "CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -586,11 +592,14 @@ namespace STAGGI_Budget_API.Migrations
 
                     b.Navigation("Savings");
 
-                    b.Navigation("Subscription");
+                    b.Navigation("Subscription")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("STAGGI_Budget_API.Models.Category", b =>
                 {
+                    b.Navigation("Budget");
+
                     b.Navigation("Transactions");
                 });
 

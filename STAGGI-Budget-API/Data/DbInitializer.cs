@@ -71,17 +71,17 @@ namespace STAGGI_Budget_API.Data
                 context.SaveChanges();
             }
 
-            // Set Accounts
-            if (!context.Accounts.Any())
-            {
-                var allUsers = context.BUsers.ToList();
-                allUsers.ForEach(user =>
-                {
-                    Account newAccount = new() { BUser = user, Balance = 0 };
-                    context.Accounts.Add(newAccount);
-                });
-                context.SaveChanges();
-            }
+            //// Set Accounts
+            //if (!context.Accounts.Any())
+            //{
+            //    var allUsers = context.BUsers.ToList();
+            //    allUsers.ForEach(user =>
+            //    {
+            //        Account newAccount = new() { BUser = user, Balance = 0 };
+            //        context.Accounts.Add(newAccount);
+            //    });
+            //    context.SaveChanges();
+            //}
 
             // Set Savings
             if (!context.Savings.Any())
@@ -145,13 +145,13 @@ namespace STAGGI_Budget_API.Data
 
                 var newTransactions = new List<CreateTransactionDTO>
                 {
-                    new CreateTransactionDTO { Title = "Sueldo ", Amount = 1000, Type = "INCOME", Category = "Salary" },
-                    new CreateTransactionDTO { Title = "Ahorro ", Amount = 100, Type = "INCOME", Category = "Savings", Saving = "Vacaciones" },
+                    new CreateTransactionDTO { Title = "Sueldo ", Amount = 1000, Type = 0, Category = "Salary" },
+                    new CreateTransactionDTO { Title = "Ahorro ", Amount = 100, Type = 0, Category = "Savings", Saving = "Vacaciones" },
 
-                    new CreateTransactionDTO { Title = "Compra 1", Amount = -8, Type = "OUTCOME", Category = "Entertainment"},
-                    new CreateTransactionDTO { Title = "Compra 2", Amount = -25, Type = "OUTCOME", Category = "Entertainment"},
-                    new CreateTransactionDTO { Title = "Compra 3", Amount = -15, Type = "OUTCOME", Category = "Groceries"},
-                    new CreateTransactionDTO { Title = "Compra 4", Amount = -50, Type = "OUTCOME", Category = "Groceries"},
+                    new CreateTransactionDTO { Title = "Compra 1", Amount = -8, Type = 1, Category = "Entertainment"},
+                    new CreateTransactionDTO { Title = "Compra 2", Amount = -25, Type = 1, Category = "Entertainment"},
+                    new CreateTransactionDTO { Title = "Compra 3", Amount = -15, Type = 1, Category = "Groceries"},
+                    new CreateTransactionDTO { Title = "Compra 4", Amount = -50, Type = 1, Category = "Groceries"},
                 };
 
                 allUsers.ForEach(user =>
@@ -167,7 +167,7 @@ namespace STAGGI_Budget_API.Data
                             Title = tr.Title,
                             Amount = tr.Amount,
                             CreateDate = DateTime.Now,
-                            Type = (TransactionType)Enum.Parse(typeof(TransactionType), tr.Type),
+                            Type = (TransactionType)(tr.Type),
                             Category = category,
                             Account = user.Account,
                             Saving = saving,
