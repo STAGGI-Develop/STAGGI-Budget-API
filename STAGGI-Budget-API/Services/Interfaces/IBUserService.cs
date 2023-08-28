@@ -13,6 +13,7 @@ namespace STAGGI_Budget_API.Services.Interfaces
         public BUser GetByEmail(string email);
         public Result<BUserDTO> CreateAccountForCurrentClient();
         public Result<List<BUserDTO>> GetCurrentClientAccounts();
+        public Result<ProfileDTO> GetProfile( string email);
         public Result<RegisterRequestDTO> RegisterBUser(RegisterRequestDTO registerRequestDTO, UserManager<BUser> _userManager);
         public Result<UserProfileDTO> GetUserProfile(string email);
         public Result<bool> Subscribe(string userEmail);

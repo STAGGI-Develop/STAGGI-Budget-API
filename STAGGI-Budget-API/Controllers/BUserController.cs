@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +27,7 @@ namespace STAGGI_Budget_API.Controllers
             _authService = authService;
         }
         
+        {/*
         [HttpGet]
         public IActionResult Get()
         {
@@ -37,8 +38,9 @@ namespace STAGGI_Budget_API.Controllers
             }
             return StatusCode(200, result.Ok);
         }
+        */}
         
-        [HttpGet ("profile")]
+        [HttpGet]
         [Authorize]
         public IActionResult GetProfile()
         {
@@ -46,7 +48,9 @@ namespace STAGGI_Budget_API.Controllers
             var token = authorizationHeader?.Substring(7);
             var userEmail = _authService.GetEmailFromToken(token);
 
-            var result = _buserService.GetUserProfile(userEmail);
+            var result = _buserService.GetProfile(userEmail);
+            //var result = _buserService.GetAll();
+            //var result = _buserService.GetUserProfile(userEmail);
 
             if (!result.IsSuccess)
             {

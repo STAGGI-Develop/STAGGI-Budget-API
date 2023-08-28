@@ -9,7 +9,7 @@ namespace STAGGI_Budget_API.Models
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public bool IsPremium { get; set; }
+        public bool IsPremium { get; set; } = false;
 
 
         //With MS doc for One to One

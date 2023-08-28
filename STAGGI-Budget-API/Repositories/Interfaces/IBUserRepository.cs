@@ -8,5 +8,6 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         void Save(BUser budUser);
         BUser FindById(string id);
         BUser FindByEmail(string email);
+        BUser UserProfile(string email);
     }
 }

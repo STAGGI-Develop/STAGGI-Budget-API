@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+using STAGGI_Budget_API.Enums;
+using Microsoft.AspNetCore.Identity;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
@@ -85,6 +86,46 @@ namespace STAGGI_Budget_API.Services
             throw new NotImplementedException();
         }
 
+        public Result<ProfileDTO> GetProfile(string email)
+        {
+            var userProfile = _buserRepository.UserProfile(email);
+
+            ProfileDTO profile = new()
+            {
+                FirstName = userProfile.FirstName,
+                LastName = userProfile.LastName,
+                Email = userProfile.Email,
+                IsPremium = userProfile.IsPremium,
+                SubscriptionEnd = userProfile.Subscription.EndDate.ToString(),
+                Account = new AccountDTO
+                {
+                    Name = "",
+                    Balance = userProfile.Account.Balance,
+                    IsPrincipal = false,
+                    BUserId = ""
+                },
+                Budgets = userProfile.Budgets.Select(b => new BudgetDTO
+                {
+                    Name = b.Name,
+                    Balance = b.Balance,
+                    LimitAmount = b.LimitAmount,
+                }).ToList(),
+                Savings = userProfile.Savings.Select(s => new SavingDTO
+                {
+                    Name = s.Name,
+                    Balance = s.Balance,
+                    TargetAmount = s.TargetAmount,
+                }).ToList(),
+                Transactions = userProfile.Account.Transactions.Select(t => new TransactionDTO
+                {
+                    Amount = t.Amount,
+                    //Type = t.Type == 0 ? "Income" : "Expense"
+                }).ToList()
+            };
+
+            return Result<ProfileDTO>.Success(profile);
+        }
+        
         public Result<UserProfileDTO> GetUserProfile(string email)
         {
             BUser user = GetByEmail(email);
