@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Services;
+using Microsoft.AspNetCore.Mvc;
+using STAGGI_Budget_API.DTOs.Update;
+
 using STAGGI_Budget_API.Services.Interfaces;
 
 namespace STAGGI_Budget_API.Controllers
 {
-    [Route("api/Users")]
+    [Authorize]
+    [Route("api/User")]
     [ApiController]
     public class BUserController : ControllerBase
     {
@@ -22,7 +26,7 @@ namespace STAGGI_Budget_API.Controllers
             _userManager = userManager;
             _authService = authService;
         }
-
+        
         [HttpGet]
         public IActionResult Get()
         {
@@ -33,20 +37,7 @@ namespace STAGGI_Budget_API.Controllers
             }
             return StatusCode(200, result.Ok);
         }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public IActionResult Register([FromBody] RegisterRequestDTO registerRequestDTO)
-        {
-            var result = _buserService.RegisterBUser(registerRequestDTO, _userManager);
-
-            if (!result.IsSuccess)
-            {
-                return StatusCode(result.Error.Status, result.Error);
-            }
-            return Ok(result.Ok);
-        }
-
+        
         [HttpGet ("profile")]
         [Authorize]
         public IActionResult GetProfile()
@@ -63,6 +54,20 @@ namespace STAGGI_Budget_API.Controllers
             }
             return Ok(result.Ok);
 
+        }
+        
+        
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult Register([FromBody] RegisterRequestDTO registerRequestDTO)
+        {
+            var result = _buserService.RegisterBUser(registerRequestDTO, _userManager);
+
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+            return Ok(result.Ok);
         }
 
 
@@ -82,6 +87,29 @@ namespace STAGGI_Budget_API.Controllers
                 return StatusCode(result.Error.Status, result.Error);
             }
             return Ok(result.Ok);
+        }
+
+
+        [HttpPatch]
+        public IActionResult UpdateProfile(UpdateProfileDTO request)
+        {
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authorizationHeader?.Substring(7);
+            var userEmail = _authService.GetEmailFromToken(token);
+
+
+            return Ok(userEmail);
+        }
+        
+        [HttpPatch("subscribe")]
+        public IActionResult Unsubscribe()
+        {
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authorizationHeader?.Substring(7);
+            var userEmail = _authService.GetEmailFromToken(token);
+
+
+            return Ok();
         }
     }
 }

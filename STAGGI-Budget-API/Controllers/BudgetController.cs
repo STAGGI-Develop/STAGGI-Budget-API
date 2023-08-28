@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.Services;
 using STAGGI_Budget_API.Services.Interfaces;
 
 namespace STAGGI_Budget_API.Controllers
@@ -10,15 +11,25 @@ namespace STAGGI_Budget_API.Controllers
     public class BudgetController : ControllerBase
     {
         private readonly IBudgetService _budgetService;
-
-        public BudgetController(IBudgetService budgetService)
+        private readonly IAuthService _authService;
+        public BudgetController(IBudgetService budgetService, IAuthService authService)
         {
             _budgetService = budgetService;
+            _authService = authService;
         }
         [HttpGet]
         public IActionResult Get()
         {
-            var result = _budgetService.GetAll();
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault(); 
+            var token = authorizationHeader?.Substring(7); 
+            var userEmail = _authService.GetEmailFromToken(token); 
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized(); 
+            }
+
+            var result = _budgetService.GetAllByEmail(userEmail);
             if (!result.IsSuccess)
             {
                 return StatusCode(result.Error.Status, result.Error);
@@ -71,7 +82,7 @@ namespace STAGGI_Budget_API.Controllers
                 return StatusCode(result.Error.Status, result.Error);
             }
 
-            return StatusCode(204); // 204 No Content for successful deletion
+            return StatusCode(204); 
         }
     }
 }
