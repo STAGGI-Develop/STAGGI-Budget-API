@@ -42,13 +42,33 @@ namespace STAGGI_Budget_API.Services
                     Period = budget.Period,
                     Category = budget.Category,
                     Balance = budget.Balance,
-                  
+
                 }); ;
             }
 
             return Result<List<BudgetDTO>>.Success(budgetDTOs);
         }
 
+        //GetAllByUserEmail
+        //public Result<List<BudgetDTO>> GetAllByUserEmail(string email)
+        //{
+        //    var result = _budgetRepository.GetAllByUserEmail(email);
+        //    var budgetDTOs = new List<BudgetDTO>();
+
+        //    foreach (var budget in result)
+        //    {
+        //        budgetDTOs.Add(new BudgetDTO
+        //        {
+        //            Name = budget.Name,
+        //            LimitAmount = budget.LimitAmount,
+        //            Period = budget.Period,
+        //            Category = budget.Category,
+        //            Balance = budget.Balance,
+        //        });
+        //    }
+
+        //    return Result<List<BudgetDTO>>.Success(budgetDTOs);
+        //}
 
         //GetById
         public Result<BudgetDTO> GetById (long id)
@@ -79,7 +99,7 @@ namespace STAGGI_Budget_API.Services
             
             return Result<BudgetDTO>.Success(budgetDTO);
         }
-       
+        
         //CreateBudget
 
         public Result<BudgetDTO> CreateBudget(BudgetDTO budgetDTO)
@@ -167,7 +187,7 @@ namespace STAGGI_Budget_API.Services
                     Name = existingBudget.Name,
                     LimitAmount = existingBudget.LimitAmount,
                     Period = existingBudget.Period,
-                    Category = existingBudget.Category,
+                    //Category = existingBudget.Category,
                                 
                                     
                 };

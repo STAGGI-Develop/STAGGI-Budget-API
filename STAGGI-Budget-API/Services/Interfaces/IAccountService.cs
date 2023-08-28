@@ -9,6 +9,6 @@ namespace STAGGI_Budget_API.Services.Interfaces
         public Result<List<AccountDTO>> GetAll();
         public Result<AccountDTO> GetById(long id);
         public Result<AccountDTO> CreateAccountForCurrentClient();
-        public Result<List<AccountDTO>> GetCurrentClientAccounts();
+        public Result<List<AccountDTO>> GetCurrentClientAccounts(string email);
     }
 }

@@ -23,5 +23,9 @@ namespace STAGGI_Budget_API.Repositories
             Create(account);
             SaveChanges();
         }
+        public IEnumerable<Account> GetAccountsByBUser(string BUserId)
+        {
+            return FindByCondition(account => account.BUser.Id == BUserId);
+        }
     }
 }

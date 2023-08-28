@@ -7,5 +7,6 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         IEnumerable<Account> GetAll();
         void Save(Account account);
         Account FindById(long id);
+        IEnumerable<Account> GetAccountsByBUser(string BUserId);
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Services.Interfaces;
 
+
 namespace STAGGI_Budget_API.Controllers
 {
     [Route("api/[controller]")]
@@ -10,10 +11,12 @@ namespace STAGGI_Budget_API.Controllers
     public class BudgetController : ControllerBase
     {
         private readonly IBudgetService _budgetService;
+        //private readonly IAuthService _authService;
 
-        public BudgetController(IBudgetService budgetService)
+        public BudgetController(IBudgetService budgetService) //, IAuthService authService)
         {
             _budgetService = budgetService;
+            //_authService = authService;
         }
         [HttpGet]
         public IActionResult Get()
@@ -25,6 +28,30 @@ namespace STAGGI_Budget_API.Controllers
             }
             return StatusCode(201, result.Ok);
         }
+        //[HttpGet]
+        //public IActionResult GetAll()
+        //{
+        //    var userEmail = _authService.GetEmailFromToken(Request.Headers["Authorization"]);
+
+        //    if (string.IsNullOrEmpty(userEmail))
+        //    {
+        //        return StatusCode(401, new ErrorResponseDTO
+        //        {
+        //            Status = 401,
+        //            Error = "Unauthorized",
+        //            Message = "No se pudo obtener el correo electrónico del usuario autenticado."
+        //        });
+        //    }
+
+        //    var result = _budgetService.GetAllByUserEmail(userEmail);
+
+        //    if (!result.IsSuccess)
+        //    {
+        //        return StatusCode(result.Error.Status, result.Error);
+        //    }
+
+        //    return StatusCode(201, result.Ok);
+        //}
         [HttpGet("{id}")]
         public IActionResult GetById(long id)
         {
