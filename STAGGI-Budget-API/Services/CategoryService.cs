@@ -12,10 +12,11 @@ namespace STAGGI_Budget_API.Services
     public class CategoryService: ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
-
-        public CategoryService(ICategoryRepository categoryRepository)
+        private readonly IBUserService _buserService;
+        public CategoryService(ICategoryRepository categoryRepository, IBUserService buserService)
         {
-         _categoryRepository = categoryRepository;
+            _categoryRepository = categoryRepository;
+            _buserService = buserService;
         }
 
         public Result <List<CategoryDTO>> GetAll() 
@@ -27,6 +28,23 @@ namespace STAGGI_Budget_API.Services
             {
                 categoriesDTO.Add(new CategoryDTO 
                 {
+                    Name = category.Name,
+                    ImageUrl = category.ImageUrl,
+                    IsDisabled = category.IsDisabled,
+                });
+            }
+            return Result<List<CategoryDTO>>.Success(categoriesDTO);
+        }
+
+        public Result <List<CategoryDTO>> GetByUserEmail(string email)
+        {
+            var result = _categoryRepository.GetAllByUserEmail(email);
+
+            var categoriesDTO = new List<CategoryDTO>();
+            foreach (var category in result)
+            {
+                categoriesDTO.Add(new CategoryDTO 
+                { 
                     Name = category.Name,
                     ImageUrl = category.ImageUrl,
                     IsDisabled = category.IsDisabled,
@@ -49,12 +67,23 @@ namespace STAGGI_Budget_API.Services
             return Result<CategoryDTO>.Success(categoryDTO);
         }
 
-        public Result<string> CreateCategory(CategoryDTO categoryDTO)
+        public Result<string> CreateCategory(CategoryDTO categoryDTO, string email)
         {
             Regex regexName = new Regex("[a-zA-Z ]");
             Match categoryMatch = regexName.Match(categoryDTO.Name);
 
-            var user = new BUser { };
+            BUser user = _buserService.GetByEmail(email);
+
+            if (user == null)
+            {
+                var errorResponse = new ErrorResponseDTO
+                {
+                    Status = 404,
+                    Error = "Not found",
+                    Message = "No se encontró el usuario"
+                };
+                return Result<string>.Failure(errorResponse);
+            }
 
             Category newCategory = new Category
             {
@@ -92,7 +121,7 @@ namespace STAGGI_Budget_API.Services
             return Result<string>.Success("Creacion exitosa");
         }
 
-        public Result<string> UpdateCategory(long id, CategoryDTO categoryDTO)
+        public Result<string> UpdateCategory(long id, CategoryDTO categoryDTO, string email)
         {
             var category = _categoryRepository.FindById(id);
 
@@ -106,6 +135,7 @@ namespace STAGGI_Budget_API.Services
                 };
                 return Result<string>.Failure(newErrorResponse);
             }
+
 
             if (categoryDTO.Name != null)
             {

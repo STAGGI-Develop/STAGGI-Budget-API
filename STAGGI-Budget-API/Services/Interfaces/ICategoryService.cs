@@ -8,8 +8,9 @@ namespace STAGGI_Budget_API.Services.Interfaces
     public interface ICategoryService
     {
         public Result<List<CategoryDTO>> GetAll();
+        public Result<List<CategoryDTO>> GetByUserEmail(string email);
         public Result<CategoryDTO> FindById(long id);
-        public Result<string> CreateCategory(CategoryDTO categoryDTO);
-        public Result<string> UpdateCategory(long Id, CategoryDTO categoryDTO);
+        public Result<string> CreateCategory(CategoryDTO categoryDTO, string email);
+        public Result<string> UpdateCategory(long Id, CategoryDTO categoryDTO, string email);
     }
 }
