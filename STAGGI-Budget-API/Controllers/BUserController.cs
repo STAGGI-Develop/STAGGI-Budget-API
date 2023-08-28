@@ -27,7 +27,7 @@ namespace STAGGI_Budget_API.Controllers
             _authService = authService;
         }
         
-        {/*
+        /*
         [HttpGet]
         public IActionResult Get()
         {
@@ -38,7 +38,7 @@ namespace STAGGI_Budget_API.Controllers
             }
             return StatusCode(200, result.Ok);
         }
-        */}
+        */
         
         [HttpGet]
         [Authorize]
