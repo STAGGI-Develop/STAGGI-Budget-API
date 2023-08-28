@@ -17,7 +17,7 @@ namespace STAGGI_Budget_API.Services
     public class BudgetService: IBudgetService
     {
         private readonly IBudgetRepository _budgetRepository;
-       
+        
         //constructor
         public BudgetService(IBudgetRepository budgetRepository)
         {
@@ -25,10 +25,11 @@ namespace STAGGI_Budget_API.Services
         }
         //getAll
 
-        public Result<List<BudgetDTO>> GetAll()
+
+        public Result<List<BudgetDTO>> GetAllByEmail(string email)
         {
 
-            var result = _budgetRepository.GetAll();
+            var result = _budgetRepository.GetAllByEmail(email);
             var budgetDTOs = new List<BudgetDTO>();
 
             foreach (var budget in result)

@@ -20,7 +20,7 @@ namespace STAGGI_Budget_API.Repositories
                 .ToList();
         }
         
-        public IEnumerable<Budget> GetAllByUserEmail(string email)
+        public IEnumerable<Budget> GetAllByEmail(string email)
         {
             return FindAll()
                 .Include(budget => budget.Category)
