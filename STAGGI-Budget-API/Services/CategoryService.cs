@@ -163,23 +163,5 @@ namespace STAGGI_Budget_API.Services
             _categoryRepository.Save(category);
             return Result<string>.Success("Categoría deshabilitada correctamente");
         }
-
-        public Result<List<CategoryDTO>> GetByUserEmail(string email)
-        {
-            var result = _categoryRepository.GetAllByUserEmail(email);
-
-            var categoriesDTO = new List<CategoryDTO>();
-            foreach (var category in result)
-            {
-                categoriesDTO.Add(new CategoryDTO
-                {
-                    Name = category.Name,
-                    ImageUrl = category.ImageUrl,
-                    IsDisabled = category.IsDisabled,
-                });
-            }
-            return Result<List<CategoryDTO>>.Success(categoriesDTO);
-        }
-
     }
 }
