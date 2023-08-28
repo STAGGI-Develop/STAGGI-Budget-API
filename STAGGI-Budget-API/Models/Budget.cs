@@ -5,17 +5,29 @@ namespace STAGGI_Budget_API.Models
 {
     public class Budget
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string? Name { get; set; }
         public double Balance { get; set; }
         public double LimitAmount { get; set; }
         public BudgetPeriod Period { get; set; }
 
-        [ForeignKey("BUserId")]
-        public virtual BUser BUser { get; set; }
+        //With MS doc for One to One
+        public string BUserId { get; set; }
+        public BUser BUser { get; set; } = null!;
 
-        [ForeignKey("CategoryId")]
-        public virtual Category Category { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+
         public ICollection<Transaction> Transactions { get; set; }
+
+
+        // // With DataAnotation
+
+        //[ForeignKey("BUserId")]
+        //public virtual BUser BUser { get; set; }
+
+        //[ForeignKey("CategoryId")]
+        //public virtual Category Category { get; set; }
+        //public ICollection<Transaction> Transactions { get; set; }
     }
 }
