@@ -26,8 +26,9 @@ namespace STAGGI_Budget_API.Controllers
             var token = authorizationHeader?.Substring(7);
             var userEmail = _authService.GetEmailFromToken(token);
 
+            var result = _buserService.GetProfile(userEmail);
 
-            var result = _buserService.GetAll();
+            //var result = _buserService.GetAll();
             if (!result.IsSuccess)
             {
                 return StatusCode(result.Error.Status, result.Error);

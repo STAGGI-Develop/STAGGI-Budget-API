@@ -33,5 +33,16 @@ namespace STAGGI_Budget_API.Repositories
             Create(budUser);
             SaveChanges();
         }
+
+        public BUser? UserProfile(string email)
+        {
+            return FindByCondition(budUser => budUser.Email.ToUpper() == email.ToUpper())
+                .Include(user => user.Account)
+                .ThenInclude(acc => acc.Transactions.OrderByDescending(t => t.Id).Take(6))
+                .Include(user => user.Subscription)
+                .Include(user => user.Budgets)
+                .Include(user => user.Savings)
+                .FirstOrDefault();
+        }
     }
 }

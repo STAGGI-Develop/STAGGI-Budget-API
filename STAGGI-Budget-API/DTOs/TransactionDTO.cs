@@ -9,6 +9,6 @@ namespace STAGGI_Budget_API.DTOs
         public double Amount { get; set; }
         public TransactionType Type { get; set; }
         public DateTime? CreateDate { get; set; } //Actual por defecto
-        public List<CategoryDTO> Category { get; set; }
+        public List<CategoryDTO>? Category { get; set; }
     }
 }
