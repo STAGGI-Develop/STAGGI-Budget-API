@@ -6,7 +6,8 @@ namespace STAGGI_Budget_API.Services.Interfaces
 {
     public interface IBudgetService
     {
-        public Result<List<BudgetDTO>> GetAll();
+        
+        public Result<List<BudgetDTO>> GetAllByEmail(string email);
         public Result<BudgetDTO> GetById(long id);
         public Result<BudgetDTO> CreateBudget(BudgetDTO budgetDTO);
         public Result<Budget> DeleteBudget(long budgetId);
