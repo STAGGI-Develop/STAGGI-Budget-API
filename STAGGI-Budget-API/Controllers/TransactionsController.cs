@@ -65,7 +65,17 @@ namespace STAGGI_Budget_API.Controllers
         [HttpPost]
         public IActionResult CreateTransaction([FromBody] CreateTransactionDTO request)
         {
-            var result = _transactionService.CreateTransaction(request);
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authorizationHeader?.Substring(7);
+
+            var userEmail = _authService.GetEmailFromToken(token);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized();
+            }
+
+            var result = _transactionService.CreateTransaction(request, userEmail);
 
             if (!result.IsSuccess)
             {

@@ -44,19 +44,24 @@ namespace STAGGI_Budget_API.Services
             return Result<List<TransactionDTO>>.Success(transactionsDTO);
         }
 
-        public Result<TransactionDTO> CreateTransaction(CreateTransactionDTO transactionDTO)
+        public Result<TransactionDTO> CreateTransaction(CreateTransactionDTO transactionDTO, string currentEmail)
         {
             try
             {
                 //Tengo que pasarme el email para buscar el usuario y sacarle el account completo,
                 //El budget, el saving y la categoria tengo que buscar que coincidan con el nombre filtrandolo ver linea 161 a 176 del dbinitializer
 
-                var userEmail = "sf@mail.com"; //Hardcodeado, encontrar la manera de conseguir el mail del usuario loggeado.
+                BUser user = _bUserRepository.FindByEmail(currentEmail);
+                if (user == null)
+                {
+                    throw new ApplicationException("no se encontró el usuario"); 
+                }
+                               
+                var categoryMatch =  user.Categories.FirstOrDefault(c => c.Name == transactionDTO.Category);
                 
-                var user = _bUserRepository.FindByEmail(userEmail);               
-                var category =  user.Categories.FirstOrDefault(c => c.Name == transactionDTO.Category);
-                var budget = user.Budgets.FirstOrDefault(b => b.Name == transactionDTO.Saving);
-                //var saving = user.Savings.First(s => s.Category.Name == transactionDTO.Category);
+                
+                var budgetMatch = user.Budgets.FirstOrDefault(b => b.Name == transactionDTO.Saving);
+                //var savingMatch = user.Savings.FirstOrDefault(s => s.Category.Name == transactionDTO.Category);
 
                 var newTransaction = new Transaction
                 {
@@ -66,9 +71,9 @@ namespace STAGGI_Budget_API.Services
                     Type = (TransactionType)transactionDTO.Type,
                     CreateDate = DateTime.Now,
                     Account = user.Account,
-                    Budget = budget,
-                    Category = category
-                    //Saving =
+                    Budget = budgetMatch,
+                    Category = categoryMatch,
+                    //Saving = savingMatch
                 };
 
                 _transactionRepository.Save(newTransaction);
@@ -108,7 +113,6 @@ namespace STAGGI_Budget_API.Services
                 //transaction.CategoryId = transactionDTO.CategoryId;
 
                 return Result<TransactionDTO>.Success(transactionDTO);
-
             }
             catch
             {

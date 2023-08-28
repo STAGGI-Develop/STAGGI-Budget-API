@@ -41,6 +41,7 @@ namespace STAGGI_Budget_API.Repositories
                 .Include(tr => tr.Category)
                 .Include(tr => tr.Account)
                 .ThenInclude(ac => ac.BUser)
+                .ThenInclude(bu => bu.Categories)
                 .Where(tr=>tr.Account.BUser.Email == email)
                 .ToList();
         }
