@@ -2,6 +2,7 @@
 {
     public class SavingDTO
     {
+        public int? Id { get; set; }
         public string Name { get; set; }
         public double Balance { get; set; }
         public double TargetAmount { get; set; }

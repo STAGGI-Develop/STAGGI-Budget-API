@@ -98,6 +98,7 @@ builder.Services.AddScoped<IBUserRepository, BUserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<ISavingRepository, SavingRepository>();
 
 // Services
 builder.Services.AddScoped<IAccountService, AccountService>();
@@ -106,6 +107,7 @@ builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddScoped<IBUserService, BUserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<ISavingService, SavingService>();
 
 //builder.Services.AddScoped<UserManager<BUser>>();
 //builder.Services.AddScoped<RoleManager<IdentityRole>();

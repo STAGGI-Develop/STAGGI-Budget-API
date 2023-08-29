@@ -1,4 +1,5 @@
-﻿using STAGGI_Budget_API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
 
@@ -8,21 +9,23 @@ namespace STAGGI_Budget_API.Repositories
     {
         public SavingRepository(BudgetContext repositoryContext) : base(repositoryContext) { }
 
-        public IEnumerable<Saving> GetAll()
+        public IEnumerable<Saving> GetAllByEmail(string email)
         {
             return FindAll()
-             .ToList();
+                .Include(s => s.BUser)
+                .Where(s => s.BUser.Email == email)
+                .ToList();
         }
 
-        public Saving? FindById(long id)
+        public Saving? GetById(int id)
         {
-            return FindByCondition(tr => tr.Id == id)
+            return FindByCondition(s => s.Id == id)
                 .FirstOrDefault();
         }
 
         public void Save(Saving saving)
         {
-            if (saving.Id == null)
+            if (saving.Id == 0)
             {
                 Create(saving);
             }
@@ -31,13 +34,6 @@ namespace STAGGI_Budget_API.Repositories
                 Update(saving);
             }
             SaveChanges();
-        }
-
-        public IEnumerable<Saving> Search(string searchParameter)
-        {
-            var upperSearch = searchParameter.ToUpper();
-            return FindByCondition(sv => sv.Name.ToUpper().Contains(upperSearch))
-            .ToList();
         }
     }
 }
