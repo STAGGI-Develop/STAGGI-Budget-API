@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace STAGGI_Budget_API.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -76,10 +76,10 @@ namespace STAGGI_Budget_API.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Balance = table.Column<double>(type: "float", nullable: false),
-                    BUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    BUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,7 +88,8 @@ namespace STAGGI_Budget_API.Migrations
                         name: "FK_Accounts_AspNetUsers_BUserId",
                         column: x => x.BUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -180,10 +181,11 @@ namespace STAGGI_Budget_API.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
                     BUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -201,7 +203,7 @@ namespace STAGGI_Budget_API.Migrations
                 name: "Savings",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Balance = table.Column<double>(type: "float", nullable: false),
@@ -224,10 +226,11 @@ namespace STAGGI_Budget_API.Migrations
                 name: "Subscriptions",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     BUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -245,14 +248,14 @@ namespace STAGGI_Budget_API.Migrations
                 name: "Budgets",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Balance = table.Column<double>(type: "float", nullable: false),
                     LimitAmount = table.Column<double>(type: "float", nullable: false),
                     Period = table.Column<int>(type: "int", nullable: false),
                     BUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CategoryId = table.Column<long>(type: "bigint", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -275,17 +278,17 @@ namespace STAGGI_Budget_API.Migrations
                 name: "Transactions",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<long>(type: "bigint", nullable: false),
-                    AccountId = table.Column<long>(type: "bigint", nullable: false),
-                    SavingId = table.Column<long>(type: "bigint", nullable: true),
-                    BudgetId = table.Column<long>(type: "bigint", nullable: true)
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    BudgetId = table.Column<int>(type: "int", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    SavingId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -305,8 +308,8 @@ namespace STAGGI_Budget_API.Migrations
                         name: "FK_Transactions_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                        //onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Transactions_Savings_SavingId",
                         column: x => x.SavingId,
@@ -318,8 +321,7 @@ namespace STAGGI_Budget_API.Migrations
                 name: "IX_Accounts_BUserId",
                 table: "Accounts",
                 column: "BUserId",
-                unique: true,
-                filter: "[BUserId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -368,7 +370,8 @@ namespace STAGGI_Budget_API.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Budgets_CategoryId",
                 table: "Budgets",
-                column: "CategoryId");
+                column: "CategoryId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_BUserId",

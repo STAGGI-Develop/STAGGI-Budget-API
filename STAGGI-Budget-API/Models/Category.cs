@@ -5,13 +5,24 @@ namespace STAGGI_Budget_API.Models
 {
     public class Category
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string? Name { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsDisabled { get; set; }
 
-        [ForeignKey("BUserId")]
-        public virtual BUser BUser { get; set; }
+        //With MS doc for One to One
+        public string BUserId { get; set; }
+        public BUser BUser { get; set; } = null!;
+
+        public Budget? Budget { get; set; }
+
         public ICollection<Transaction> Transactions { get; set; }
+
+
+
+        // // With DataAnotation
+        //[ForeignKey("BUserId")]
+        //public virtual BUser BUser { get; set; }
+        //public ICollection<Transaction> Transactions { get; set; }
     }
 }
