@@ -10,7 +10,7 @@ namespace STAGGI_Budget_API.Services.Interfaces
     {
         public Result<List<CategoryDTO>> GetAll();
         public Result<List<CategoryDTO>> GetByUserEmail(string email);
-        public Result<List<CategoryDTO>> GetWithTransactions(string email, CategoryPeriod period);
+        public Result<List<CategoryExpenseDTO>> GetWithTransactions(string email, CategoryPeriod period);
 
         public Result<CategoryDTO> FindById(int id);
         public Result<string> CreateCategory(CategoryDTO categoryDTO, string email);

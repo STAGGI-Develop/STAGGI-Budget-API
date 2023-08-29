@@ -50,7 +50,7 @@ namespace STAGGI_Budget_API.Repositories
             int numberOfDays = period == CategoryPeriod.MONTH ? 30 : 7;
             return FindByCondition(cat => cat.BUser.Email == email)
                 .Include(cat => cat.Transactions
-                    .Where(tr => DateTime.Today < tr.CreateDate.AddDays(numberOfDays)))
+                    .Where(tr => DateTime.Today < tr.CreateDate.AddDays(numberOfDays) && tr.Type == TransactionType.OUTCOME && tr.Amount < 0))
                 .ToList();
         }
     }
