@@ -176,21 +176,24 @@ namespace STAGGI_Budget_API.Services
             return Result<string>.Success("Actualización exitosa");
         }
 
-        public Result<List<CategoryDTO>> GetWithTransactions(string email, CategoryPeriod period)
+        public Result<List<CategoryExpenseDTO>> GetWithTransactions(string email, CategoryPeriod period)
         {
-            var result = _categoryRepository.GetCategoriesWithTransactions(email, period);
+            var result = _categoryRepository.GetCategoriesWithTransactions(email, period)
+                .Where(cat => cat.Transactions.Any());
 
-            var categoriesDTO = new List<CategoryDTO>();
+            var categoryExpensesDTO = new List<CategoryExpenseDTO>();
+
             foreach (var category in result)
             {
-                categoriesDTO.Add(new CategoryDTO
+                categoryExpensesDTO.Add(new CategoryExpenseDTO
                 {
-                    Name = category.Name,
-                    Image = category.Image,
-                    IsDisabled = category.IsDisabled,
+                    Label = category.Name,
+                    Value = (category.Transactions.Sum(t => t.Amount)) * -1
+
                 });
             }
-            return Result<List<CategoryDTO>>.Success(categoriesDTO);
+            
+            return Result<List<CategoryExpenseDTO>>.Success(categoryExpensesDTO);
         }
 
         public List<Category> GetAllUserCategories(string email)

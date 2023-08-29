@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace STAGGI_Budget_API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
@@ -23,7 +24,6 @@ namespace STAGGI_Budget_API.Controllers
             _authService = authService;
         }
 
-        [Authorize]
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -44,7 +44,46 @@ namespace STAGGI_Budget_API.Controllers
             return Ok(result.Ok);                       
         }
 
-        [Authorize]
+        [HttpGet("month")]
+        public IActionResult GetMonth()
+        {
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authorizationHeader?.Substring(7);
+            var userEmail = _authService.GetEmailFromToken(token);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return BadRequest("Email no encontrado.");
+            }
+
+            var result = _categoryService.GetWithTransactions(userEmail, CategoryPeriod.MONTH);
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+            return Ok(result.Ok);
+        }
+
+        [HttpGet("week")]
+        public IActionResult GetWeek()
+        {
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authorizationHeader?.Substring(7);
+            var userEmail = _authService.GetEmailFromToken(token);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return BadRequest("Email no encontrado.");
+            }
+
+            var result = _categoryService.GetWithTransactions(userEmail, CategoryPeriod.WEEK);
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+            return Ok(result.Ok);
+        }
+
         [HttpPost]
         public IActionResult PostCategory(CategoryDTO categoryDTO)
         {
@@ -66,7 +105,6 @@ namespace STAGGI_Budget_API.Controllers
 
         }
 
-        [Authorize]
         [HttpPatch("{id}")]
         public IActionResult UpdateCategory(int id, [FromBody] CategoryDTO category)
         {
