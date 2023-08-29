@@ -25,10 +25,22 @@ namespace STAGGI_Budget_API.Repositories
         public BUser? FindByEmail(string email)
         {
             return FindByCondition(budUser => budUser.Email.ToUpper() == email.ToUpper())
-            //.Include(client => client.Accounts)
+            .Include(u => u.Subscription)
             .FirstOrDefault();
         }
         public void Save(BUser budUser)
+        {
+            if (budUser.Id == string.Empty || budUser.Id == null)
+            {
+                Create(budUser);
+            }
+            else
+            {
+                Update(budUser);
+            }
+            SaveChanges();
+        }
+        public void AddUser(BUser budUser)
         {
             Create(budUser);
             SaveChanges();

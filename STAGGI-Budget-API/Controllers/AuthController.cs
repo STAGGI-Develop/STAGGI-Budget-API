@@ -28,18 +28,5 @@ namespace STAGGI_Budget_API.Controllers
 
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RequestUserDTO request)
-        {
-            var result = await _authService.Register(request);
-
-            if (!result.IsSuccess)
-            {
-                return StatusCode(result.Error.Status, result.Error);
-            }
-
-            return StatusCode(201, result.Ok);
-
-        }
     }
 }

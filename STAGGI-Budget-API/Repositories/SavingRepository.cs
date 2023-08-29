@@ -22,7 +22,14 @@ namespace STAGGI_Budget_API.Repositories
 
         public void Save(Saving saving)
         {
-            Create(saving);
+            if (saving.Id == null)
+            {
+                Create(saving);
+            }
+            else
+            {
+                Update(saving);
+            }
             SaveChanges();
         }
 

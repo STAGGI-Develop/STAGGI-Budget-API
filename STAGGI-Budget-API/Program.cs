@@ -107,6 +107,8 @@ builder.Services.AddScoped<IBUserService, BUserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
+//builder.Services.AddScoped<UserManager<BUser>>();
+//builder.Services.AddScoped<RoleManager<IdentityRole>();
 
 //builder.Services.AddCors(options =>
 //{
