@@ -1,6 +1,7 @@
 ﻿using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
+using System;
 
 namespace STAGGI_Budget_API.Repositories
 {
@@ -9,7 +10,14 @@ namespace STAGGI_Budget_API.Repositories
         public SubscriptionRepository(BudgetContext repositoryContext) : base(repositoryContext) { }
         public void Save(Subscription subscription)
         {
-            Create(subscription);
+            if (subscription.Id == null)
+            {
+                Create(subscription);
+            }
+            else
+            {
+                Update(subscription);
+            }
             SaveChanges();
         }
     }

@@ -14,11 +14,16 @@ namespace STAGGI_Budget_API.Services
     {
         private readonly IBUserRepository _buserRepository;
         public readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly UserManager<BUser> _userManager;
+        //private readonly RoleManager<IdentityRole> _roleManager;
 
-        public BUserService(IBUserRepository buserRepository, ISubscriptionRepository subscriptionRepository)
+        public BUserService(IBUserRepository buserRepository,
+            ISubscriptionRepository subscriptionRepository,
+            UserManager<BUser> userManager)
         {
             _buserRepository = buserRepository;
             _subscriptionRepository = subscriptionRepository;
+            _userManager = userManager;
         }
         public Result<List<UserProfileDTO>> GetAll()
         {
@@ -40,36 +45,34 @@ namespace STAGGI_Budget_API.Services
             return Result<List<UserProfileDTO>>.Success(usersDTO);
         }
 
-        public Result<UserProfileDTO> GetById(long id)
+        public async Task<Result<string>> RegisterUserAsync(RequestUserDTO request)
         {
-            throw new NotImplementedException();
-        }
-
-        public Result<RequestUserDTO> RegisterBUser(UserManager<BUser> _userManager)
-        {
-            var registerRequestDTO = new RequestUserDTO();
-
-            var newUser = new RequestUserDTO
+            try
             {
-                FirstName = registerRequestDTO.FirstName,
-                LastName = registerRequestDTO.LastName,
-                Email = registerRequestDTO.Email,
-                Password = registerRequestDTO.Password,
-            };
+                var finalBUser = new BUser
+                {
+                    Email = request.Email,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    UserName = request.Email,
+                    Account = new Account()
+                };
+                finalBUser.Account.BUserId = finalBUser.Id;
 
-            var finalBUser = new BUser
+                await _userManager.CreateAsync(finalBUser, request.Password);
+                await _userManager.AddToRoleAsync(finalBUser, "User");
+
+                return Result<string>.Success(finalBUser.Id);
+            }
+            catch (Exception ex)
             {
-                Email = newUser.Email,
-                FirstName = newUser.FirstName,
-                LastName = newUser.LastName,
-                UserName = newUser.Email
-            };
-            _userManager.CreateAsync(finalBUser, newUser.Password);
-            _userManager.AddToRoleAsync(finalBUser, "User");
-
-            _buserRepository.Save(finalBUser);
-
-            return Result<RequestUserDTO>.Success(newUser);
+                return Result<string>.Failure(new ErrorResponseDTO
+                {
+                    Status = 500,
+                    Error = "",
+                    Message = ex.Message
+                });
+            }
         }
 
         public BUser GetByEmail(string email)
@@ -77,33 +80,24 @@ namespace STAGGI_Budget_API.Services
             return _buserRepository.FindByEmail(email);
         }
 
-        public Result<UserProfileDTO> CreateAccountForCurrentClient()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Result<List<UserProfileDTO>> GetCurrentClientAccounts()
-        {
-            throw new NotImplementedException();
-        }
-
         public Result<UserProfileDTO> GetProfile(string email)
         {
             var userProfile = _buserRepository.UserProfile(email);
 
-            UserProfileDTO profile = new()
+            UserProfileDTO profile = new UserProfileDTO
             {
+                Id = userProfile.Id,
                 FirstName = userProfile.FirstName,
                 LastName = userProfile.LastName,
                 Email = userProfile.Email,
                 IsPremium = userProfile.IsPremium,
+                Balance = userProfile.Account.Balance,
                 Subscription = new SubscriptionDTO
                 {
                     IsActive = userProfile.Subscription.IsActive,
-                    StartDate = (DateTime)userProfile.Subscription.StartDate,
-                    EndDate = (DateTime)userProfile.Subscription.EndDate,
+                    StartDate = userProfile.Subscription.StartDate,
+                    EndDate = userProfile.Subscription.EndDate,
                 },
-                Balance = userProfile.Account.Balance,
                 Budgets = userProfile.Budgets.Select(b => new BudgetDTO
                 {
                     Balance = b.Balance,
@@ -118,53 +112,40 @@ namespace STAGGI_Budget_API.Services
                 Transactions = userProfile.Account.Transactions.Select(t => new TransactionDTO
                 {
                     Amount = t.Amount,
-                    //Type = t.Type == 0 ? "Income" : "Expense"
+                    Type = t.Type == 0 ? "Income" : "Expense"
                 }).ToList()
             };
 
             return Result<UserProfileDTO>.Success(profile);
         }
-        
-        //public Result<UserProfileDTO> GetUserProfile(string email)
-        //{
-        //    BUser user = GetByEmail(email);
 
-        //    var userProfileDTO = new UserProfileDTO
-        //    {
-        //        FirstName = user.FirstName,
-        //        LastName = user.LastName,
-        //        Email = user.Email,
-        //        PhoneNumber = user.PhoneNumber,
-
-        //        SuscriptionState = user.Subscription?.IsActive == true ? "Premium" : "Classic",
-        //        EndDate = user.Subscription?.EndDate
-                
-        //    };
-
-        //    return Result<UserProfileDTO>.Success(userProfileDTO);
-
-        //}
-
-        public Result<RequestUserDTO> RegisterBUser(RequestUserDTO registerRequestDTO, UserManager<BUser> _userManager)
+        public Result<bool> Subscription(string userEmail, bool status)
         {
-            throw new NotImplementedException();
-        }
-
-        public Result<bool> Subscribe(string userEmail)
-        {
-            BUser user = GetByEmail(userEmail);
-
-            Subscription subscription = new Subscription()
+            try
             {
-                IsActive = true,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddMonths(1),
-                BUser = user,                          //Arreglar por cambio de modelos
-            };
+                BUser user = GetByEmail(userEmail);
 
-            _subscriptionRepository.Save(subscription);
+                user.Subscription.IsActive = status;
+                if (status)
+                {
+                    user.Subscription.StartDate = DateTime.Now;
+                    user.Subscription.EndDate = DateTime.Now.AddMonths(1);
+                }
 
-            return Result<bool>.Success(true);
+                //_buserRepository.Save(user);
+                _subscriptionRepository.Save(user.Subscription);
+
+                return Result<bool>.Success(status);
+            }
+            catch (Exception ex)
+            {
+                return Result<bool>.Failure(new ErrorResponseDTO
+                {
+                    Status = 500,
+                    Error = "",
+                    Message = ex.Message
+                });
+            }
         }
     }
 }
