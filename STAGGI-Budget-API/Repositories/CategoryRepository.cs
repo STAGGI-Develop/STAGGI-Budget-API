@@ -1,4 +1,6 @@
-﻿using STAGGI_Budget_API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using STAGGI_Budget_API.Data;
+using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
 
@@ -41,6 +43,15 @@ namespace STAGGI_Budget_API.Repositories
         public void DeleteCategory(Category category)
         {
             Delete(category);
+        }
+
+        public IEnumerable<Category> GetCategoriesWithTransactions(string email, CategoryPeriod period)
+        {
+            int numberOfDays = period == CategoryPeriod.MONTH ? 30 : 7;
+            return FindByCondition(cat => cat.BUser.Email == email)
+                .Include(cat => cat.Transactions
+                    .Where(tr => DateTime.Today < tr.CreateDate.AddDays(numberOfDays)))
+                .ToList();
         }
     }
 }

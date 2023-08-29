@@ -1,4 +1,5 @@
-﻿using STAGGI_Budget_API.Models;
+﻿using STAGGI_Budget_API.Enums;
+using STAGGI_Budget_API.Models;
 
 namespace STAGGI_Budget_API.Repositories.Interfaces
 {
@@ -6,6 +7,8 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
     {
         IEnumerable<Category> GetAll();
         IEnumerable<Category> GetAllByUserEmail(string email);
+        IEnumerable<Category> GetCategoriesWithTransactions(string email, CategoryPeriod period);
+
         void Save(Category category);
         Category? FindById(int id);
         void DeleteCategory(Category category);

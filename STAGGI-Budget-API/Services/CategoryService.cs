@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
@@ -172,6 +173,23 @@ namespace STAGGI_Budget_API.Services
             _categoryRepository.Save(category);
 
             return Result<string>.Success("Actualización exitosa");
+        }
+
+        public Result<List<CategoryDTO>> GetWithTransactions(string email, CategoryPeriod period)
+        {
+            var result = _categoryRepository.GetCategoriesWithTransactions(email, period);
+
+            var categoriesDTO = new List<CategoryDTO>();
+            foreach (var category in result)
+            {
+                categoriesDTO.Add(new CategoryDTO
+                {
+                    Name = category.Name,
+                    ImageUrl = category.ImageUrl,
+                    IsDisabled = category.IsDisabled,
+                });
+            }
+            return Result<List<CategoryDTO>>.Success(categoriesDTO);
         }
     }
 }
