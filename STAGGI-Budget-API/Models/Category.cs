@@ -6,8 +6,8 @@ namespace STAGGI_Budget_API.Models
     public class Category
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? ImageUrl { get; set; }
+        public string Name { get; set; }
+        public string? Image { get; set; }
         public bool IsDisabled { get; set; }
 
         //With MS doc for One to One

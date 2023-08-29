@@ -16,7 +16,6 @@ namespace STAGGI_Budget_API.Repositories
         {
             return FindAll()
                 .Include(budget => budget.Category)
-                //    .ThenInclude(cl => cl.Loan)
                 .ToList();
         }
         
@@ -26,7 +25,6 @@ namespace STAGGI_Budget_API.Repositories
                 .Include(budget => budget.Category)
                 .Include(budget => budget.BUser)
                 .Where(budget => budget.BUser.Email == email)
-                //    .ThenInclude(cl => cl.Loan)
                 .ToList();
         }
 
@@ -34,13 +32,19 @@ namespace STAGGI_Budget_API.Repositories
         {
             return FindByCondition(budget => budget.Id == id)
                 .Include(budget => budget.Category)
-                //    .ThenInclude(cl => cl.Loan)
                 .FirstOrDefault();
         }
 
         public void Save(Budget budget)
         {
-            Create(budget);
+            if (budget.Id == 0)
+            {
+                Create(budget);
+            }
+            else
+            {
+                Update(budget);
+            }
             SaveChanges();
         }
     }

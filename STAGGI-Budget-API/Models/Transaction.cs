@@ -10,7 +10,7 @@ namespace STAGGI_Budget_API.Models
         public string? Title { get; set; }
         public string? Description { get; set; }
         public double Amount { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.Now;
         public TransactionType Type { get; set; }
 
 

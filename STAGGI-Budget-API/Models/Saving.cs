@@ -6,7 +6,7 @@ namespace STAGGI_Budget_API.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public double Balance { get; set; }
+        public double Balance { get; set; } = 0;
         public double TargetAmount { get; set; }
         public DateTime? DueDate { get; set; }
 

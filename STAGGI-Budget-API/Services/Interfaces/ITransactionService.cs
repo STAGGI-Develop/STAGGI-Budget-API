@@ -1,4 +1,5 @@
 ﻿using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Helpers;
 
 namespace STAGGI_Budget_API.Services.Interfaces
@@ -6,9 +7,9 @@ namespace STAGGI_Budget_API.Services.Interfaces
     public interface ITransactionService
     {
         public Result<List<TransactionDTO>> GetAll();
-        public Result<TransactionDTO> GetTransactionById(long id);
-        public Result<TransactionDTO> CreateTransaction(TransactionDTO transactionDTO);
-        public Result<TransactionDTO> ModifyTransaction(long transactionId, TransactionDTO transactionDTO);
+        public Result<TransactionDTO> GetTransactionById(int id);
+        public Result<string> CreateTransaction(RequestTransactionDTO transactionDTO, string email);
+        public Result<string> ModifyTransaction(int transactionId, RequestTransactionDTO transactionDTO);
         public Result<List<TransactionDTO>> SearchTransaction(string searchParameter);
     }
 }

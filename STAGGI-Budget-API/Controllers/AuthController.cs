@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Services.Interfaces;
 
 namespace STAGGI_Budget_API.Controllers
@@ -15,7 +15,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
+        public async Task<IActionResult> Login([FromBody] RequestLoginDTO request)
         {
             var result = await _authService.Login(request);
 
@@ -29,7 +29,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequestDTO request)
+        public async Task<IActionResult> Register([FromBody] RequestUserDTO request)
         {
             var result = await _authService.Register(request);
 
@@ -41,22 +41,5 @@ namespace STAGGI_Budget_API.Controllers
             return StatusCode(201, result.Ok);
 
         }
-
-
-        //[HttpGet("me")]
-        //public async Task<IActionResult> Me()
-        //{
-        //    var user = HttpContext.User;
-
-        //    return Ok(new
-        //    {
-        //        Claims = user.Claims.Select(s => new { s.Type, s.Value }).ToList(),
-        //        user.Identity.Name,
-        //        user.Identity.IsAuthenticated,
-        //        user.Identity.AuthenticationType
-        //    });
-        //    //.RequireAuthorization();
-        //}
-
     }
 }

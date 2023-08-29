@@ -6,9 +6,8 @@ namespace STAGGI_Budget_API.Models
     public class Budget
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
-        public double Balance { get; set; }
-        public double LimitAmount { get; set; }
+        public double Balance { get; set; } = 0;
+        public double LimitAmount { get; set; } = 0;
         public BudgetPeriod Period { get; set; }
 
         //With MS doc for One to One
@@ -16,7 +15,7 @@ namespace STAGGI_Budget_API.Models
         public BUser BUser { get; set; } = null!;
 
         public int CategoryId { get; set; }
-        public Category Category { get; set; }
+        public Category Category { get; set; } // = null!;
 
         public ICollection<Transaction> Transactions { get; set; }
 
