@@ -34,11 +34,22 @@ namespace STAGGI_Budget_API.Repositories
             SaveChanges();
         }
 
-        public IEnumerable<Transaction> Search(string searchParameter)
+        public IEnumerable<Transaction> Search(string searchParameter, string email)
         {
             var upperSearch = searchParameter.ToUpper();
-            return FindByCondition(tr =>tr.Title.ToUpper().Contains(upperSearch))
+            return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch))
             .ToList();
+        }
+
+        public IEnumerable<Transaction> FindByUserEmail(string email)
+        {
+            return FindAll()
+                .Include(tr => tr.Category)
+                .Include(tr => tr.Account)
+                .ThenInclude(ac => ac.BUser)
+                .ThenInclude(bu => bu.Categories)
+                .Where(tr => tr.Account.BUser.Email == email)
+                .ToList();
         }
     }
 }

@@ -21,9 +21,17 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get() 
+        public IActionResult GetAllByUserEmail()
         {
-            var result = _transactionService.GetAll();
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized();
+            }
+
+            var result = _transactionService.GetAllByUserEmail(userEmail);
 
             if (!result.IsSuccess)
             {
@@ -94,7 +102,10 @@ namespace STAGGI_Budget_API.Controllers
         {
             //string request = HttpContext.Request.Query["title"]; //Comente esto y le agregue un parametro al metodo para probar swagger
 
-            var result = _transactionService.SearchTransaction(searchParameter);
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader);
+
+            var result = _transactionService.SearchTransaction(searchParameter, userEmail);
 
             if (!result.IsSuccess) 
             {
