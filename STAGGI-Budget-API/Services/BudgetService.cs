@@ -129,7 +129,7 @@ namespace STAGGI_Budget_API.Services
         }
 
         //UpdateBudget
-        public Result<BudgetDTO> UpdateBudget(int budgetId, BudgetDTO updatedBudgetDTO)
+        public Result<BudgetDTO> UpdateBudget(int budgetId, BudgetDTO updatedBudgetDTO, string email)
         {
             try
             {

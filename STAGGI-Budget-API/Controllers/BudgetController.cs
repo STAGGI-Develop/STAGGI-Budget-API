@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Services;
@@ -60,18 +61,40 @@ namespace STAGGI_Budget_API.Controllers
 
             return StatusCode(201, result.Ok);
         }
-        [HttpPut]
-        public IActionResult UpdateBudget(int budgetId, [FromBody] BudgetDTO budgetDTO)
-        {
-            var result = _budgetService.UpdateBudget(budgetId, budgetDTO);
+        //[HttpPut]
+        //public IActionResult UpdateBudget(int budgetId, [FromBody] BudgetDTO budgetDTO)
+        //{
+        //    var result = _budgetService.UpdateBudget(budgetId, budgetDTO);
 
+        //    if (!result.IsSuccess)
+        //    {
+        //        return StatusCode(result.Error.Status, result.Error);
+        //    }
+
+        //    return StatusCode(201, result.Ok);
+        //}
+
+        [Authorize]
+        [HttpPatch("{id}")]
+        public IActionResult UpdateBudget(int id, [FromBody] BudgetDTO budget, string mail)
+        {
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authorizationHeader?.Substring(7);
+            var userEmail = _authService.GetEmailFromToken(token);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return BadRequest("Email no encontrado.");
+            }
+
+            var result = _budgetService.UpdateBudget(id, budget, userEmail);
             if (!result.IsSuccess)
             {
                 return StatusCode(result.Error.Status, result.Error);
             }
-             
-            return StatusCode(201, result.Ok);
+            return Ok(result.Ok);
         }
+
         [HttpDelete("{id}")]
         public IActionResult DeleteBudget(long id)
         {
