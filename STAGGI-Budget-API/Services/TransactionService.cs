@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
@@ -13,10 +14,12 @@ namespace STAGGI_Budget_API.Services
     public class TransactionService : ITransactionService
     {
         private readonly ITransactionRepository _transactionRepository;
+        private readonly ICategoryService _categoryService;
 
-        public TransactionService(ITransactionRepository transactionRepository)
+        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService)
         {
             _transactionRepository = transactionRepository;
+            _categoryService = categoryService;
         }
 
         public Result<List<TransactionDTO>> GetAll()
@@ -31,7 +34,7 @@ namespace STAGGI_Budget_API.Services
                     Title = transaction.Title,
                     Description = transaction.Description,
                     Amount = transaction.Amount,
-                    Type = transaction.Type,
+                    Type = transaction.Type.ToString(),
                     CreateDate = DateTime.Now,
                     //CategoryId = transaction.CategoryId,
                 });
@@ -40,25 +43,28 @@ namespace STAGGI_Budget_API.Services
             return Result<List<TransactionDTO>>.Success(transactionsDTO);
         }
 
-        public Result<TransactionDTO> CreateTransaction(TransactionDTO transactionDTO)
+        public Result<string> CreateTransaction(RequestTransactionDTO transactionDTO, string email)
         {
             try
             {
+                var userCategories = _categoryService.GetAllUserCategories(email);
+                var categoryMatch = userCategories.FirstOrDefault(c => c.Name == transactionDTO.Category);
+
                 _transactionRepository.Save(new Transaction
                 {
                     Title = transactionDTO.Title,
                     Description = transactionDTO.Description,
-                    Amount = transactionDTO.Amount,
-                    Type = transactionDTO.Type,
+                    Amount = (double)transactionDTO.Amount,
+                    Type = (TransactionType)(transactionDTO.Type),
                     CreateDate = DateTime.Now,
-                    //CategoryId = transactionDTO.CategoryId,
+                    CategoryId = categoryMatch.Id,
                 });
 
-                return Result<TransactionDTO>.Success(transactionDTO);
+                return Result<string>.Success("created");
             }
             catch
             {
-                return Result<TransactionDTO>.Failure(new ErrorResponseDTO
+                return Result<string>.Failure(new ErrorResponseDTO
                 {
                     Status = 500,
                     Error = "Internal Server Error",
@@ -66,7 +72,7 @@ namespace STAGGI_Budget_API.Services
                 });
             }
         }
-        public Result<TransactionDTO> ModifyTransaction(long transactionId, TransactionDTO transactionDTO)
+        public Result<string> ModifyTransaction(int transactionId, RequestTransactionDTO transactionDTO)
         {
             try
             {
@@ -74,16 +80,16 @@ namespace STAGGI_Budget_API.Services
 
                 transaction.Title = transactionDTO.Title;
                 transaction.Description = transactionDTO.Description;
-                transaction.Amount = transactionDTO.Amount;
-                transaction.Type = transactionDTO.Type;
+                transaction.Amount = (double)transactionDTO.Amount;
+                //transaction.Type = transactionDTO.Type;
                 //transaction.CategoryId = transactionDTO.CategoryId;
 
-                return Result<TransactionDTO>.Success(transactionDTO);
+                return Result<string>.Success("modified");
 
             }
             catch
             {
-                return Result<TransactionDTO>.Failure(new ErrorResponseDTO
+                return Result<string>.Failure(new ErrorResponseDTO
                 {
                     Status = 500,
                     Error = "Internal Server Error",
@@ -142,7 +148,7 @@ namespace STAGGI_Budget_API.Services
                     Title = transaction.Title,
                     Description = transaction.Description,
                     Amount = transaction.Amount,
-                    Type = transaction.Type,
+                    Type = transaction.Type.ToString(),
                     CreateDate = transaction.CreateDate,
                 };
 
@@ -162,16 +168,17 @@ namespace STAGGI_Budget_API.Services
             return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
         }
 
-        public Result<TransactionDTO> GetTransactionById(long id)
+        public Result<TransactionDTO> GetTransactionById(int id)
         {
             var transaction = _transactionRepository.FindById(id);
+            var type = transaction.Type;
 
             var transactionDTO = new TransactionDTO
             {
                 Title = transaction.Title,
                 Description = transaction.Description,
                 Amount = transaction.Amount,
-                Type = transaction.Type,
+                Type = (type).ToString(),
                 CreateDate = transaction.CreateDate
             };
 

@@ -97,6 +97,7 @@ builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 builder.Services.AddScoped<IBUserRepository, BUserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
 // Services
 builder.Services.AddScoped<IAccountService, AccountService>();
@@ -106,6 +107,8 @@ builder.Services.AddScoped<IBUserService, BUserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
+//builder.Services.AddScoped<UserManager<BUser>>();
+//builder.Services.AddScoped<RoleManager<IdentityRole>();
 
 //builder.Services.AddCors(options =>
 //{

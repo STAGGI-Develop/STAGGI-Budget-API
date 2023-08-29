@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Helpers;
+using STAGGI_Budget_API.Services;
 using STAGGI_Budget_API.Services.Interfaces;
 
 namespace STAGGI_Budget_API.Controllers
@@ -11,9 +13,11 @@ namespace STAGGI_Budget_API.Controllers
     public class TransactionsController : ControllerBase
     {
         private readonly ITransactionService _transactionService;
-        public TransactionsController(ITransactionService transactionService)
+        private readonly IAuthService _authService;
+        public TransactionsController(ITransactionService transactionService, IAuthService authService)
         {
             _transactionService = transactionService;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -30,7 +34,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(long id)
+        public IActionResult GetById(int id)
         {
             var result = _transactionService.GetTransactionById(id);
 
@@ -43,9 +47,17 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTransaction([FromBody] TransactionDTO transactionDTO)
+        public IActionResult CreateTransaction([FromBody] RequestTransactionDTO transactionDTO)
         {
-            var result = _transactionService.CreateTransaction(transactionDTO);
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized();
+            }
+
+            var result = _transactionService.CreateTransaction(transactionDTO, userEmail);
 
             if (!result.IsSuccess)
             {
@@ -55,10 +67,18 @@ namespace STAGGI_Budget_API.Controllers
             return StatusCode(201, result.Ok);
         }
 
-        [HttpPut]
-        public IActionResult ModifyTransaction(long transactionId, [FromBody] TransactionDTO transactionDTO)
+        [HttpPut("{id}")]
+        public IActionResult ModifyTransaction(int transactionId, [FromBody] RequestTransactionDTO transactionDTO)
         {
-            var result = _transactionService.ModifyTransaction(transactionId, transactionDTO);
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized();
+            }
+
+            var result = _transactionService.ModifyTransaction(transactionId, transactionDTO); // TODO: add email s
 
             if (!result.IsSuccess)
             {

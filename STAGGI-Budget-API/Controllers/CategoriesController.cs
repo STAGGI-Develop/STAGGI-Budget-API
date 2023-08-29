@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
-using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services;
@@ -30,7 +29,7 @@ namespace STAGGI_Budget_API.Controllers
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
-            var userEmail = _authService.GetEmailFromToken(token);
+            var userEmail = _authService.ValidateToken(token);
 
             if (string.IsNullOrEmpty(userEmail))
             {
@@ -90,7 +89,7 @@ namespace STAGGI_Budget_API.Controllers
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
-            var userEmail = _authService.GetEmailFromToken(token);
+            var userEmail = _authService.ValidateToken(token);
 
             if (string.IsNullOrEmpty(userEmail))
             {
@@ -111,7 +110,7 @@ namespace STAGGI_Budget_API.Controllers
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
-            var userEmail = _authService.GetEmailFromToken(token);
+            var userEmail = _authService.ValidateToken(token);
 
             if (string.IsNullOrEmpty(userEmail))
             {

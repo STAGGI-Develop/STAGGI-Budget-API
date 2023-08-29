@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace STAGGI_Budget_API.Services
 {
-    public class CategoryService: ICategoryService
+    public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IBUserService _buserService;
@@ -20,34 +20,34 @@ namespace STAGGI_Budget_API.Services
             _buserService = buserService;
         }
 
-        public Result <List<CategoryDTO>> GetAll() 
+        public Result<List<CategoryDTO>> GetAll()
         {
             var result = _categoryRepository.GetAll();
 
             var categoriesDTO = new List<CategoryDTO>();
             foreach (var category in result)
             {
-                categoriesDTO.Add(new CategoryDTO 
+                categoriesDTO.Add(new CategoryDTO
                 {
                     Name = category.Name,
-                    ImageUrl = category.ImageUrl,
+                    Image = category.Image,
                     IsDisabled = category.IsDisabled,
                 });
             }
             return Result<List<CategoryDTO>>.Success(categoriesDTO);
         }
 
-        public Result <List<CategoryDTO>> GetByUserEmail(string email)
+        public Result<List<CategoryDTO>> GetByUserEmail(string email)
         {
             var result = _categoryRepository.GetAllByUserEmail(email);
 
             var categoriesDTO = new List<CategoryDTO>();
             foreach (var category in result)
             {
-                categoriesDTO.Add(new CategoryDTO 
-                { 
+                categoriesDTO.Add(new CategoryDTO
+                {
                     Name = category.Name,
-                    ImageUrl = category.ImageUrl,
+                    Image = category.Image,
                     IsDisabled = category.IsDisabled,
                 });
             }
@@ -61,7 +61,7 @@ namespace STAGGI_Budget_API.Services
             var categoryDTO = new CategoryDTO
             {
                 Name = category.Name,
-                ImageUrl = category.ImageUrl,
+                Image = category.Image,
                 IsDisabled = category.IsDisabled
             };
 
@@ -89,7 +89,7 @@ namespace STAGGI_Budget_API.Services
             Category newCategory = new Category
             {
                 Name = categoryDTO.Name,
-                ImageUrl = categoryDTO.ImageUrl,
+                Image = categoryDTO.Image,
                 IsDisabled = false,
                 BUserId = user.Id
             };
@@ -102,7 +102,7 @@ namespace STAGGI_Budget_API.Services
                     Message = "La longitud de la categoria supera el maximo",
                     Status = 500
                 };
-                               
+
                 return Result<string>.Failure(newErrorResponse);
             }
 
@@ -154,15 +154,16 @@ namespace STAGGI_Budget_API.Services
                     };
 
                     return Result<string>.Failure(newErrorResponse);
-                } else
+                }
+                else
                 {
                     category.Name = categoryDTO.Name;
                 }
             }
 
-            if (categoryDTO.ImageUrl != null)
+            if (categoryDTO.Image != null)
             {
-                category.ImageUrl = categoryDTO.ImageUrl;
+                category.Image = categoryDTO.Image;
             }
 
             if (categoryDTO.IsDisabled != null)
@@ -188,10 +189,17 @@ namespace STAGGI_Budget_API.Services
                 {
                     Label = category.Name,
                     Value = (category.Transactions.Sum(t => t.Amount)) * -1
+
                 });
             }
             
             return Result<List<CategoryExpenseDTO>>.Success(categoryExpensesDTO);
+        }
+
+        public List<Category> GetAllUserCategories(string email)
+        {
+            var result = _categoryRepository.GetAllByUserEmail(email).ToList();
+            return result;
         }
     }
 }

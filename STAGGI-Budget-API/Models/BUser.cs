@@ -9,11 +9,12 @@ namespace STAGGI_Budget_API.Models
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public bool IsPremium { get; set; }
+        public bool IsPremium { get; set; } = false;
+        public string? ImageUrl { get; set; }
 
 
         //With MS doc for One to One
-        public Account Account { get; set; } = new Account();
+        public Account Account { get; set; } //= new Account();
         public ICollection<Budget> Budgets { get; } = new List<Budget>();
         public ICollection<Category> Categories { get; } = new List<Category>();
         public ICollection<Saving> Savings { get; } = new List<Saving>();

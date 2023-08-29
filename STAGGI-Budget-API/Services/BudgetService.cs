@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
+using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories;
@@ -17,27 +19,38 @@ namespace STAGGI_Budget_API.Services
     public class BudgetService: IBudgetService
     {
         private readonly IBudgetRepository _budgetRepository;
-       
+        private readonly ICategoryService _categoryService;
+        private readonly IBUserService _bUserService;
+        
         //constructor
-        public BudgetService(IBudgetRepository budgetRepository)
+        public BudgetService(IBudgetRepository budgetRepository, ICategoryService categoryService, IBUserService bUserService)
         {
             _budgetRepository = budgetRepository;
+            _categoryService = categoryService;
+            _bUserService = bUserService;
         }
         //getAll
 
-        public Result<List<BudgetDTO>> GetAll()
+
+        public Result<List<BudgetDTO>> GetAllByEmail(string email)
         {
 
-            var result = _budgetRepository.GetAll();
+            var result = _budgetRepository.GetAllByEmail(email);
             var budgetDTOs = new List<BudgetDTO>();
 
             foreach (var budget in result)
             {
                 budgetDTOs.Add(new BudgetDTO
                 {
-                    Name = budget.Name,
+                    Balance = budget.Balance,
                     LimitAmount = budget.LimitAmount,
-                    Period = budget.Period,
+                    Period = budget.Period == 0 ? "Outcome" : "Income",
+                    Category = new CategoryDTO
+                    {
+                        Name = budget.Category.Name,
+                        Image = budget.Category.Image,
+                        IsDisabled = budget.Category.IsDisabled,
+                    }
                    
                 });
             }
@@ -56,19 +69,19 @@ namespace STAGGI_Budget_API.Services
                 {
                     Status = 204,
                     Error = "No Content",
-                    Message = "El presupuesto no fue encontrado."
+                    Message = "Result not found"
                 });
             }
             var budgetDTO = new BudgetDTO
             {
-                Name = result.Name,
                 LimitAmount = result.LimitAmount,
-                Period = result.Period,
+                Period = result.Period == 0 ? "Outcome" : "Income",
                 Balance = result.Balance,
-                Category = new Category
+                Category = new CategoryDTO
                 {
                     Name = result.Category.Name,
-                    ImageUrl = result.Category.ImageUrl,
+                    Image = result.Category.Image,
+                    IsDisabled = result.Category.IsDisabled,
                 }
             };
             return Result<BudgetDTO>.Success(budgetDTO);
@@ -76,22 +89,27 @@ namespace STAGGI_Budget_API.Services
        
         //CreateBudget
 
-        public Result<BudgetDTO> CreateBudget(BudgetDTO budgetDTO)
+        public Result<string> CreateBudget(RequestBudgetDTO request, string email)
         {
             try
             {
+                var user = _bUserService.GetByEmail(email);
+                var userCategories = _categoryService.GetAllUserCategories(email);
+                var categoryMatch = userCategories.FirstOrDefault(c => c.Name == request.Category);
+
                 _budgetRepository.Save(new Budget
                 {
-                    Name = budgetDTO.Name,
-                    LimitAmount = budgetDTO.LimitAmount,
-                    Period = budgetDTO.Period,               
+                    LimitAmount = (double)request.LimitAmount,
+                    Period = (BudgetPeriod)(request.Period),
+                    CategoryId = categoryMatch.Id,
+                    BUserId = user.Id
                 });
 
-                return Result<BudgetDTO>.Success(budgetDTO);
+                return Result<string>.Success("Created");
             }
             catch
             {
-                return Result<BudgetDTO>.Failure(new ErrorResponseDTO
+                return Result<string>.Failure(new ErrorResponseDTO
                 {
                     Status = 500,
                     Error = "Internal Server Error",
@@ -99,40 +117,43 @@ namespace STAGGI_Budget_API.Services
                 });
             }
         }
+
         //DeleteBudget
-        public Result<Budget> DeleteBudget(long budgetId)
-        {
-            try
-            {
-                // obtenemos presupuesto a eliminar utilizando el budgetId.
-                Budget budgetToDelete = _budgetRepository.GetById(budgetId);
+        //public Result<string> DeleteBudget(long budgetId)
+        //{
+        //    try
+        //    {
+        //        // obtenemos presupuesto a eliminar utilizando el budgetId.
+        //        Budget budgetToDelete = _budgetRepository.GetById(budgetId);
 
-                if (budgetToDelete != null)
-                {
-                    _budgetRepository.Delete(budgetToDelete);
+        //        if (budgetToDelete != null)
+        //        {
+        //            _budgetRepository.Delete(budgetToDelete);
 
-                }
-                return Result<Budget>.Success(budgetToDelete)
+        //        }
+        //        return Result<string>.Success("Deleted")
 
-             ;
-            }catch
+        //     ;
+        //    }catch
            
-            {
-                return Result<Budget>.Failure(new ErrorResponseDTO
-                {
-                    Status = 500,
-                    Error = "Internal Server Error",
-                    Message = "No se pudo realizar la acción."
-                });
-            }
-        }
+        //    {
+        //        return Result<string>.Failure(new ErrorResponseDTO
+        //        {
+        //            Status = 500,
+        //            Error = "Internal Server Error",
+        //            Message = "No se pudo realizar la acción."
+        //        });
+        //    }
+        //}
 
         //UpdateBudget
-        public Result<BudgetDTO> UpdateBudget(int budgetId, BudgetDTO updatedBudgetDTO)
+        public Result<BudgetDTO> UpdateBudget(int budgetId, RequestBudgetDTO request, string email)
         {
             try
             {
                 Budget existingBudget = _budgetRepository.GetById(budgetId);
+
+                //TODO: si request trae categoría, buscar Category por nombre y sacar el id
 
                 if (existingBudget == null)
                 {
@@ -140,26 +161,24 @@ namespace STAGGI_Budget_API.Services
                     {
                         Status = 404,
                         Error = "Not Found",
-                        Message = "El presupuesto no fue encontrado."
+                        Message = "Result not found"
                     });
                 }
 
-                
-                existingBudget.Name = updatedBudgetDTO.Name;
-                existingBudget.LimitAmount = updatedBudgetDTO.LimitAmount;
-                existingBudget.Period = updatedBudgetDTO.Period;
-               
+                existingBudget.LimitAmount = (double)request.LimitAmount;
 
-                
+                if (request.Period != null)
+                {
+                    existingBudget.Period = (BudgetPeriod)request.Period;
+                }
+                //existingBudget.CategoryId = request.Category;
+
                 _budgetRepository.Save(existingBudget);
 
-                
                 BudgetDTO updatedBudget = new BudgetDTO
                 {
-                    Name = existingBudget.Name,
                     LimitAmount = existingBudget.LimitAmount,
-                    Period = existingBudget.Period,
-                    
+                    Period = existingBudget.Period == 0 ? "Weekly" : "Monthly",
                 };
 
                 return Result<BudgetDTO>.Success(updatedBudget);
