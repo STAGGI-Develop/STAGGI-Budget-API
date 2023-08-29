@@ -1,174 +1,115 @@
 ﻿using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services.Interfaces;
-using System.Text.RegularExpressions;
 
 namespace STAGGI_Budget_API.Services
 {
-        public class SavingService : ISavingService
+    public class SavingService : ISavingService
+    {
+        private readonly ISavingRepository _savingRepository;
+        private readonly IBUserService _bUserService;
+
+        public SavingService(ISavingRepository savingRepository, IBUserService bUserService)
         {
-            private readonly ISavingRepository _savingRepository;
+            _savingRepository = savingRepository;
+            _bUserService = bUserService;
+        }
+        public Result<List<SavingDTO>> GetAll(string email)
+        {
+            var result = _savingRepository.GetAllByEmail(email);
 
-            public SavingService(ISavingRepository savingRepository)
+            var savingsDTO = result.Select(s => new SavingDTO
             {
-                _savingRepository = savingRepository;
-            }
+                Id = s.Id,
+                Name = s.Name,
+                Balance = s.Balance,
+                TargetAmount = s.TargetAmount,
+                DueDate = s.DueDate,
+            }).ToList();
 
-            public Result<List<SavingDTO>> GetAll()
+            return Result<List<SavingDTO>>.Success(savingsDTO);
+        }
+
+        public Result<SavingDTO> GetSavingById(int id)
+        {
+            var result = _savingRepository.GetById(id);
+
+            var savingDTO = new SavingDTO
             {
-                var result = _savingRepository.GetAll();
-                var savingsDTO = new List<SavingDTO>();
+                Id = result.Id,
+                Name = result.Name,
+                Balance = result.Balance,
+                TargetAmount = result.TargetAmount,
+                DueDate = result.DueDate,
+            };
 
-                foreach (var saving in result)
+            return Result<SavingDTO>.Success(savingDTO);
+        }
+
+        public Result<string> CreateSaving(RequestSavingDTO request, string email)
+        {
+            try
+            {
+                var user = _bUserService.GetByEmail(email);
+
+                _savingRepository.Save(new Saving
                 {
-                    savingsDTO.Add(new SavingDTO
+                    Name = request.Name,
+                    TargetAmount = (double)request.TargetAmount,
+                    DueDate = request.DueDate,
+                    BUserId = user.Id
+                });
+
+                return Result<string>.Success("Created");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure(new ErrorResponseDTO
+                {
+                    Status = 500,
+                    Error = "Internal Server Error",
+                    Message = ex.Message
+                });
+            }
+        }
+
+        public Result<string> UpdateSaving(int id, RequestSavingDTO request, string email)
+        {
+            try
+            {
+                Saving saving = _savingRepository.GetById(id);
+
+                if (saving == null)
+                {
+                    return Result<string>.Failure(new ErrorResponseDTO
                     {
-                        Name = saving.Name,
-                        Balance = saving.Balance,
-                        TargetAmount = saving.TargetAmount,
-                        DueDate = DateTime.Now,
-                        //CategoryId = saving.CategoryId,
+                        Status = 404,
+                        Error = "Not Found",
+                        Message = "Result not found"
                     });
                 }
 
-                return Result<List<SavingDTO>>.Success(savingsDTO);
-            }
+                if (request.Name != null) saving.Name = request.Name;
+                if (request.TargetAmount != 0) saving.TargetAmount = (double)request.TargetAmount;
+                if (request.DueDate.HasValue) saving.DueDate = request.DueDate;
+                //if (request.IsDisabled =! saving.IsDisabled) saving.IsDisabled = request.IsDisabled;
 
-            public Result<SavingDTO> CreateSaving(SavingDTO savingDTO)
+                _savingRepository.Save(saving);
+
+                return Result<string>.Success("Updated");
+            }
+            catch (Exception ex)
             {
-                try
+                return Result<string>.Failure(new ErrorResponseDTO
                 {
-                    _savingRepository.Save(new Saving
-                    {
-                        Name = savingDTO.Name,
-                        Balance = savingDTO.Balance,
-                        TargetAmount = savingDTO.TargetAmount,
-                        DueDate = DateTime.Now,
-                        //CategoryId = savingDTO.CategoryId,
-                    });
-
-                    return Result<SavingDTO>.Success(savingDTO);
-                }
-                catch
-                {
-                    return Result<SavingDTO>.Failure(new ErrorResponseDTO
-                    {
-                        Status = 500,
-                        Error = "Internal Server Error",
-                        Message = "No se pudo realizar la meta."
-                    });
-                }
+                    Status = 500,
+                    Error = "Internal Server Error",
+                    Message = ex.Message
+                });
             }
-            public Result<SavingDTO> ModifySaving(long savingId, SavingDTO savingDTO)
-            {
-                try
-                {
-                    var saving = _savingRepository.FindById(savingId) ?? throw new KeyNotFoundException($"Article with id: {savingId} not found");
-
-                    saving.Name = savingDTO.Name;
-                    saving.Balance = savingDTO.Balance;
-                    saving.TargetAmount = savingDTO.TargetAmount;
-                    //saving.CategoryId = savingDTO.CategoryId;
-
-                    return Result<SavingDTO>.Success(savingDTO);
-
-                }
-                catch
-                {
-                    return Result<SavingDTO>.Failure(new ErrorResponseDTO
-                    {
-                        Status = 500,
-                        Error = "Internal Server Error",
-                        Message = "No se pudo actualizar la meta."
-                    });
-                }
-            }
-
-            public Result<List<SavingDTO>> SearchSaving(string searchParameter)
-            {
-                Regex regexName = new Regex("[A-Z0-9]");
-
-                if (searchParameter == null)
-                {
-                    var newErrorResponse = new ErrorResponseDTO
-                    {
-                        Error = "Server Error",
-                        Message = "Usted no ingreso ningun dato a buscar.",
-                        Status = 500
-                    };
-
-                    return Result<List<SavingDTO>>.Failure(newErrorResponse);
-                }
-
-                if (searchParameter.Length > 15)
-                {
-                    var newErrorResponse = new ErrorResponseDTO
-                    {
-                        Error = "Server Error",
-                        Message = "La longitud de la busqueda supera el maximo de caracteres.",
-                        Status = 500
-                    };
-
-                    return Result<List<SavingDTO>>.Failure(newErrorResponse);
-                }
-
-                Match searchMatch = regexName.Match(searchParameter);
-                if (!searchMatch.Success)
-                {
-                    var newErrorResponse = new ErrorResponseDTO
-                    {
-                        Error = "Server Error",
-                        Message = "Usted no puede utilizar caracteres especiales para buscar.",
-                        Status = 500
-                    };
-
-                    return Result<List<SavingDTO>>.Failure(newErrorResponse);
-                }
-
-                var savingSearch = _savingRepository.Search(searchParameter);
-                var savingSearchDTO = new List<SavingDTO>();
-                foreach (Saving saving in savingSearch)
-                {
-                    SavingDTO newSavingSearchDTO = new SavingDTO
-                    {
-                        Name = saving.Name,
-                        Balance = saving.Balance,
-                        TargetAmount = saving.TargetAmount,
-                        DueDate = saving.DueDate,
-                    };
-
-                    savingSearchDTO.Add(newSavingSearchDTO);
-                }
-
-                if (savingSearchDTO == null)
-                {
-                    return Result<List<SavingDTO>>.Failure(new ErrorResponseDTO
-                    {
-                        Status = 204,
-                        Error = "Error en la busqueda",
-                        Message = "No se pudo encontrar la transaccion buscada."
-                    });
-                }
-
-                return Result<List<SavingDTO>>.Success(savingSearchDTO);
-            }
-
-            public Result<SavingDTO> GetSavingById(long id)
-            {
-                var saving = _savingRepository.FindById(id);
-
-                var savingDTO = new SavingDTO
-                {
-                    Name = saving.Name,
-                    Balance = saving.Balance,
-                    TargetAmount = saving.TargetAmount,
-                    DueDate = saving.DueDate
-                };
-
-                return Result<SavingDTO>.Success(savingDTO);
-
-            }
+        }
     }
 }
