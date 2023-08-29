@@ -11,7 +11,7 @@ namespace STAGGI_Budget_API.Services.Interfaces
         public Result<BudgetDTO> GetById(long id);
         public Result<BudgetDTO> CreateBudget(BudgetDTO budgetDTO);
         public Result<Budget> DeleteBudget(long budgetId);
-        public Result<BudgetDTO> UpdateBudget(int budgetId, BudgetDTO updatedBudgetDTO);
+        public Result<BudgetDTO> UpdateBudget(int budgetId, BudgetDTO updatedBudgetDTO, string email);
 
         //public Result<List<BudgetDTO>> GetCurrentClientBudgets();
      
