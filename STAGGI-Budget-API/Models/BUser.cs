@@ -10,6 +10,7 @@ namespace STAGGI_Budget_API.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public bool IsPremium { get; set; } = false;
+        public string? ImageUrl { get; set; }
 
 
         //With MS doc for One to One

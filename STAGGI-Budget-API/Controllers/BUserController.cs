@@ -2,13 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Services;
 using Microsoft.AspNetCore.Mvc;
-using STAGGI_Budget_API.DTOs.Update;
 
 using STAGGI_Budget_API.Services.Interfaces;
+using STAGGI_Budget_API.DTOs.Request;
 
 namespace STAGGI_Budget_API.Controllers
 {
@@ -46,7 +45,7 @@ namespace STAGGI_Budget_API.Controllers
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
-            var userEmail = _authService.GetEmailFromToken(token);
+            var userEmail = _authService.ValidateToken(token);
 
             var result = _buserService.GetProfile(userEmail);
             //var result = _buserService.GetAll();
@@ -63,7 +62,7 @@ namespace STAGGI_Budget_API.Controllers
         
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult Register([FromBody] RegisterRequestDTO registerRequestDTO)
+        public IActionResult Register([FromBody] RequestUserDTO registerRequestDTO)
         {
             var result = _buserService.RegisterBUser(registerRequestDTO, _userManager);
 
@@ -80,7 +79,7 @@ namespace STAGGI_Budget_API.Controllers
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
-            var userEmail = _authService.GetEmailFromToken(token);
+            var userEmail = _authService.ValidateToken(token);
 
             var result = _buserService.Subscribe(userEmail); 
 
@@ -95,11 +94,11 @@ namespace STAGGI_Budget_API.Controllers
 
 
         [HttpPatch]
-        public IActionResult UpdateProfile(UpdateProfileDTO request)
+        public IActionResult UpdateProfile(RequestUserDTO request)
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
-            var userEmail = _authService.GetEmailFromToken(token);
+            var userEmail = _authService.ValidateToken(token);
 
 
             return Ok(userEmail);
@@ -110,7 +109,7 @@ namespace STAGGI_Budget_API.Controllers
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
-            var userEmail = _authService.GetEmailFromToken(token);
+            var userEmail = _authService.ValidateToken(token);
 
 
             return Ok();

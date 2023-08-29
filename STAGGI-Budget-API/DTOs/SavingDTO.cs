@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace STAGGI_Budget_API.DTOs
+﻿namespace STAGGI_Budget_API.DTOs
 {
     public class SavingDTO
     {

@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Services;
 using STAGGI_Budget_API.Services.Interfaces;
 
 namespace STAGGI_Budget_API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BudgetController : ControllerBase
@@ -21,9 +23,8 @@ namespace STAGGI_Budget_API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault(); 
-            var token = authorizationHeader?.Substring(7); 
-            var userEmail = _authService.GetEmailFromToken(token); 
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader); 
 
             if (string.IsNullOrEmpty(userEmail))
             {
@@ -37,9 +38,18 @@ namespace STAGGI_Budget_API.Controllers
             }
             return StatusCode(201, result.Ok);
         }
+
         [HttpGet("{id}")]
         public IActionResult GetById(long id)
         {
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized();
+            }
+
             var result = _budgetService.GetById(id);
 
             if (!result.IsSuccess)
@@ -49,10 +59,20 @@ namespace STAGGI_Budget_API.Controllers
 
             return StatusCode(201, result.Ok);
         }
+
         [HttpPost]
-        public IActionResult CreateBudget([FromBody] BudgetDTO budgetDTO)
+        public IActionResult CreateBudget([FromBody] RequestBudgetDTO budgetDTO)
         {
-            var result = _budgetService.CreateBudget(budgetDTO);
+
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized();
+            }
+
+            var result = _budgetService.CreateBudget(budgetDTO, userEmail);
 
             if (!result.IsSuccess)
             {
@@ -74,20 +94,19 @@ namespace STAGGI_Budget_API.Controllers
         //    return StatusCode(201, result.Ok);
         //}
 
-        [Authorize]
         [HttpPatch("{id}")]
-        public IActionResult UpdateBudget(int id, [FromBody] BudgetDTO budget, string mail)
+        public IActionResult UpdateBudget(int id, [FromBody] RequestBudgetDTO request)
         {
-            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
-            var token = authorizationHeader?.Substring(7);
-            var userEmail = _authService.GetEmailFromToken(token);
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault().Substring(7);
+            var userEmail = _authService.ValidateToken(authorizationHeader);
 
             if (string.IsNullOrEmpty(userEmail))
             {
-                return BadRequest("Email no encontrado.");
+                return Unauthorized();
             }
 
-            var result = _budgetService.UpdateBudget(id, budget, userEmail);
+            var result = _budgetService.UpdateBudget(id, request, userEmail);
+
             if (!result.IsSuccess)
             {
                 return StatusCode(result.Error.Status, result.Error);
@@ -95,17 +114,17 @@ namespace STAGGI_Budget_API.Controllers
             return Ok(result.Ok);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteBudget(long id)
-        {
-            var result = _budgetService.DeleteBudget(id);
+        //[HttpDelete("{id}")]
+        //public IActionResult DeleteBudget(long id)
+        //{
+        //    var result = _budgetService.DeleteBudget(id);
 
-            if (!result.IsSuccess)
-            {
-                return StatusCode(result.Error.Status, result.Error);
-            }
+        //    if (!result.IsSuccess)
+        //    {
+        //        return StatusCode(result.Error.Status, result.Error);
+        //    }
 
-            return StatusCode(204); 
-        }
+        //    return StatusCode(204); 
+        //}
     }
 }

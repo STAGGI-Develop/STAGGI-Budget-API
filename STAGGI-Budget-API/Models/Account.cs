@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Metadata;
-
-namespace STAGGI_Budget_API.Models
+﻿namespace STAGGI_Budget_API.Models
 {
     public class Account
     {

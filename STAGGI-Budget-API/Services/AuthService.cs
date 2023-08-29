@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Services.Interfaces;
@@ -22,7 +23,7 @@ namespace STAGGI_Budget_API.Services
             _roleManager = roleManager;
         }
 
-        public async Task<Result<string>> Login(LoginRequestDTO request)
+        public async Task<Result<string>> Login(RequestLoginDTO request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
 
@@ -59,7 +60,7 @@ namespace STAGGI_Budget_API.Services
             return Result<string>.Success(jwt);
         }
 
-        public async Task<Result<string>> Register(RegisterRequestDTO request)
+        public async Task<Result<string>> Register(RequestUserDTO request)
         {
             var userExists = await _userManager.FindByEmailAsync(request.Email);
             if (userExists != null)
@@ -96,7 +97,7 @@ namespace STAGGI_Budget_API.Services
             return Result<string>.Success("User created successfully!");
         }
 
-        public string GetEmailFromToken(string token)
+        public string ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var decodedToken = tokenHandler.ReadJwtToken(token);

@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
@@ -21,14 +22,14 @@ namespace STAGGI_Budget_API.Data
                 await _roleManager.CreateAsync(new IdentityRole { Name = "User" });
                 await _roleManager.CreateAsync(new IdentityRole { Name = "Premium" });
 
-                var newUsers = new RegisterRequestDTO[]
+                var newUsers = new RequestUserDTO[]
                 {
-                new RegisterRequestDTO { FirstName="Sebastian", LastName="F", Email = "sf@mail.com", Password = "Pass-123"},
-                new RegisterRequestDTO { FirstName="Tatiana", LastName="Q", Email = "tq@mail.com", Password = "Pass-123"},
-                new RegisterRequestDTO { FirstName="Andres", LastName="R", Email = "ar@mail.com", Password = "Pass-123"},
-                new RegisterRequestDTO { FirstName="Gonzalo", LastName="C", Email = "gc@mail.com", Password = "Pass-123"},
-                new RegisterRequestDTO { FirstName="Gaston", LastName="R", Email = "gr@mail.com", Password = "Pass-123"},
-                new RegisterRequestDTO { FirstName="Ignacio", LastName="D", Email = "id@mail.com", Password = "Pass-123"}
+                new RequestUserDTO { FirstName="Sebastian", LastName="F", Email = "sf@mail.com", Password = "Pass-123"},
+                new RequestUserDTO { FirstName="Tatiana", LastName="Q", Email = "tq@mail.com", Password = "Pass-123"},
+                new RequestUserDTO { FirstName="Andres", LastName="R", Email = "ar@mail.com", Password = "Pass-123"},
+                new RequestUserDTO { FirstName="Gonzalo", LastName="C", Email = "gc@mail.com", Password = "Pass-123"},
+                new RequestUserDTO { FirstName="Gaston", LastName="R", Email = "gr@mail.com", Password = "Pass-123"},
+                new RequestUserDTO { FirstName="Ignacio", LastName="D", Email = "id@mail.com", Password = "Pass-123"}
                 };
                 foreach (var user in newUsers)
                 {
@@ -52,19 +53,19 @@ namespace STAGGI_Budget_API.Data
                 var allUsers = context.BUsers.ToList();
                 var defaultCategories = new List<CategoryDTO>
                 {
-                    new CategoryDTO { Name = "Groceries", ImageUrl = "groceries" },
-                    new CategoryDTO { Name = "Transportation", ImageUrl = "transportation" },
-                    new CategoryDTO { Name = "Entertainment", ImageUrl = "entertainment" },
-                    new CategoryDTO { Name = "Miscellaneous", ImageUrl = "miscellaneous" },
-                    new CategoryDTO { Name = "Home", ImageUrl = "home" },
-                    new CategoryDTO { Name = "Salary", ImageUrl = "salary" },
-                    new CategoryDTO { Name = "Savings", ImageUrl = "savings" }
+                    new CategoryDTO { Name = "Groceries", Image = "groceries" },
+                    new CategoryDTO { Name = "Transportation", Image = "transportation" },
+                    new CategoryDTO { Name = "Entertainment", Image = "entertainment" },
+                    new CategoryDTO { Name = "Miscellaneous", Image = "miscellaneous" },
+                    new CategoryDTO { Name = "Home", Image = "home" },
+                    new CategoryDTO { Name = "Salary", Image = "salary" },
+                    new CategoryDTO { Name = "Savings", Image = "savings" }
                 };
                 allUsers.ForEach(user =>
                 {
                     defaultCategories.ForEach(cat =>
                     {
-                        Category newCategory = new() { Name = cat.Name, ImageUrl = cat.ImageUrl, BUser = user };
+                        Category newCategory = new() { Name = cat.Name, Image = cat.Image, BUser = user };
                         context.Categories.Add(newCategory);
                     });
                 });
@@ -109,10 +110,10 @@ namespace STAGGI_Budget_API.Data
             if (!context.Budgets.Any())
             {
                 var allUsers = context.BUsers.Include(u => u.Categories).ToList();
-                var newBudgets = new List<CreateBudgetDTO>
+                var newBudgets = new List<RequestBudgetDTO>
                 {
-                    new CreateBudgetDTO { LimitAmount = 400, Period = "Monthly", Category = "Groceries" },
-                    new CreateBudgetDTO { LimitAmount = 50, Period = "Weekly", Category = "Entertainment"},
+                    new RequestBudgetDTO { LimitAmount = 400, Period = 1, Category = "Groceries" },
+                    new RequestBudgetDTO { LimitAmount = 50, Period = 0, Category = "Entertainment"},
                 };
                 allUsers.ForEach(user =>
                 {
@@ -121,9 +122,9 @@ namespace STAGGI_Budget_API.Data
                         var userCategory = user.Categories.First(e => e.Name == bud.Category);
                         Budget budget = new()
                         {
-                            LimitAmount = bud.LimitAmount,
+                            LimitAmount = (double)bud.LimitAmount,
                             //Period = Enum.TryParse<BudgetPeriod>(bud.Period, out BudgetPeriod parsed)?parsed:,
-                            Period = (BudgetPeriod)Enum.Parse(typeof(BudgetPeriod), bud.Period),
+                            Period = (BudgetPeriod)(bud.Period),
                             BUser = user,
                             Category = userCategory
                         };
@@ -143,15 +144,15 @@ namespace STAGGI_Budget_API.Data
                     .ThenInclude(b => b.Category)
                     .ToList();
 
-                var newTransactions = new List<CreateTransactionDTO>
+                var newTransactions = new List<RequestTransactionDTO>
                 {
-                    new CreateTransactionDTO { Title = "Sueldo ", Amount = 1000, Type = 0, Category = "Salary" },
-                    new CreateTransactionDTO { Title = "Ahorro ", Amount = 100, Type = 0, Category = "Savings", Saving = "Vacaciones" },
+                    new RequestTransactionDTO { Title = "Sueldo ", Amount = 1000, Type = 0, Category = "Salary" },
+                    new RequestTransactionDTO { Title = "Ahorro ", Amount = 100, Type = 0, Category = "Savings", Saving = "Vacaciones" },
 
-                    new CreateTransactionDTO { Title = "Compra 1", Amount = -8, Type = 1, Category = "Entertainment"},
-                    new CreateTransactionDTO { Title = "Compra 2", Amount = -25, Type = 1, Category = "Entertainment"},
-                    new CreateTransactionDTO { Title = "Compra 3", Amount = -15, Type = 1, Category = "Groceries"},
-                    new CreateTransactionDTO { Title = "Compra 4", Amount = -50, Type = 1, Category = "Groceries"},
+                    new RequestTransactionDTO { Title = "Compra 1", Amount = -8, Type = 1, Category = "Entertainment"},
+                    new RequestTransactionDTO { Title = "Compra 2", Amount = -25, Type = 1, Category = "Entertainment"},
+                    new RequestTransactionDTO { Title = "Compra 3", Amount = -15, Type = 1, Category = "Groceries"},
+                    new RequestTransactionDTO { Title = "Compra 4", Amount = -50, Type = 1, Category = "Groceries"},
                 };
 
                 allUsers.ForEach(user =>
@@ -165,7 +166,7 @@ namespace STAGGI_Budget_API.Data
                         Transaction transaction = new()
                         {
                             Title = tr.Title,
-                            Amount = tr.Amount,
+                            Amount = (double)tr.Amount,
                             CreateDate = DateTime.Now,
                             Type = (TransactionType)(tr.Type),
                             Category = category,
@@ -177,16 +178,16 @@ namespace STAGGI_Budget_API.Data
 
                         if (budget != null)
                         {
-                            budget.Balance = budget.Balance + (tr.Amount * -1);
+                            budget.Balance = (double)(budget.Balance + (tr.Amount * -1));
                         }
 
                         if(saving != null)
                         {
-                            saving.Balance = saving.Balance + tr.Amount;
+                            saving.Balance = (double)(saving.Balance + tr.Amount);
                         }
                         else
                         {
-                            user.Account.Balance = user.Account.Balance + tr.Amount;
+                            user.Account.Balance = (double)(user.Account.Balance + tr.Amount);
                         }
                     });
                 });
