@@ -7,7 +7,7 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         IEnumerable<Category> GetAll();
         IEnumerable<Category> GetAllByUserEmail(string email);
         void Save(Category category);
-        Category? FindById(long id);
+        Category? FindById(int id);
         void DeleteCategory(Category category);
     }
 }

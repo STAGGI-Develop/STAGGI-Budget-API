@@ -53,7 +53,7 @@ namespace STAGGI_Budget_API.Services
             return Result<List<CategoryDTO>>.Success(categoriesDTO);
         }
 
-        public Result<CategoryDTO> FindById(long id)
+        public Result<CategoryDTO> FindById(int id)
         {
             var category = _categoryRepository.FindById(id);
 
@@ -89,7 +89,8 @@ namespace STAGGI_Budget_API.Services
             {
                 Name = categoryDTO.Name,
                 ImageUrl = categoryDTO.ImageUrl,
-                BUser = user
+                IsDisabled = false,
+                BUserId = user.Id
             };
 
             if (categoryDTO.Name.Length > 15)
@@ -121,7 +122,7 @@ namespace STAGGI_Budget_API.Services
             return Result<string>.Success("Creacion exitosa");
         }
 
-        public Result<string> UpdateCategory(long id, CategoryDTO categoryDTO, string email)
+        public Result<string> UpdateCategory(int id, CategoryDTO categoryDTO, string email)
         {
             var category = _categoryRepository.FindById(id);
 
