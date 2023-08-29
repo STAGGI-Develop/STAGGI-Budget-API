@@ -19,7 +19,7 @@ namespace STAGGI_Budget_API.Repositories
             return FindByCondition(cat => cat.BUser.Email == email).ToList();
         }
 
-        public Category? FindById(long id) 
+        public Category? FindById(int id) 
         {
             return FindByCondition(cat => cat.Id == id)
                 .FirstOrDefault();

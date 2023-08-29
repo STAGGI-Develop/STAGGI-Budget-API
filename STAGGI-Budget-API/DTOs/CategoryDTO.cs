@@ -7,7 +7,7 @@ namespace STAGGI_Budget_API.DTOs
     public class CategoryDTO
     {
         [JsonIgnore]
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string? Name { get; set; }
         public string? ImageUrl { get; set; }
         public bool? IsDisabled { get; set; }

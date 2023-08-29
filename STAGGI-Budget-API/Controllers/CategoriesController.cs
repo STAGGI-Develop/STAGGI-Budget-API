@@ -68,7 +68,7 @@ namespace STAGGI_Budget_API.Controllers
 
         [Authorize]
         [HttpPatch("{id}")]
-        public IActionResult UpdateCategory(long id, [FromBody] CategoryDTO category)
+        public IActionResult UpdateCategory(int id, [FromBody] CategoryDTO category)
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
