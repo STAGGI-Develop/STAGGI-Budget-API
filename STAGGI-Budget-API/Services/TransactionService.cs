@@ -35,6 +35,7 @@ namespace STAGGI_Budget_API.Services
             {
                 transactionsDTO.Add(new TransactionDTO
                 {
+                    Id = transaction.Id,
                     Title = transaction.Title,
                     Description = transaction.Description,
                     Amount = transaction.Amount,
@@ -120,6 +121,7 @@ namespace STAGGI_Budget_API.Services
 
                 TransactionDTO updatedTransaction = new TransactionDTO
                 {
+                    Id = existingTransaction.Id,
                     Title = existingTransaction.Title,
                     Description = existingTransaction.Description,
                     Amount = existingTransaction.Amount,
@@ -188,6 +190,7 @@ namespace STAGGI_Budget_API.Services
             {
                 TransactionDTO newTransactionSearchDTO = new TransactionDTO
                 {
+                    Id = transaction.Id,
                     Title = transaction.Title,
                     Description = transaction.Description,
                     Amount = transaction.Amount,
@@ -218,6 +221,7 @@ namespace STAGGI_Budget_API.Services
 
             var transactionDTO = new TransactionDTO
             {
+                Id = transaction.Id,
                 Title = transaction.Title,
                 Description = transaction.Description,
                 Amount = transaction.Amount,
@@ -229,12 +233,12 @@ namespace STAGGI_Budget_API.Services
 
         }
 
-        /*public Result<string> DeleteTransactionById(int id)
+        public Result<string> DeleteTransactionById(int id)
         {
             var transaccionesDelUsuario = _transactionRepository.FindById(id);
             _transactionRepository.Delete(transaccionesDelUsuario);            
 
             return Result<string>.Success("deleted");
-        }*/
+        }
     }
 }
