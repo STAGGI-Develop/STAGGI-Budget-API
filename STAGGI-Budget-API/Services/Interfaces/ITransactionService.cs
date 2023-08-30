@@ -22,5 +22,6 @@ namespace STAGGI_Budget_API.Services.Interfaces
         Result<List<TransactionDTO>> SearchTransactionByDateAndType(DateTime? fromDate, DateTime? toDate, TransactionType type, string email);
         Result<List<TransactionDTO>> SearchTransactionByKeywordAndDate(string keyword, DateTime? fromDate, DateTime? toDate, string email);
         Result<List<TransactionDTO>> SearchTransactionByAllFilters(string keyword, DateTime? fromDate, DateTime? toDate, TransactionType type, string userEmail);
+        Result<List<TransactionDTO>> SearchLastTransactionsByEmail(string email);
     }
 }

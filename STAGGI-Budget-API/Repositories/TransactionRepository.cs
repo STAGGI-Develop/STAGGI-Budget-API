@@ -104,5 +104,10 @@ namespace STAGGI_Budget_API.Repositories
             return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch) && tr.CreateDate >= fromDate && tr.CreateDate <= toDate && tr.Type == type)
             .ToList();
         }
+
+        public IEnumerable<Transaction> SearchLastByEmail(string email)
+        {
+            return FindByUserEmail(email).OrderByDescending(tr => tr.CreateDate).Take(6).ToList();
+        }
     }
 }
