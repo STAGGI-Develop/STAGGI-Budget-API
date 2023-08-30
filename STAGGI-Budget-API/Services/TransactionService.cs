@@ -16,13 +16,14 @@ namespace STAGGI_Budget_API.Services
         private readonly ITransactionRepository _transactionRepository;
         private readonly ICategoryService _categoryService;
         private readonly IBUserService _bUserService;
+        private readonly IBudgetService _budgetService;
 
-
-        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService)
+        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetService budgetService)
         {
             _transactionRepository = transactionRepository;
             _categoryService = categoryService;
             _bUserService = bUserService;
+            _budgetService = budgetService;
         }
 
         public Result<List<TransactionDTO>> GetAllByUserEmail(string userEmail)
@@ -62,6 +63,9 @@ namespace STAGGI_Budget_API.Services
                     };
                 }
 
+                var userBudget = _budgetService.GetAllByEmail(email);
+
+
                 var userCategories = _categoryService.GetAllUserCategories(email);
                 var categoryMatch = userCategories.FirstOrDefault(c => c.Name == transactionDTO.Category);
 
@@ -74,6 +78,8 @@ namespace STAGGI_Budget_API.Services
                     CreateDate = DateTime.Now,
                     AccountId = user.Account.Id,
                     CategoryId = categoryMatch.Id,
+                    //Saving = ,
+                    //Budget = ,
                 });
 
                 return Result<string>.Success("created");
@@ -88,24 +94,45 @@ namespace STAGGI_Budget_API.Services
                 });
             }
         }
-        public Result<string> ModifyTransaction(int transactionId, RequestTransactionDTO transactionDTO)
+        public Result<TransactionDTO> ModifyTransaction(int transactionId, RequestTransactionDTO request)
         {
             try
             {
-                var transaction = _transactionRepository.FindById(transactionId) ?? throw new KeyNotFoundException($"Article with id: {transactionId} not found");
+                Transaction existingTransaction = _transactionRepository.FindById(transactionId);
+                
+                if (existingTransaction == null)
+                {
+                    return Result<TransactionDTO>.Failure(new ErrorResponseDTO
+                    {
+                        Status = 404,
+                        Error = "Not Found",
+                        Message = "Result not found"
+                    });
+                }
 
-                transaction.Title = transactionDTO.Title;
-                transaction.Description = transactionDTO.Description;
-                transaction.Amount = (double)transactionDTO.Amount;
-                //transaction.Type = transactionDTO.Type;
-                //transaction.CategoryId = transactionDTO.CategoryId;
+                existingTransaction.Type = (TransactionType)(request.Type);
+                existingTransaction.Title = request.Title;
+                existingTransaction.Description = request.Description;
+                existingTransaction.Amount = (double)request.Amount;
+                existingTransaction.CreateDate = DateTime.Now;
 
-                return Result<string>.Success("modified");
+                _transactionRepository.Save(existingTransaction);
+
+                TransactionDTO updatedTransaction = new TransactionDTO
+                {
+                    Title = existingTransaction.Title,
+                    Description = existingTransaction.Description,
+                    Amount = existingTransaction.Amount,
+                    Type = (existingTransaction.Type).ToString(),
+                    CreateDate = existingTransaction.CreateDate
+                };
+                                                
+                return Result<TransactionDTO>.Success(updatedTransaction);
 
             }
             catch
             {
-                return Result<string>.Failure(new ErrorResponseDTO
+                return Result<TransactionDTO>.Failure(new ErrorResponseDTO
                 {
                     Status = 500,
                     Error = "Internal Server Error",
@@ -201,5 +228,13 @@ namespace STAGGI_Budget_API.Services
             return Result<TransactionDTO>.Success(transactionDTO);
 
         }
+
+        /*public Result<string> DeleteTransactionById(int id)
+        {
+            var transaccionesDelUsuario = _transactionRepository.FindById(id);
+            _transactionRepository.Delete(transaccionesDelUsuario);            
+
+            return Result<string>.Success("deleted");
+        }*/
     }
 }

@@ -76,7 +76,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult ModifyTransaction(int transactionId, [FromBody] RequestTransactionDTO transactionDTO)
+        public IActionResult ModifyTransaction(int transactionId, [FromBody] RequestTransactionDTO request)
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
@@ -86,7 +86,20 @@ namespace STAGGI_Budget_API.Controllers
                 return Unauthorized();
             }
 
-            var result = _transactionService.ModifyTransaction(transactionId, transactionDTO); // TODO: add email s
+            var result = _transactionService.ModifyTransaction(transactionId, request); // TODO: add email s
+
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+
+            return StatusCode(201, result.Ok);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTransaction(int id)
+        {
+            var result = _transactionService.DeleteTransactionById(id);
 
             if (!result.IsSuccess)
             {

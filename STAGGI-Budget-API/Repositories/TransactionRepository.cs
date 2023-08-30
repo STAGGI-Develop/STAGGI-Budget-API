@@ -51,5 +51,11 @@ namespace STAGGI_Budget_API.Repositories
                 .Where(tr => tr.Account.BUser.Email == email)
                 .ToList();
         }
+
+        public void Delete(Transaction transaction)
+        {               
+            Delete(transaction);
+            SaveChanges();            
+        }
     }
 }
