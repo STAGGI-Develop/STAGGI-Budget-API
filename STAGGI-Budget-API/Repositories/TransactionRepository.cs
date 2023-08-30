@@ -2,6 +2,7 @@
 using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
+using System.Linq;
 
 namespace STAGGI_Budget_API.Repositories
 {
@@ -15,7 +16,7 @@ namespace STAGGI_Budget_API.Repositories
              .ToList();
         }
 
-        public Transaction? FindById(long id)
+        public Transaction? FindById(int id)
         {
             return FindByCondition(tr => tr.Id == id)
                 .FirstOrDefault();
@@ -34,7 +35,7 @@ namespace STAGGI_Budget_API.Repositories
             SaveChanges();
         }
 
-        public IEnumerable<Transaction> Search(string searchParameter, string email)
+        public IEnumerable<Transaction> SearchByKeyword(string searchParameter, string email)
         {
             var upperSearch = searchParameter.ToUpper();
             return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch))
@@ -56,6 +57,17 @@ namespace STAGGI_Budget_API.Repositories
         {               
             Delete(transaction);
             SaveChanges();            
+        }
+
+        public IEnumerable<Transaction> SearchByDate(DateTime? fromDate, DateTime? toDate)
+        {
+            return FindByCondition(tr => tr.CreateDate >= fromDate && tr.CreateDate <= toDate)
+            .ToList();
+        }
+
+        public IEnumerable<Transaction> SearchByType(bool type, string email)
+        {
+            throw new NotImplementedException();
         }
     }
 }

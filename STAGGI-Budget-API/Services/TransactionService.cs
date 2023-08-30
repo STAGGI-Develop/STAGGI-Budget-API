@@ -143,7 +143,7 @@ namespace STAGGI_Budget_API.Services
             }
         }
 
-        public Result<List<TransactionDTO>> SearchTransaction(string searchParameter, string email)
+        public Result<List<TransactionDTO>> SearchTransactionByKeyword(string searchParameter, string email)
         {
             Regex regexName = new Regex("[a-zA-Z0-9]");
 
@@ -184,7 +184,7 @@ namespace STAGGI_Budget_API.Services
                 return Result<List<TransactionDTO>>.Failure(newErrorResponse);
             }
 
-            var transactionSearch = _transactionRepository.Search(searchParameter, email);
+            var transactionSearch = _transactionRepository.SearchByKeyword(searchParameter, email);
             var transactionSearchDTO = new List<TransactionDTO>();
             foreach(Transaction transaction in transactionSearch)
             {
@@ -214,6 +214,90 @@ namespace STAGGI_Budget_API.Services
             return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
         }
 
+        public Result<List<TransactionDTO>> SearchTransactionByDate(DateTime? fromDate, DateTime? toDate)
+        {
+            if (toDate < fromDate)
+            {
+                var newErrorResponse = new ErrorResponseDTO
+                {
+                    Error = "Server Error",
+                    Message = "Error en la fecha proporcionada.",
+                    Status = 500
+                };
+
+                return Result<List<TransactionDTO>>.Failure(newErrorResponse);
+            }
+
+            var transactionSearch = _transactionRepository.SearchByDate(fromDate, toDate);
+            
+            /*if (fromDate == null)
+            {
+                fromDate = DateTime.MinValue;
+            }*/
+                       
+            if (toDate == null)
+            {
+                toDate = DateTime.Now;
+
+                var transactionSearchDTO = new List<TransactionDTO>();
+                foreach (Transaction transaction in transactionSearch)
+                {
+                    TransactionDTO newTransactionSearchDTO = new TransactionDTO
+                    {
+                        Id = transaction.Id,
+                        Title = transaction.Title,
+                        Description = transaction.Description,
+                        Amount = transaction.Amount,
+                        Type = transaction.Type.ToString(),
+                        CreateDate = transaction.CreateDate,
+                    };
+
+                    transactionSearchDTO.Add(newTransactionSearchDTO);
+                }
+
+                if (transactionSearchDTO == null)
+                {
+                    return Result<List<TransactionDTO>>.Failure(new ErrorResponseDTO
+                    {
+                        Status = 204,
+                        Error = "Error en la busqueda",
+                        Message = "No se pudo encontrar la transaccion buscada."
+                    });
+                }
+                return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
+            }
+
+            else
+            {
+                var transactionSearchDTO = new List<TransactionDTO>();
+                foreach (Transaction transaction in transactionSearch)
+                {
+                    TransactionDTO newTransactionSearchDTO = new TransactionDTO
+                    {
+                        Id = transaction.Id,
+                        Title = transaction.Title,
+                        Description = transaction.Description,
+                        Amount = transaction.Amount,
+                        Type = transaction.Type.ToString(),
+                        CreateDate = transaction.CreateDate,
+                    };
+
+                    transactionSearchDTO.Add(newTransactionSearchDTO);
+                }
+
+                if (transactionSearchDTO == null)
+                {
+                    return Result<List<TransactionDTO>>.Failure(new ErrorResponseDTO
+                    {
+                        Status = 204,
+                        Error = "Error en la busqueda",
+                        Message = "No se pudo encontrar la transaccion buscada."
+                    });
+                }
+                return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
+            }            
+        }
+
         public Result<TransactionDTO> GetTransactionById(int id)
         {
             var transaction = _transactionRepository.FindById(id);
@@ -235,10 +319,15 @@ namespace STAGGI_Budget_API.Services
 
         public Result<string> DeleteTransactionById(int id)
         {
-            var transaccionesDelUsuario = _transactionRepository.FindById(id);
-            _transactionRepository.Delete(transaccionesDelUsuario);            
+            var userTransactions = _transactionRepository.FindById(id);
+            _transactionRepository.Delete(userTransactions);            
 
             return Result<string>.Success("deleted");
+        }
+
+        public Result<List<TransactionDTO>> SearchTransactionByType(bool type, string email)
+        {
+            throw new NotImplementedException();
         }
     }
 }

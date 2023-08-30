@@ -22,7 +22,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllByUserEmail(string? keyword)
+        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate)
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
@@ -41,8 +41,13 @@ namespace STAGGI_Budget_API.Controllers
             //comprobar si llega alguna query
             if (!string.IsNullOrEmpty(keyword))
             {
-                result = _transactionService.SearchTransaction(keyword, userEmail);
+                result = _transactionService.SearchTransactionByKeyword(keyword, userEmail);
             }
+
+            /*if (fromDate != null)
+            {
+                result = _transactionService.SearchTransactionByDate(fromDate, toDate);
+            }*/
             else
             {
                 result = _transactionService.GetAllByUserEmail(userEmail);
@@ -133,7 +138,7 @@ namespace STAGGI_Budget_API.Controllers
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
 
-            var result = _transactionService.SearchTransaction(searchParameter, userEmail);
+            var result = _transactionService.SearchTransactionByKeyword(searchParameter, userEmail);
 
             if (!result.IsSuccess) 
             {
