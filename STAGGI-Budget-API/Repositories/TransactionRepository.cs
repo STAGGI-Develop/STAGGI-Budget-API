@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STAGGI_Budget_API.Data;
+using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace STAGGI_Budget_API.Repositories
 {
@@ -59,15 +61,19 @@ namespace STAGGI_Budget_API.Repositories
             SaveChanges();            
         }
 
-        public IEnumerable<Transaction> SearchByDate(DateTime? fromDate, DateTime? toDate)
+        public IEnumerable<Transaction> SearchByDate(DateTime? fromDate, DateTime? toDate, string email)
         {
-            return FindByCondition(tr => tr.CreateDate >= fromDate && tr.CreateDate <= toDate)
+            //return FindByCondition(tr => tr.CreateDate >= fromDate && tr.CreateDate <= toDate)
+            //.ToList();
+
+            return FindByUserEmail(email).Where(tr => tr.CreateDate >= fromDate && tr.CreateDate <= toDate)
             .ToList();
         }
 
-        public IEnumerable<Transaction> SearchByType(bool type, string email)
+        public IEnumerable<Transaction> SearchByType(TransactionType type, string email)
         {
-            throw new NotImplementedException();
+            return FindByUserEmail(email).Where(tr => tr.Type == type)
+            .ToList();
         }
     }
 }

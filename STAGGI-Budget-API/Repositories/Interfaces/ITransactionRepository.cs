@@ -1,4 +1,5 @@
-﻿using STAGGI_Budget_API.Models;
+﻿using STAGGI_Budget_API.Enums;
+using STAGGI_Budget_API.Models;
 
 namespace STAGGI_Budget_API.Repositories.Interfaces
 {
@@ -10,7 +11,7 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         IEnumerable<Transaction> SearchByKeyword(string searchParameter, string email);
         IEnumerable<Transaction> FindByUserEmail(string email);
         void Delete(Transaction transaction);
-        IEnumerable<Transaction> SearchByDate(DateTime? fromDate, DateTime? toDate);
-        IEnumerable<Transaction> SearchByType(bool type, string email);
+        IEnumerable<Transaction> SearchByDate(DateTime? fromDate, DateTime? toDate, string email);
+        IEnumerable<Transaction> SearchByType(TransactionType type, string email);
     }
 }

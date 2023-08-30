@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.DTOs.Request;
+using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Services;
 using STAGGI_Budget_API.Services.Interfaces;
 using System.Collections.Generic;
+using System.Transactions;
 
 namespace STAGGI_Budget_API.Controllers
 {
@@ -22,7 +24,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate)
+        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate, TransactionType type)
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
@@ -39,15 +41,38 @@ namespace STAGGI_Budget_API.Controllers
             //DateTime queryFromDate = HttpContext.Request.Query["fromDate"];
 
             //comprobar si llega alguna query
-            if (!string.IsNullOrEmpty(keyword))
+
+            //OK
+            if (!string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null && type == 0) // Filter only by keyword
             {
                 result = _transactionService.SearchTransactionByKeyword(keyword, userEmail);
             }
 
-            /*if (fromDate != null)
+            //OK
+            else if (type != 0 && string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null) //Filter only by Type
             {
-                result = _transactionService.SearchTransactionByDate(fromDate, toDate);
-            }*/
+                result = _transactionService.SearchTransactionByType(type, userEmail);
+            }
+
+            //OK
+            else if (fromDate != null || toDate != null && string.IsNullOrEmpty(keyword) && type == 0) //Filter only by dates
+            {
+                if (fromDate == null)
+                {
+                    fromDate = DateTime.MinValue; //From oldest to toDate
+                }
+
+                if (toDate == null)
+                {
+                    toDate = DateTime.Now; //from fromDate to newest
+                }
+
+                result = _transactionService.SearchTransactionByDate(fromDate, toDate, userEmail);
+            }
+
+
+
+
             else
             {
                 result = _transactionService.GetAllByUserEmail(userEmail);

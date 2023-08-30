@@ -149,13 +149,13 @@ namespace STAGGI_Budget_API.Data
 
                 var newTransactions = new List<RequestTransactionDTO>
                 {
-                    new RequestTransactionDTO { Title = "Sueldo ", Amount = 1000, Type = 0, Category = "Salary" },
-                    new RequestTransactionDTO { Title = "Ahorro ", Amount = 100, Type = 0, Category = "Savings", Saving = "Vacaciones" },
+                    new RequestTransactionDTO { Title = "Sueldo ", Amount = 1000, Type = 1, Category = "Salary" },
+                    new RequestTransactionDTO { Title = "Ahorro ", Amount = 100, Type = 1, Category = "Savings", Saving = "Vacaciones" },
 
-                    new RequestTransactionDTO { Title = "Compra 1", Amount = -8, Type = 1, Category = "Entertainment"},
-                    new RequestTransactionDTO { Title = "Compra 2", Amount = -25, Type = 1, Category = "Entertainment"},
-                    new RequestTransactionDTO { Title = "Compra 3", Amount = -15, Type = 1, Category = "Groceries"},
-                    new RequestTransactionDTO { Title = "Compra 4", Amount = -50, Type = 1, Category = "Groceries"},
+                    new RequestTransactionDTO { Title = "Compra 1", Amount = -8, Type = 2, Category = "Entertainment"},
+                    new RequestTransactionDTO { Title = "Compra 2", Amount = -25, Type = 2, Category = "Entertainment"},
+                    new RequestTransactionDTO { Title = "Compra 3", Amount = -15, Type = 2, Category = "Groceries"},
+                    new RequestTransactionDTO { Title = "Compra 4", Amount = -50, Type = 2, Category = "Groceries"},
                 };
 
                 allUsers.ForEach(user =>
