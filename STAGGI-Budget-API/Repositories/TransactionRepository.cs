@@ -3,8 +3,10 @@ using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
+using System.ComponentModel;
 using System.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace STAGGI_Budget_API.Repositories
 {
@@ -56,9 +58,9 @@ namespace STAGGI_Budget_API.Repositories
         }
 
         public void Delete(Transaction transaction)
-        {               
+        {
             Delete(transaction);
-            SaveChanges();            
+            SaveChanges();
         }
 
         public IEnumerable<Transaction> SearchByDate(DateTime? fromDate, DateTime? toDate, string email)
@@ -73,6 +75,33 @@ namespace STAGGI_Budget_API.Repositories
         public IEnumerable<Transaction> SearchByType(TransactionType type, string email)
         {
             return FindByUserEmail(email).Where(tr => tr.Type == type)
+            .ToList();
+        }
+
+        public IEnumerable<Transaction> SearchByKeywordAndType(string keyword, TransactionType type, string email)
+        {
+            var upperSearch = keyword.ToUpper();
+            return FindByUserEmail(email).Where(tr => tr.Type == type && tr.Title.ToUpper().Contains(upperSearch))
+            .ToList();
+        }
+
+        public IEnumerable<Transaction> SearchByDateAndType(DateTime? fromDate, DateTime? toDate, TransactionType type, string email)
+        {
+            return FindByUserEmail(email).Where(tr => tr.CreateDate >= fromDate && tr.CreateDate <= toDate && tr.Type == type)
+            .ToList();
+        }
+
+        public IEnumerable<Transaction> SearchByKeywordAndDate(string keyword, DateTime? fromDate, DateTime? toDate, string email)
+        {
+            var upperSearch = keyword.ToUpper();
+            return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch) && tr.CreateDate >= fromDate && tr.CreateDate <= toDate)
+            .ToList();
+        }
+
+        public IEnumerable<Transaction> SearchByAllFilters(string keyword, DateTime? fromDate, DateTime? toDate, TransactionType type, string email)
+        {
+            var upperSearch = keyword.ToUpper();
+            return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch) && tr.CreateDate >= fromDate && tr.CreateDate <= toDate && tr.Type == type)
             .ToList();
         }
     }

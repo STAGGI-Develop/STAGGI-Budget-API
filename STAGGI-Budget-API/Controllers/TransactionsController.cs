@@ -24,7 +24,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate, TransactionType type)
+        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate, TransactionType type) //HasValue
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
@@ -43,19 +43,19 @@ namespace STAGGI_Budget_API.Controllers
             //comprobar si llega alguna query
 
             //OK
-            if (!string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null && type == 0) // Filter only by keyword
+            if (!string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null && type == TransactionType.UNDEFINED) // Filter only by keyword
             {
                 result = _transactionService.SearchTransactionByKeyword(keyword, userEmail);
             }
 
             //OK
-            else if (type != 0 && string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null) //Filter only by Type
+            else if (type != TransactionType.UNDEFINED && string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null) //Filter only by Type
             {
                 result = _transactionService.SearchTransactionByType(type, userEmail);
             }
 
             //OK
-            else if (fromDate != null || toDate != null && string.IsNullOrEmpty(keyword) && type == 0) //Filter only by dates
+            else if ((fromDate != null || toDate != null) && string.IsNullOrEmpty(keyword) && type == TransactionType.UNDEFINED) //Filter only by dates
             {
                 if (fromDate == null)
                 {
@@ -70,8 +70,56 @@ namespace STAGGI_Budget_API.Controllers
                 result = _transactionService.SearchTransactionByDate(fromDate, toDate, userEmail);
             }
 
+            else if (!string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null && type != TransactionType.UNDEFINED)//Filter by Keyword and type
+            {
+                result = _transactionService.SearchTransactionByKeywordAndType(keyword, type, userEmail);
 
+            }
 
+            else if (string.IsNullOrEmpty(keyword) && (toDate != null || fromDate != null) && type != TransactionType.UNDEFINED) //Filter by dates and type
+            {
+                if (fromDate == null)
+                {
+                    fromDate = DateTime.MinValue; //From oldest to toDate
+                }
+
+                if (toDate == null)
+                {
+                    toDate = DateTime.Now; //from fromDate to newest
+                }
+
+                result = _transactionService.SearchTransactionByDateAndType(fromDate, toDate, type, userEmail);
+            }
+
+            else if (!string.IsNullOrEmpty(keyword) && (toDate != null || fromDate != null) && type == TransactionType.UNDEFINED) //Filter by keyword and dates
+            {
+                if (fromDate == null)
+                {
+                    fromDate = DateTime.MinValue; //From oldest to toDate
+                }
+
+                if (toDate == null)
+                {
+                    toDate = DateTime.Now; //from fromDate to newest
+                }
+
+                result = _transactionService.SearchTransactionByKeywordAndDate(keyword, fromDate, toDate, userEmail);
+            }
+
+            else if (type != TransactionType.UNDEFINED && !string.IsNullOrEmpty(keyword) && (toDate != null || fromDate != null))
+            {
+                if (fromDate == null)
+                {
+                    fromDate = DateTime.MinValue; //From oldest to toDate
+                }
+
+                if (toDate == null)
+                {
+                    toDate = DateTime.Now; //from fromDate to newest
+                }
+
+                result = _transactionService.SearchTransactionByAllFilters(keyword, fromDate, toDate, type, userEmail);
+            }
 
             else
             {
