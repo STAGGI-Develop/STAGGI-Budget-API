@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.DTOs.Request;
+using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Services;
 using STAGGI_Budget_API.Services.Interfaces;
 using System.Collections.Generic;
+using System.Transactions;
 
 namespace STAGGI_Budget_API.Controllers
 {
@@ -22,7 +24,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllByUserEmail(string? keyword)
+        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate, TransactionType type) //HasValue
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
@@ -39,10 +41,86 @@ namespace STAGGI_Budget_API.Controllers
             //DateTime queryFromDate = HttpContext.Request.Query["fromDate"];
 
             //comprobar si llega alguna query
-            if (!string.IsNullOrEmpty(keyword))
+
+            //OK
+            if (!string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null && type == TransactionType.UNDEFINED) // Filter only by keyword
             {
-                result = _transactionService.SearchTransaction(keyword, userEmail);
+                result = _transactionService.SearchTransactionByKeyword(keyword, userEmail);
             }
+
+            //OK
+            else if (type != TransactionType.UNDEFINED && string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null) //Filter only by Type
+            {
+                result = _transactionService.SearchTransactionByType(type, userEmail);
+            }
+
+            //OK
+            else if ((fromDate != null || toDate != null) && string.IsNullOrEmpty(keyword) && type == TransactionType.UNDEFINED) //Filter only by dates
+            {
+                if (fromDate == null)
+                {
+                    fromDate = DateTime.MinValue; //From oldest to toDate
+                }
+
+                if (toDate == null)
+                {
+                    toDate = DateTime.Now; //from fromDate to newest
+                }
+
+                result = _transactionService.SearchTransactionByDate(fromDate, toDate, userEmail);
+            }
+
+            else if (!string.IsNullOrEmpty(keyword) && toDate == null && fromDate == null && type != TransactionType.UNDEFINED)//Filter by Keyword and type
+            {
+                result = _transactionService.SearchTransactionByKeywordAndType(keyword, type, userEmail);
+
+            }
+
+            else if (string.IsNullOrEmpty(keyword) && (toDate != null || fromDate != null) && type != TransactionType.UNDEFINED) //Filter by dates and type
+            {
+                if (fromDate == null)
+                {
+                    fromDate = DateTime.MinValue; //From oldest to toDate
+                }
+
+                if (toDate == null)
+                {
+                    toDate = DateTime.Now; //from fromDate to newest
+                }
+
+                result = _transactionService.SearchTransactionByDateAndType(fromDate, toDate, type, userEmail);
+            }
+
+            else if (!string.IsNullOrEmpty(keyword) && (toDate != null || fromDate != null) && type == TransactionType.UNDEFINED) //Filter by keyword and dates
+            {
+                if (fromDate == null)
+                {
+                    fromDate = DateTime.MinValue; //From oldest to toDate
+                }
+
+                if (toDate == null)
+                {
+                    toDate = DateTime.Now; //from fromDate to newest
+                }
+
+                result = _transactionService.SearchTransactionByKeywordAndDate(keyword, fromDate, toDate, userEmail);
+            }
+
+            else if (type != TransactionType.UNDEFINED && !string.IsNullOrEmpty(keyword) && (toDate != null || fromDate != null))
+            {
+                if (fromDate == null)
+                {
+                    fromDate = DateTime.MinValue; //From oldest to toDate
+                }
+
+                if (toDate == null)
+                {
+                    toDate = DateTime.Now; //from fromDate to newest
+                }
+
+                result = _transactionService.SearchTransactionByAllFilters(keyword, fromDate, toDate, type, userEmail);
+            }
+
             else
             {
                 result = _transactionService.GetAllByUserEmail(userEmail);
@@ -133,7 +211,7 @@ namespace STAGGI_Budget_API.Controllers
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
 
-            var result = _transactionService.SearchTransaction(searchParameter, userEmail);
+            var result = _transactionService.SearchTransactionByKeyword(searchParameter, userEmail);
 
             if (!result.IsSuccess) 
             {
