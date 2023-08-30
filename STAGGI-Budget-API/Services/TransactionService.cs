@@ -15,26 +15,30 @@ namespace STAGGI_Budget_API.Services
     {
         private readonly ITransactionRepository _transactionRepository;
         private readonly ICategoryService _categoryService;
+        private readonly IBUserService _bUserService;
+        private readonly IBudgetService _budgetService;
 
-        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService)
+        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetService budgetService)
         {
             _transactionRepository = transactionRepository;
             _categoryService = categoryService;
+            _bUserService = bUserService;
+            _budgetService = budgetService;
         }
 
-        public Result<List<TransactionDTO>> GetAll()
-        { 
-            var result = _transactionRepository.GetAll();
+        public Result<List<TransactionDTO>> GetAllByUserEmail(string userEmail)
+        {
+            var result = _transactionRepository.FindByUserEmail(userEmail);
             var transactionsDTO = new List<TransactionDTO>();
 
-            foreach (var transaction in result) 
+            foreach (var transaction in result)
             {
-                transactionsDTO.Add(new TransactionDTO 
-                { 
+                transactionsDTO.Add(new TransactionDTO
+                {
                     Title = transaction.Title,
                     Description = transaction.Description,
                     Amount = transaction.Amount,
-                    Type = transaction.Type.ToString(),
+                    Type = (transaction.Type).ToString(),
                     CreateDate = DateTime.Now,
                     //CategoryId = transaction.CategoryId,
                 });
@@ -47,6 +51,21 @@ namespace STAGGI_Budget_API.Services
         {
             try
             {
+                BUser user = _bUserService.GetByEmail(email);
+                
+                if (user == null)
+                {
+                    var newErrorResponse = new ErrorResponseDTO
+                    {
+                        Error = "Server Error",
+                        Message = "El usuario no existe.",
+                        Status = 500
+                    };
+                }
+
+                var userBudget = _budgetService.GetAllByEmail(email);
+
+
                 var userCategories = _categoryService.GetAllUserCategories(email);
                 var categoryMatch = userCategories.FirstOrDefault(c => c.Name == transactionDTO.Category);
 
@@ -57,7 +76,10 @@ namespace STAGGI_Budget_API.Services
                     Amount = (double)transactionDTO.Amount,
                     Type = (TransactionType)(transactionDTO.Type),
                     CreateDate = DateTime.Now,
+                    AccountId = user.Account.Id,
                     CategoryId = categoryMatch.Id,
+                    //Saving = ,
+                    //Budget = ,
                 });
 
                 return Result<string>.Success("created");
@@ -72,24 +94,45 @@ namespace STAGGI_Budget_API.Services
                 });
             }
         }
-        public Result<string> ModifyTransaction(int transactionId, RequestTransactionDTO transactionDTO)
+        public Result<TransactionDTO> ModifyTransaction(int transactionId, RequestTransactionDTO request)
         {
             try
             {
-                var transaction = _transactionRepository.FindById(transactionId) ?? throw new KeyNotFoundException($"Article with id: {transactionId} not found");
+                Transaction existingTransaction = _transactionRepository.FindById(transactionId);
+                
+                if (existingTransaction == null)
+                {
+                    return Result<TransactionDTO>.Failure(new ErrorResponseDTO
+                    {
+                        Status = 404,
+                        Error = "Not Found",
+                        Message = "Result not found"
+                    });
+                }
 
-                transaction.Title = transactionDTO.Title;
-                transaction.Description = transactionDTO.Description;
-                transaction.Amount = (double)transactionDTO.Amount;
-                //transaction.Type = transactionDTO.Type;
-                //transaction.CategoryId = transactionDTO.CategoryId;
+                existingTransaction.Type = (TransactionType)(request.Type);
+                existingTransaction.Title = request.Title;
+                existingTransaction.Description = request.Description;
+                existingTransaction.Amount = (double)request.Amount;
+                existingTransaction.CreateDate = DateTime.Now;
 
-                return Result<string>.Success("modified");
+                _transactionRepository.Save(existingTransaction);
+
+                TransactionDTO updatedTransaction = new TransactionDTO
+                {
+                    Title = existingTransaction.Title,
+                    Description = existingTransaction.Description,
+                    Amount = existingTransaction.Amount,
+                    Type = (existingTransaction.Type).ToString(),
+                    CreateDate = existingTransaction.CreateDate
+                };
+                                                
+                return Result<TransactionDTO>.Success(updatedTransaction);
 
             }
             catch
             {
-                return Result<string>.Failure(new ErrorResponseDTO
+                return Result<TransactionDTO>.Failure(new ErrorResponseDTO
                 {
                     Status = 500,
                     Error = "Internal Server Error",
@@ -98,9 +141,9 @@ namespace STAGGI_Budget_API.Services
             }
         }
 
-        public Result<List<TransactionDTO>> SearchTransaction(string searchParameter)
+        public Result<List<TransactionDTO>> SearchTransaction(string searchParameter, string email)
         {
-            Regex regexName = new Regex("[A-Z0-9]");
+            Regex regexName = new Regex("[a-zA-Z0-9]");
 
             if (searchParameter == null)
             {
@@ -139,7 +182,7 @@ namespace STAGGI_Budget_API.Services
                 return Result<List<TransactionDTO>>.Failure(newErrorResponse);
             }
 
-            var transactionSearch = _transactionRepository.Search(searchParameter);
+            var transactionSearch = _transactionRepository.Search(searchParameter, email);
             var transactionSearchDTO = new List<TransactionDTO>();
             foreach(Transaction transaction in transactionSearch)
             {
@@ -185,5 +228,13 @@ namespace STAGGI_Budget_API.Services
             return Result<TransactionDTO>.Success(transactionDTO);
 
         }
+
+        /*public Result<string> DeleteTransactionById(int id)
+        {
+            var transaccionesDelUsuario = _transactionRepository.FindById(id);
+            _transactionRepository.Delete(transaccionesDelUsuario);            
+
+            return Result<string>.Success("deleted");
+        }*/
     }
 }

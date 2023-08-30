@@ -38,8 +38,11 @@ namespace STAGGI_Budget_API.Data
                         Email = user.Email,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        UserName = user.Email
+                        UserName = user.Email,
+                        Account = new Account(),
                     };
+                    newUser.Account.BUserId = newUser.Id; 
+
                     await _userManager.CreateAsync(newUser, user.Password);
                     await _userManager.AddToRoleAsync(newUser, "Admin");
                     await _userManager.AddToRoleAsync(newUser, "User");
@@ -178,16 +181,16 @@ namespace STAGGI_Budget_API.Data
 
                         if (budget != null)
                         {
-                            budget.Balance = (double)(budget.Balance + (tr.Amount * -1));
+                            budget.Balance = budget.Balance + ((double)(tr.Amount) * -1);
                         }
 
                         if(saving != null)
                         {
-                            saving.Balance = (double)(saving.Balance + tr.Amount);
+                            saving.Balance = saving.Balance + (double)(tr.Amount);
                         }
                         else
                         {
-                            user.Account.Balance = (double)(user.Account.Balance + tr.Amount);
+                            user.Account.Balance = user.Account.Balance + (double)(tr.Amount);
                         }
                     });
                 });

@@ -21,9 +21,17 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get() 
+        public IActionResult GetAllByUserEmail()
         {
-            var result = _transactionService.GetAll();
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized();
+            }
+
+            var result = _transactionService.GetAllByUserEmail(userEmail);
 
             if (!result.IsSuccess)
             {
@@ -68,7 +76,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult ModifyTransaction(int transactionId, [FromBody] RequestTransactionDTO transactionDTO)
+        public IActionResult ModifyTransaction(int transactionId, [FromBody] RequestTransactionDTO request)
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
@@ -78,7 +86,20 @@ namespace STAGGI_Budget_API.Controllers
                 return Unauthorized();
             }
 
-            var result = _transactionService.ModifyTransaction(transactionId, transactionDTO); // TODO: add email s
+            var result = _transactionService.ModifyTransaction(transactionId, request); // TODO: add email s
+
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+
+            return StatusCode(201, result.Ok);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTransaction(int id)
+        {
+            var result = _transactionService.DeleteTransactionById(id);
 
             if (!result.IsSuccess)
             {
@@ -94,7 +115,10 @@ namespace STAGGI_Budget_API.Controllers
         {
             //string request = HttpContext.Request.Query["title"]; //Comente esto y le agregue un parametro al metodo para probar swagger
 
-            var result = _transactionService.SearchTransaction(searchParameter);
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader);
+
+            var result = _transactionService.SearchTransaction(searchParameter, userEmail);
 
             if (!result.IsSuccess) 
             {
