@@ -8,6 +8,7 @@ using STAGGI_Budget_API.Services;
 using STAGGI_Budget_API.Services.Interfaces;
 using System.Collections.Generic;
 using System.Transactions;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace STAGGI_Budget_API.Controllers
 {
@@ -145,6 +146,29 @@ namespace STAGGI_Budget_API.Controllers
             }
 
             return StatusCode(201, result.Ok);
+        }
+
+        [HttpGet("Transaction/Last")]
+        public IActionResult GetLastTransasctions() 
+        {
+            string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            string userEmail = _authService.ValidateToken(authorizationHeader);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized();
+            }
+            Result<List<TransactionDTO>> result;
+
+            result = _transactionService.SearchLastTransactionsByEmail(userEmail);
+
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+
+            return StatusCode(201, result.Ok);
+
         }
 
         [HttpPost]

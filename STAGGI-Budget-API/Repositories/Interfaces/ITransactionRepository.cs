@@ -19,5 +19,7 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         IEnumerable<Transaction> SearchByDateAndType(DateTime? fromDate, DateTime? toDate, TransactionType type, string email);
         IEnumerable<Transaction> SearchByKeywordAndDate(string keyword, DateTime? fromDate, DateTime? toDate, string email);
         IEnumerable<Transaction> SearchByAllFilters(string keyword, DateTime? fromDate, DateTime? toDate, TransactionType type, string email);
+        IEnumerable<Transaction> SearchLastByEmail(string email);
+
     }
 }

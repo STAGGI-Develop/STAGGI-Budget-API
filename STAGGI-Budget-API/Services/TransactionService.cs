@@ -547,5 +547,36 @@ namespace STAGGI_Budget_API.Services
 
             return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
         }
+
+        public Result<List<TransactionDTO>> SearchLastTransactionsByEmail(string email)
+        {
+            var transactionSearch = _transactionRepository.SearchLastByEmail(email);
+            var transactionSearchDTO = new List<TransactionDTO>();
+            foreach (Transaction transaction in transactionSearch)
+            {
+                TransactionDTO newTransactionSearchDTO = new TransactionDTO
+                {
+                    Id = transaction.Id,
+                    Title = transaction.Title,
+                    Description = transaction.Description,
+                    Amount = transaction.Amount,
+                    Type = transaction.Type.ToString(),
+                    CreateDate = transaction.CreateDate,
+                };
+
+                transactionSearchDTO.Add(newTransactionSearchDTO);
+            }
+
+            if (transactionSearchDTO == null)
+            {
+                return Result<List<TransactionDTO>>.Failure(new ErrorResponseDTO
+                {
+                    Status = 204,
+                    Error = "Error en la busqueda",
+                    Message = "No se pudo encontrar la transaccion buscada."
+                });
+            }
+            return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
+        }
     }
 }
