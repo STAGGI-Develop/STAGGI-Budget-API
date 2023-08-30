@@ -5,6 +5,7 @@ using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Services;
 using STAGGI_Budget_API.Services.Interfaces;
+using System.Collections.Generic;
 
 namespace STAGGI_Budget_API.Controllers
 {
@@ -21,7 +22,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllByUserEmail()
+        public IActionResult GetAllByUserEmail(string? keyword)
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
@@ -31,7 +32,21 @@ namespace STAGGI_Budget_API.Controllers
                 return Unauthorized();
             }
 
-            var result = _transactionService.GetAllByUserEmail(userEmail);
+            Result<List<TransactionDTO>> result;
+
+            //obtener las variables que llegan por query
+            //string queryKeyword = HttpContext.Request.Query["k"];
+            //DateTime queryFromDate = HttpContext.Request.Query["fromDate"];
+
+            //comprobar si llega alguna query
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                result = _transactionService.SearchTransaction(keyword, userEmail);
+            }
+            else
+            {
+                result = _transactionService.GetAllByUserEmail(userEmail);
+            }
 
             if (!result.IsSuccess)
             {
@@ -96,18 +111,18 @@ namespace STAGGI_Budget_API.Controllers
             return StatusCode(201, result.Ok);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteTransaction(int id)
-        {
-            var result = _transactionService.DeleteTransactionById(id);
+        //[HttpDelete("{id}")]
+        //public IActionResult DeleteTransaction(int id)
+        //{
+        //    var result = _transactionService.DeleteTransactionById(id);
 
-            if (!result.IsSuccess)
-            {
-                return StatusCode(result.Error.Status, result.Error);
-            }
+        //    if (!result.IsSuccess)
+        //    {
+        //        return StatusCode(result.Error.Status, result.Error);
+        //    }
 
-            return StatusCode(201, result.Ok);
-        }
+        //    return StatusCode(201, result.Ok);
+        //}
 
         [HttpGet("search")]
         
