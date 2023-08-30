@@ -170,7 +170,6 @@ namespace STAGGI_Budget_API.Services
 
                 return Result<List<TransactionDTO>>.Failure(newErrorResponse);
             }
-
             Match searchMatch = regexName.Match(searchParameter);
             if (!searchMatch.Success)
             {
