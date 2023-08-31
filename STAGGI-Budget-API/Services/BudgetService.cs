@@ -65,7 +65,7 @@ namespace STAGGI_Budget_API.Services
         //GetById
         public Result<BudgetDTO> GetById (int id)
         {
-            var result = _budgetRepository.GetById(id);
+            var result = _budgetRepository.GetById(id, true);
             if (result == null)
             {
                 return Result<BudgetDTO>.Failure(new ErrorResponseDTO
@@ -83,6 +83,7 @@ namespace STAGGI_Budget_API.Services
                 Balance = result.Balance,
                 Category = new CategoryDTO
                 {
+                    Id = result.Category.Id,
                     Name = result.Category.Name,
                     Image = result.Category.Image,
                     IsDisabled = result.Category.IsDisabled,
@@ -98,7 +99,8 @@ namespace STAGGI_Budget_API.Services
                     Category = new CategoryDTO { 
                         Id = tr.Category.Id,
                         Name = tr.Category.Name,
-                        Image = tr.Category.Image
+                        Image = tr.Category.Image,
+                        IsDisabled = tr.Category.IsDisabled,
                     }
                 }).ToList()
             };

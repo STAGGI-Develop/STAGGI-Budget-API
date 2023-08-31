@@ -88,8 +88,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // 
-builder.Services.AddControllers().AddJsonOptions(x =>
-    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+//builder.Services.AddControllers().AddJsonOptions(x =>
+//    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
 // Repositories
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -148,7 +148,7 @@ if (app.Environment.IsDevelopment())
 
 // Enable CORS
 app.UseCors(builder =>
-    builder.WithOrigins("http://localhost:3000") // Cambia esto con el origen correcto
+    builder.WithOrigins("http://localhost:5173") // Cambia esto con el origen correcto
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials()
