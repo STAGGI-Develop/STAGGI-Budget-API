@@ -35,7 +35,7 @@ namespace STAGGI_Budget_API.Services
 
         public Result<SavingDTO> GetSavingById(int id)
         {
-            var result = _savingRepository.GetById(id);
+            var result = _savingRepository.GetById(id, true);
 
             var savingDTO = new SavingDTO
             {
@@ -44,6 +44,21 @@ namespace STAGGI_Budget_API.Services
                 Balance = result.Balance,
                 TargetAmount = result.TargetAmount,
                 DueDate = result.DueDate,
+                Transactions = result.Transactions.Select(tr => new TransactionDTO
+                {
+                    Id = tr.Id,
+                    Title = tr.Title,
+                    Description = tr.Description,
+                    Amount = tr.Amount,
+                    Type = tr.Type.ToString(),
+                    CreateDate = DateTime.Now,
+                    Category = new CategoryDTO
+                    {
+                        Id = tr.Category.Id,
+                        Name = tr.Category.Name,
+                        Image = tr.Category.Image
+                    }
+                }).ToList()
             };
 
             return Result<SavingDTO>.Success(savingDTO);

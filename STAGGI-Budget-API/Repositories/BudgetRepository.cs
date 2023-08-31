@@ -28,11 +28,27 @@ namespace STAGGI_Budget_API.Repositories
                 .ToList();
         }
 
-        public Budget? GetById(int id)
+        //public Budget? GetById(int id)
+        //{
+        //    return FindByCondition(budget => budget.Id == id)
+        //        .Include(budget => budget.Category)
+        //        .FirstOrDefault();
+        //}
+        public Budget? GetById(int id, bool? includeTransaction = false)
         {
-            return FindByCondition(budget => budget.Id == id)
-                .Include(budget => budget.Category)
-                .FirstOrDefault();
+            var query = FindByCondition(budget => budget.Id == id);
+
+            if ((bool)includeTransaction)
+            {
+                query = query.Include(budget => budget.Category)
+                    .Include(budget => budget.Transactions);
+            }
+            else
+            {
+                query = query.Include(budget => budget.Category);
+            }
+
+            return query.FirstOrDefault();
         }
 
         public void Save(Budget budget)
