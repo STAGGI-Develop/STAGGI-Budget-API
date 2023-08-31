@@ -23,17 +23,9 @@ namespace STAGGI_Budget_API.Services
             _roleManager = roleManager;
         }
 
-        public async Task<Result<string>> Login(RequestLoginDTO request)
+        public async Task<string> CreateToken(BUser user)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-
-            if (user is null || !await _userManager.CheckPasswordAsync(user, request.Password))
-            {
-                return Result<string>.Unauthorized();
-            }
-
             var roles = await _userManager.GetRolesAsync(user);
-
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Sid, user.Id),
@@ -57,7 +49,21 @@ namespace STAGGI_Budget_API.Services
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
 
-            return Result<string>.Success(jwt);
+            return jwt;
+        }
+
+        public async Task<Result<string>> Login(RequestLoginDTO request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            if (user is null || !await _userManager.CheckPasswordAsync(user, request.Password))
+            {
+                return Result<string>.Unauthorized();
+            }
+
+            string token = await CreateToken(user);
+
+            return Result<string>.Success(token);
         }
 
         public async Task<Result<string>> Register(RequestUserDTO request)
@@ -94,7 +100,9 @@ namespace STAGGI_Budget_API.Services
                 return Result<string>.Failure(errorResponse);
             }
 
-            return Result<string>.Success("User created successfully!");
+            string token = await CreateToken(user);
+
+            return Result<string>.Success(token);
         }
 
         public string ValidateToken(string token)

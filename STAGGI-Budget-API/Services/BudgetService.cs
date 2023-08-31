@@ -42,9 +42,10 @@ namespace STAGGI_Budget_API.Services
             {
                 budgetDTOs.Add(new BudgetDTO
                 {
+                    Id = budget.Id,
                     Balance = budget.Balance,
                     LimitAmount = budget.LimitAmount,
-                    Period = budget.Period == 0 ? "Outcome" : "Income",
+                    Period = budget.Period == 0 ? "Weekly" : "Monthly",
                     Category = new CategoryDTO
                     {
                         Name = budget.Category.Name,
@@ -60,7 +61,7 @@ namespace STAGGI_Budget_API.Services
 
 
         //GetById
-        public Result<BudgetDTO> GetById (long id)
+        public Result<BudgetDTO> GetById (int id)
         {
             var result = _budgetRepository.GetById(id);
             if (result == null)
@@ -75,7 +76,7 @@ namespace STAGGI_Budget_API.Services
             var budgetDTO = new BudgetDTO
             {
                 LimitAmount = result.LimitAmount,
-                Period = result.Period == 0 ? "Outcome" : "Income",
+                Period = result.Period == 0 ? "Weekly" : "Monthly",
                 Balance = result.Balance,
                 Category = new CategoryDTO
                 {
@@ -165,12 +166,10 @@ namespace STAGGI_Budget_API.Services
                     });
                 }
 
-                existingBudget.LimitAmount = (double)request.LimitAmount;
+                if (request.LimitAmount != null) existingBudget.LimitAmount = (double)request.LimitAmount;
 
-                if (request.Period != null)
-                {
-                    existingBudget.Period = (BudgetPeriod)request.Period;
-                }
+                if (request.Period != null) existingBudget.Period = (BudgetPeriod)request.Period;
+
                 //existingBudget.CategoryId = request.Category;
 
                 _budgetRepository.Save(existingBudget);
