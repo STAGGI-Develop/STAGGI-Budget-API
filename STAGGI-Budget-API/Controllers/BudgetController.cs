@@ -40,7 +40,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult GetById(long id)
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);

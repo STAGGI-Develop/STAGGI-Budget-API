@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using STAGGI_Budget_API.DTOs;
-using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Helpers;
 using STAGGI_Budget_API.Models;
@@ -30,7 +29,6 @@ namespace STAGGI_Budget_API.Services
             {
                 categoriesDTO.Add(new CategoryDTO
                 {
-                    Id = category.Id,
                     Name = category.Name,
                     Image = category.Image,
                     IsDisabled = category.IsDisabled,
@@ -48,7 +46,6 @@ namespace STAGGI_Budget_API.Services
             {
                 categoriesDTO.Add(new CategoryDTO
                 {
-                    Id = category.Id,
                     Name = category.Name,
                     Image = category.Image,
                     IsDisabled = category.IsDisabled,
@@ -63,7 +60,6 @@ namespace STAGGI_Budget_API.Services
 
             var categoryDTO = new CategoryDTO
             {
-                Id = category.Id,
                 Name = category.Name,
                 Image = category.Image,
                 IsDisabled = category.IsDisabled
@@ -72,7 +68,7 @@ namespace STAGGI_Budget_API.Services
             return Result<CategoryDTO>.Success(categoryDTO);
         }
 
-        public Result<string> CreateCategory(RequestCategoryDTO categoryDTO, string email)
+        public Result<string> CreateCategory(CategoryDTO categoryDTO, string email)
         {
             Regex regexName = new Regex("[a-zA-Z ]");
             Match categoryMatch = regexName.Match(categoryDTO.Name);
@@ -127,7 +123,7 @@ namespace STAGGI_Budget_API.Services
             return Result<string>.Success("Creacion exitosa");
         }
 
-        public Result<string> UpdateCategory(int id, RequestCategoryDTO categoryDTO, string email)
+        public Result<string> UpdateCategory(int id, CategoryDTO categoryDTO, string email)
         {
             var category = _categoryRepository.FindById(id);
 

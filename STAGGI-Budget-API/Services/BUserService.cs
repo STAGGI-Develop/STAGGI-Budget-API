@@ -15,17 +15,15 @@ namespace STAGGI_Budget_API.Services
         private readonly IBUserRepository _buserRepository;
         public readonly ISubscriptionRepository _subscriptionRepository;
         private readonly UserManager<BUser> _userManager;
-        private readonly IAuthService _authService;
+        //private readonly RoleManager<IdentityRole> _roleManager;
 
         public BUserService(IBUserRepository buserRepository,
             ISubscriptionRepository subscriptionRepository,
-            UserManager<BUser> userManager,
-            IAuthService authService)
+            UserManager<BUser> userManager)
         {
             _buserRepository = buserRepository;
             _subscriptionRepository = subscriptionRepository;
             _userManager = userManager;
-            _authService = authService;
         }
         public Result<List<UserProfileDTO>> GetAll()
         {
@@ -64,9 +62,7 @@ namespace STAGGI_Budget_API.Services
                 await _userManager.CreateAsync(finalBUser, request.Password);
                 await _userManager.AddToRoleAsync(finalBUser, "User");
 
-                string token = await _authService.CreateToken(finalBUser);
-
-                return Result<string>.Success(token);
+                return Result<string>.Success(finalBUser.Id);
             }
             catch (Exception ex)
             {
@@ -94,7 +90,6 @@ namespace STAGGI_Budget_API.Services
                 FirstName = userProfile.FirstName,
                 LastName = userProfile.LastName,
                 Email = userProfile.Email,
-                ImageUrl = userProfile.ImageUrl,
                 IsPremium = userProfile.IsPremium,
                 Balance = userProfile.Account.Balance,
                 Subscription = new SubscriptionDTO
@@ -148,36 +143,6 @@ namespace STAGGI_Budget_API.Services
                 {
                     Status = 500,
                     Error = "",
-                    Message = ex.Message
-                });
-            }
-        }
-
-        public async Task<Result<string>> UpdateUserAsync(RequestUserDTO request, string email, string token)
-        {
-            try
-            {
-                BUser user = await _userManager.FindByEmailAsync(email);
-
-                if (!string.IsNullOrEmpty(request.Email))
-                {
-                    var emailConfirmationToken = await _userManager.GenerateChangeEmailTokenAsync(user, request.Email);
-                    await _userManager.ChangeEmailAsync(user, request.Email, emailConfirmationToken);
-                }
-
-                if (!string.IsNullOrEmpty(request.FirstName)) user.FirstName = request.FirstName;
-                if (!string.IsNullOrEmpty(request.LastName)) user.LastName = request.LastName;
-                if (!string.IsNullOrEmpty(request.ImageUrl)) user.ImageUrl = request.ImageUrl;
-                await _userManager.UpdateAsync(user);
-
-                return Result<string>.Success("Updated");
-            }
-            catch (Exception ex)
-            {
-                return Result<string>.Failure(new ErrorResponseDTO
-                {
-                    Status = 500,
-                    Error = "Server Error",
                     Message = ex.Message
                 });
             }

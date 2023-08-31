@@ -43,8 +43,6 @@ namespace STAGGI_Budget_API.Controllers
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             var userEmail = _authService.ValidateToken(token);
 
-            if (string.IsNullOrEmpty(userEmail)) return Unauthorized();
-
             var result = _buserService.GetProfile(userEmail);
 
             if (!result.IsSuccess)
@@ -85,8 +83,6 @@ namespace STAGGI_Budget_API.Controllers
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             var userEmail = _authService.ValidateToken(token);
 
-            if (string.IsNullOrEmpty(userEmail)) return Unauthorized();
-
             var result = _buserService.Subscription(userEmail, true);
 
             if (!result.IsSuccess)
@@ -102,27 +98,7 @@ namespace STAGGI_Budget_API.Controllers
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             var userEmail = _authService.ValidateToken(token);
 
-            if (string.IsNullOrEmpty(userEmail)) return Unauthorized();
-
             var result = _buserService.Subscription(userEmail, false);
-
-            if (!result.IsSuccess)
-            {
-                return StatusCode(result.Error.Status, result.Error);
-            }
-            return Ok(result.Ok);
-        }
-
-        [HttpPatch]
-        public async Task<IActionResult> UpdateProfile([FromBody] RequestUserDTO request)
-        {
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
-            var jwt = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
-            var userEmail = _authService.ValidateToken(token);
-
-            if (string.IsNullOrEmpty(userEmail)) return Unauthorized();
-
-            var result =await _buserService.UpdateUserAsync(request, userEmail, jwt);
 
             if (!result.IsSuccess)
             {

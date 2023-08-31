@@ -4,7 +4,6 @@ namespace STAGGI_Budget_API.DTOs
 {
     public class TransactionDTO
     {
-        public int Id { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public double Amount { get; set; }

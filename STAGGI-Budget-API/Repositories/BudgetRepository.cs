@@ -28,7 +28,7 @@ namespace STAGGI_Budget_API.Repositories
                 .ToList();
         }
 
-        public Budget? GetById(int id)
+        public Budget GetById(long id)
         {
             return FindByCondition(budget => budget.Id == id)
                 .Include(budget => budget.Category)
