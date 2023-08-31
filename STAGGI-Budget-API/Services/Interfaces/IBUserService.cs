@@ -10,8 +10,8 @@ namespace STAGGI_Budget_API.Services.Interfaces
     public interface IBUserService
     {
         public Result<List<UserProfileDTO>> GetAll();
-        //public Result<UserProfileDTO> GetById(long id);
         public Task<Result<string>> RegisterUserAsync(RequestUserDTO request);
+        public Task<Result<string>> UpdateUserAsync(RequestUserDTO request, string email, string token);
         public BUser GetByEmail(string email);
         public Result<UserProfileDTO> GetProfile( string email);
         public Result<bool> Subscription(string userEmail, bool status);

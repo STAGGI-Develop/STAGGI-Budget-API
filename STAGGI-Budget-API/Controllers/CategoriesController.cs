@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs;
+using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Enums;
 using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories.Interfaces;
@@ -86,7 +87,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostCategory(CategoryDTO categoryDTO)
+        public IActionResult PostCategory(RequestCategoryDTO categoryDTO)
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
@@ -107,7 +108,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult UpdateCategory(int id, [FromBody] CategoryDTO category)
+        public IActionResult UpdateCategory(int id, [FromBody]RequestCategoryDTO category)
         {
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             var token = authorizationHeader?.Substring(7);
