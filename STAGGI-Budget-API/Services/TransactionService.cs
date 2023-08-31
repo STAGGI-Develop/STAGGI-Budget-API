@@ -7,6 +7,7 @@ using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services.Interfaces;
+using System;
 using System.Text.RegularExpressions;
 
 namespace STAGGI_Budget_API.Services
@@ -16,14 +17,16 @@ namespace STAGGI_Budget_API.Services
         private readonly ITransactionRepository _transactionRepository;
         private readonly ICategoryService _categoryService;
         private readonly IBUserService _bUserService;
-        private readonly IBudgetService _budgetService;
+        private readonly IBudgetRepository _budgetRepository;
+        private readonly ISavingService _savingService;
 
-        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetService budgetService)
+        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetRepository budgetRepository, ISavingService savingService)
         {
             _transactionRepository = transactionRepository;
             _categoryService = categoryService;
             _bUserService = bUserService;
-            _budgetService = budgetService;
+            _budgetRepository = budgetRepository;
+            _savingService = savingService;
         }
 
         public Result<List<TransactionDTO>> GetAllByUserEmail(string userEmail)
@@ -48,7 +51,7 @@ namespace STAGGI_Budget_API.Services
             return Result<List<TransactionDTO>>.Success(transactionsDTO);
         }
 
-        public Result<string> CreateTransaction(RequestTransactionDTO transactionDTO, string email)
+        public Result<string> CreateTransaction(RequestTransactionDTO request, string email)
         {
             try
             {
@@ -63,25 +66,53 @@ namespace STAGGI_Budget_API.Services
                         Status = 500
                     };
                 }
-
-                var userBudget = _budgetService.GetAllByEmail(email);
-
+                //var userSaving = _savingService.GetAll();
 
                 var userCategories = _categoryService.GetAllUserCategories(email);
-                var categoryMatch = userCategories.FirstOrDefault(c => c.Name == transactionDTO.Category);
+                var categoryMatch = userCategories.FirstOrDefault(c => c.Name == request.Category);
 
-                _transactionRepository.Save(new Transaction
+                Transaction newTransaction = new Transaction
                 {
-                    Title = transactionDTO.Title,
-                    Description = transactionDTO.Description,
-                    Amount = (double)transactionDTO.Amount,
-                    Type = (TransactionType)(transactionDTO.Type),
+                    Title = request.Title,
+                    Description = request.Description,
+                    Amount = (double)request.Amount,
+                    Type = (TransactionType)(request.Type),
                     CreateDate = DateTime.Now,
                     AccountId = user.Account.Id,
                     CategoryId = categoryMatch.Id,
+                    //BudgetId = 
                     //Saving = ,
-                    //Budget = ,
-                });
+                };
+
+                /*_transactionRepository.Save(newTransaction);
+
+                var userBudget = _budgetRepository.GetById();
+                newTransaction.Budget = userBudget; (
+
+                if (userBudget != null)
+                {
+                    userBudget.Balance = budget.Balance + ((double)(tr.Amount) * -1);
+                    _budgetRepository.save();
+                }
+
+                    /*if (saving != null)
+                    {
+                        saving.Balance = saving.Balance + (double)(tr.Amount);
+                        user.Account.Balance = user.Account.Balance + (double)(tr.Amount);
+                        _savingRepository.save();
+                    }*/
+
+                if (newTransaction.Type == TransactionType.INCOME)
+                {
+                    user.Account.Balance = user.Account.Balance + (double)(newTransaction.Amount);
+                }
+
+                if (newTransaction.Type == TransactionType.OUTCOME)
+                {
+                    user.Account.Balance = user.Account.Balance - (double)(newTransaction.Amount);
+                }
+
+                _transactionRepository.Save(newTransaction);
 
                 return Result<string>.Success("created");
             }

@@ -18,7 +18,7 @@ namespace STAGGI_Budget_API.Models
         public int AccountId { get; set; }
         public Account Account { get; set; } = null!;
 
-        public int? BudgetId { get; set; }
+        public int BudgetId { get; set; }
         public Budget? Budget { get; set; }
 
         public int CategoryId { get; set; }
