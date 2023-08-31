@@ -17,10 +17,16 @@ namespace STAGGI_Budget_API.Repositories
                 .ToList();
         }
 
-        public Saving? GetById(int id)
+        public Saving? GetById(int id, bool? includeTransaction = false)
         {
-            return FindByCondition(s => s.Id == id)
-                .FirstOrDefault();
+            var query = FindByCondition(saving => saving.Id == id);
+
+            if ((bool)includeTransaction)
+            {
+                query = query.Include(saving => saving.Transactions);
+            }
+
+            return query.FirstOrDefault();
         }
 
         public void Save(Saving saving)

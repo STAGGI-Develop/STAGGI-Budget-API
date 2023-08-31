@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using STAGGI_Budget_API.Data;
 using STAGGI_Budget_API.DTOs;
 using STAGGI_Budget_API.DTOs.Request;
@@ -8,6 +9,7 @@ using STAGGI_Budget_API.Models;
 using STAGGI_Budget_API.Repositories;
 using STAGGI_Budget_API.Repositories.Interfaces;
 using STAGGI_Budget_API.Services.Interfaces;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
@@ -75,6 +77,7 @@ namespace STAGGI_Budget_API.Services
             }
             var budgetDTO = new BudgetDTO
             {
+                Id = result.Id,
                 LimitAmount = result.LimitAmount,
                 Period = result.Period == 0 ? "Weekly" : "Monthly",
                 Balance = result.Balance,
@@ -83,7 +86,21 @@ namespace STAGGI_Budget_API.Services
                     Name = result.Category.Name,
                     Image = result.Category.Image,
                     IsDisabled = result.Category.IsDisabled,
-                }
+                },
+                Transactions = result.Transactions.Select(tr => new TransactionDTO
+                {
+                    Id = tr.Id,
+                    Title = tr.Title,
+                    Description = tr.Description,
+                    Amount = tr.Amount,
+                    Type = tr.Type.ToString(),
+                    CreateDate = DateTime.Now,
+                    Category = new CategoryDTO { 
+                        Id = tr.Category.Id,
+                        Name = tr.Category.Name,
+                        Image = tr.Category.Image
+                    }
+                }).ToList()
             };
             return Result<BudgetDTO>.Success(budgetDTO);
         }
@@ -193,8 +210,48 @@ namespace STAGGI_Budget_API.Services
             }
         }
 
-    }
-    }
-   
+        public void UpdateBudgetBalance(int budgetId)
+        {
+            var budget = _budgetRepository.GetById(budgetId, true);
+            if (budget != null)
+            {
+                switch (budget.Period)
+                {
+                    case (BudgetPeriod)0:
+                        DateTime startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+                        DateTime endOfWeek = startOfWeek.AddDays(7);
+
+                        var weekTr = budget.Transactions.Where(t => t.CreateDate >= startOfWeek && t.CreateDate < endOfWeek);
+
+                        budget.Balance = 0;
+                        weekTr.ToList().ForEach(t => budget.Balance += t.Amount);
+
+                        _budgetRepository.Save(budget);
+
+                        break;
+
+                    case (BudgetPeriod)1:
+                        DateTime startOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                        DateTime endOfMonth = startOfMonth.AddMonths(1);
+
+                        var monthTr = budget.Transactions.Where(t => t.CreateDate >= startOfMonth && t.CreateDate < endOfMonth);
+
+                        budget.Balance = 0;
+                        monthTr.ToList().ForEach(t => budget.Balance += t.Amount);
+
+                        _budgetRepository.Save(budget);
+
+                        break;
+
+                    case (BudgetPeriod)2:
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
 
 
+    }
+}
