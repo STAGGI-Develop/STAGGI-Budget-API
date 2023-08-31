@@ -19,14 +19,16 @@ namespace STAGGI_Budget_API.Services
         private readonly IBUserService _bUserService;
         private readonly IBudgetRepository _budgetRepository;
         private readonly ISavingService _savingService;
+        public readonly IBUserRepository _bUserRepository;
 
-        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetRepository budgetRepository, ISavingService savingService)
+        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetRepository budgetRepository, ISavingService savingService, IBUserRepository bUserRepository)
         {
             _transactionRepository = transactionRepository;
             _categoryService = categoryService;
             _bUserService = bUserService;
             _budgetRepository = budgetRepository;
             _savingService = savingService;
+            _bUserRepository = bUserRepository;
         }
 
         public Result<List<TransactionDTO>> GetAllByUserEmail(string userEmail)
@@ -56,7 +58,7 @@ namespace STAGGI_Budget_API.Services
             try
             {
                 BUser user = _bUserService.GetByEmail(email);
-                
+
                 if (user == null)
                 {
                     var newErrorResponse = new ErrorResponseDTO
@@ -83,10 +85,10 @@ namespace STAGGI_Budget_API.Services
                     //BudgetId = 
                     //Saving = ,
                 };
+                _transactionRepository.Save(newTransaction);
 
-                /*_transactionRepository.Save(newTransaction);
-
-                var userBudget = _budgetRepository.GetById();
+                //Llamar updateBudget en servicios de budget con el id de budget asociado
+                /*var userBudget = _budgetRepository.GetById();
                 newTransaction.Budget = userBudget; (
 
                 if (userBudget != null)
@@ -95,12 +97,12 @@ namespace STAGGI_Budget_API.Services
                     _budgetRepository.save();
                 }
 
-                    /*if (saving != null)
-                    {
-                        saving.Balance = saving.Balance + (double)(tr.Amount);
-                        user.Account.Balance = user.Account.Balance + (double)(tr.Amount);
-                        _savingRepository.save();
-                    }*/
+                /*if (saving != null)
+                {
+                    saving.Balance = saving.Balance + (double)(tr.Amount);
+                    user.Account.Balance = user.Account.Balance + (double)(tr.Amount);
+                    _savingRepository.save();
+                }*/
 
                 if (newTransaction.Type == TransactionType.INCOME)
                 {
@@ -112,7 +114,7 @@ namespace STAGGI_Budget_API.Services
                     user.Account.Balance = user.Account.Balance - (double)(newTransaction.Amount);
                 }
 
-                _transactionRepository.Save(newTransaction);
+                _bUserRepository.Save(user);
 
                 return Result<string>.Success("created");
             }
