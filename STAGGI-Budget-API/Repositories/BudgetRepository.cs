@@ -40,8 +40,19 @@ namespace STAGGI_Budget_API.Repositories
 
             if ((bool)includeTransaction)
             {
+                DateTime fromDate = DateTime.UtcNow;
+
+                if (query.First().Period == 0)
+                {
+                    fromDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+                }
+                else
+                {
+                    fromDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                }
+
                 query = query.Include(budget => budget.Category)
-                    .Include(budget => budget.Transactions);
+                    .Include(budget => budget.Transactions.Where(t => t.CreateDate >= fromDate));
             }
             else
             {

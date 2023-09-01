@@ -11,10 +11,6 @@ namespace STAGGI_Budget_API.DTOs
         public string? Email { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsPremium { get; set; } = false;
-        public double Balance { get; set; }
         public SubscriptionDTO? Subscription { get; set; }
-        public ICollection<BudgetDTO>? Budgets { get; set; }
-        public ICollection<SavingDTO>? Savings { get; set; }
-        public ICollection<TransactionDTO>? Transactions { get; set; }
     }
 }

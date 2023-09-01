@@ -42,7 +42,7 @@ namespace STAGGI_Budget_API.Repositories
         public IEnumerable<Transaction> SearchByKeyword(string searchParameter, string email)
         {
             var upperSearch = searchParameter.ToUpper();
-            return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch))
+            return FindByUserEmail(email).Where(tr => !string.IsNullOrEmpty(tr.Title) && tr.Title.ToUpper().Contains(upperSearch))
             .ToList();
         }
 
