@@ -21,7 +21,15 @@ namespace STAGGI_Budget_API.Repositories
 
         public void Save(Account account)
         {
-            Create(account);
+            if (account.Id == 0) 
+            {
+                Create(account);
+            }
+            else
+            {
+                Update(account);
+            }
+            
             SaveChanges();
         }
 

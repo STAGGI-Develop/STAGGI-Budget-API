@@ -17,16 +17,18 @@ namespace STAGGI_Budget_API.Services
     public class TransactionService : ITransactionService
     {
         private readonly ITransactionRepository _transactionRepository;
+        private readonly IAccountRepository _accountRepository;
         private readonly ICategoryService _categoryService;
         private readonly IBUserService _bUserService;
         private readonly IBudgetService _budgetService;
 
-        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetService budgetService)
+        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetService budgetService, IAccountRepository accountRepository)
         {
             _transactionRepository = transactionRepository;
             _categoryService = categoryService;
             _bUserService = bUserService;
             _budgetService = budgetService;
+            _accountRepository = accountRepository;
         }
 
         public Result<List<TransactionDTO>> GetAllByUserEmail(string userEmail)
@@ -270,7 +272,12 @@ namespace STAGGI_Budget_API.Services
         public Result<string> DeleteTransactionById(int id)
         {
             var userTransactions = _transactionRepository.FindById(id);
-            _transactionRepository.Delete(userTransactions);
+            var account = userTransactions.Account;
+
+            _transactionRepository.DeleteTransaction(userTransactions);
+
+            account.Balance = account.Balance - userTransactions.Amount;
+            _accountRepository.Save(account);
 
             return Result<string>.Success("deleted");
         }
