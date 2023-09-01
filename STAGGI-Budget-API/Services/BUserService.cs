@@ -124,6 +124,17 @@ namespace STAGGI_Budget_API.Services
             return Result<UserProfileDTO>.Success(profile);
         }
 
+        public Result<UserBalanceDTO> GetProfileBalance(string email)
+        {
+            var userProfile = _buserRepository.UserProfile(email);
+
+            UserBalanceDTO userBalance = new UserBalanceDTO
+            {
+                Balance = userProfile.Account.Balance
+            };
+            return Result<UserBalanceDTO>.Success(userBalance);
+        }
+
         public Result<bool> Subscription(string userEmail, bool status)
         {
             try
