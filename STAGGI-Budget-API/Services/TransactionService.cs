@@ -82,7 +82,7 @@ namespace STAGGI_Budget_API.Services
                     CreateDate = DateTime.Now,
                     AccountId = user.Account.Id,
                     CategoryId = categoryMatch.Id,
-                    //Saving = ,
+                    //Saving = transactionDTO.Saving
                     //Budget = ,
                 });
 
