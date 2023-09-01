@@ -12,7 +12,7 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         Transaction? FindById(int id);
         IEnumerable<Transaction> SearchByKeyword(string searchParameter, string email);
         IEnumerable<Transaction> FindByUserEmail(string email);
-        void Delete(Transaction transaction);
+        void DeleteTransaction(Transaction transaction);
         IEnumerable<Transaction> SearchByDate(DateTime? fromDate, DateTime? toDate, string email);
         IEnumerable<Transaction> SearchByType(TransactionType type, string email);
         IEnumerable<Transaction> SearchByKeywordAndType(string keyword, TransactionType type, string email);

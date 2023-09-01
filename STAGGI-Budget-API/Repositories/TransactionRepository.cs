@@ -23,6 +23,7 @@ namespace STAGGI_Budget_API.Repositories
         public Transaction? FindById(int id)
         {
             return FindByCondition(tr => tr.Id == id)
+                .Include(tr => tr.Account)
                 .FirstOrDefault();
         }
 
@@ -57,7 +58,7 @@ namespace STAGGI_Budget_API.Repositories
                 .ToList();
         }
 
-        public void Delete(Transaction transaction)
+        public void DeleteTransaction(Transaction transaction)
         {
             Delete(transaction);
             SaveChanges();
