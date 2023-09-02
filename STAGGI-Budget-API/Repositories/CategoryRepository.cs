@@ -21,6 +21,11 @@ namespace STAGGI_Budget_API.Repositories
             return FindByCondition(cat => cat.BUser.Email == email).ToList();
         }
 
+        public IEnumerable<Category> GetByUserWithBudgets(string email)
+        {
+            return FindByCondition(cat => cat.BUser.Email == email).Include(cat => cat.Budgets).ToList();
+        }
+
         public Category? FindById(int id) 
         {
             return FindByCondition(cat => cat.Id == id)
