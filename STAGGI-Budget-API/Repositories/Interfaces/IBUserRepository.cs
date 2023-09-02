@@ -10,5 +10,6 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         BUser FindById(string id);
         BUser FindByEmail(string email);
         BUser UserProfile(string email);
+        void CheckUpdatePremium(string query);
     }
 }

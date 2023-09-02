@@ -15,6 +15,7 @@ namespace STAGGI_Budget_API.Services.Interfaces
         public BUser GetByEmail(string email);
         public Result<UserProfileDTO> GetProfile( string email);
         public Result<bool> Subscription(string userEmail, bool status);
+        public void CheckPremium();
         public Result<UserBalanceDTO> GetProfileBalance(string userEmail);
     }
 }

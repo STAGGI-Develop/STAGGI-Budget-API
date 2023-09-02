@@ -84,6 +84,11 @@ namespace STAGGI_Budget_API.Services
             return _buserRepository.FindByEmail(email);
         }
 
+        public void CheckPremium()
+        {
+            _buserRepository.CheckUpdatePremium("EXECUTE SubscriptionUpdater ");
+        }
+
         public Result<UserProfileDTO> GetProfile(string email)
         {
             var userProfile = _buserRepository.UserProfile(email);

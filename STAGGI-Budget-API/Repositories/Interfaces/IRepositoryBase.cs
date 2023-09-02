@@ -13,6 +13,7 @@ namespace STAGGI_Budget_API.Repositories.Interfaces
         void Create(T entity);
         void Update(T entity);
         void Delete(T entity);
+        void Execute(string query);
         void SaveChanges();
     }
 }
