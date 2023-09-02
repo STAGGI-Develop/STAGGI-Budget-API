@@ -23,6 +23,7 @@ namespace STAGGI_Budget_API.Repositories
         public Transaction? FindById(int id)
         {
             return FindByCondition(tr => tr.Id == id)
+                .Include(tr => tr.Account)
                 .FirstOrDefault();
         }
 
@@ -42,7 +43,7 @@ namespace STAGGI_Budget_API.Repositories
         public IEnumerable<Transaction> SearchByKeyword(string searchParameter, string email)
         {
             var upperSearch = searchParameter.ToUpper();
-            return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch))
+            return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch) || (!string.IsNullOrEmpty(tr.Description) && tr.Description.ToUpper().Contains(upperSearch)))
             .ToList();
         }
 
@@ -57,7 +58,7 @@ namespace STAGGI_Budget_API.Repositories
                 .ToList();
         }
 
-        public void Delete(Transaction transaction)
+        public void DeleteTransaction(Transaction transaction)
         {
             Delete(transaction);
             SaveChanges();

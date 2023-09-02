@@ -101,32 +101,42 @@ namespace STAGGI_Budget_API.Services
                 Email = userProfile.Email,
                 ImageUrl = userProfile.ImageUrl,
                 IsPremium = userProfile.IsPremium,
-                Balance = userProfile.Account.Balance,
                 Subscription = new SubscriptionDTO
                 {
                     IsActive = userProfile.Subscription.IsActive,
                     StartDate = userProfile.Subscription.StartDate,
                     EndDate = userProfile.Subscription.EndDate,
                 },
-                Budgets = userProfile.Budgets.Select(b => new BudgetDTO
-                {
-                    Balance = b.Balance,
-                    LimitAmount = b.LimitAmount,
-                }).ToList(),
-                Savings = userProfile.Savings.Select(s => new SavingDTO
-                {
-                    Name = s.Name,
-                    Balance = s.Balance,
-                    TargetAmount = s.TargetAmount,
-                }).ToList(),
-                Transactions = userProfile.Account.Transactions.Select(t => new TransactionDTO
-                {
-                    Amount = t.Amount,
-                    Type = t.Type == 0 ? "Income" : "Expense"
-                }).ToList()
+                //Budgets = userProfile.Budgets.Select(b => new BudgetDTO
+                //{
+                //    Balance = b.Balance,
+                //    LimitAmount = b.LimitAmount,
+                //}).ToList(),
+                //Savings = userProfile.Savings.Select(s => new SavingDTO
+                //{
+                //    Name = s.Name,
+                //    Balance = s.Balance,
+                //    TargetAmount = s.TargetAmount,
+                //}).ToList(),
+                //Transactions = userProfile.Account.Transactions.Select(t => new TransactionDTO
+                //{
+                //    Amount = t.Amount,
+                //    Type = t.Type == 0 ? "Income" : "Expense"
+                //}).ToList()
             };
 
             return Result<UserProfileDTO>.Success(profile);
+        }
+
+        public Result<UserBalanceDTO> GetProfileBalance(string email)
+        {
+            var userProfile = _buserRepository.UserProfile(email);
+
+            UserBalanceDTO userBalance = new UserBalanceDTO
+            {
+                Balance = userProfile.Account.Balance
+            };
+            return Result<UserBalanceDTO>.Success(userBalance);
         }
 
         public Result<bool> Subscription(string userEmail, bool status)

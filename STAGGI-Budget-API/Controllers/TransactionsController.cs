@@ -213,18 +213,18 @@ namespace STAGGI_Budget_API.Controllers
             return StatusCode(201, result.Ok);
         }
 
-        //[HttpDelete("{id}")]
-        //public IActionResult DeleteTransaction(int id)
-        //{
-        //    var result = _transactionService.DeleteTransactionById(id);
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTransaction(int id)
+        {
+            var result = _transactionService.DeleteTransactionById(id);
 
-        //    if (!result.IsSuccess)
-        //    {
-        //        return StatusCode(result.Error.Status, result.Error);
-        //    }
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
 
-        //    return StatusCode(201, result.Ok);
-        //}
+            return StatusCode(201, result.Ok);
+        }
 
         [HttpGet("search")]
         

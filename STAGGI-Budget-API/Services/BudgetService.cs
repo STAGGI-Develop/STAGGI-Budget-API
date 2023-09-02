@@ -95,7 +95,7 @@ namespace STAGGI_Budget_API.Services
                     Description = tr.Description,
                     Amount = tr.Amount,
                     Type = tr.Type.ToString(),
-                    CreateDate = DateTime.Now,
+                    CreateDate = tr.CreateDate,
                     Category = new CategoryDTO { 
                         Id = tr.Category.Id,
                         Name = tr.Category.Name,

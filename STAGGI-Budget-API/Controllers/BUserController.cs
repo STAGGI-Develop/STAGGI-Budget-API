@@ -44,6 +44,23 @@ namespace STAGGI_Budget_API.Controllers
             }
             return Ok(result.Ok);
         }
+
+        [HttpGet("balance")]
+        public IActionResult GetProfileBalance()
+        {
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
+            var userEmail = _authService.ValidateToken(token);
+
+            if (string.IsNullOrEmpty(userEmail)) return Unauthorized();
+
+            var result = _buserService.GetProfileBalance(userEmail);
+
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.Error.Status, result.Error);
+            }
+            return Ok(result.Ok);
+        }
         
         [HttpPost]
         [AllowAnonymous]
