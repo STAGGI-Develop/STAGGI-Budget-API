@@ -14,9 +14,9 @@ namespace STAGGI_Budget_API.Models
         public string BUserId { get; set; }
         public BUser BUser { get; set; } = null!;
 
-        public Budget? Budget { get; set; }
+        public ICollection<Budget>? Budgets { get; set; }
 
-        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Transaction>? Transactions { get; set; }
 
 
 

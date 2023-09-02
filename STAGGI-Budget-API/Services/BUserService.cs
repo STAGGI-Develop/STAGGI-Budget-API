@@ -16,16 +16,19 @@ namespace STAGGI_Budget_API.Services
         public readonly ISubscriptionRepository _subscriptionRepository;
         private readonly UserManager<BUser> _userManager;
         private readonly IAuthService _authService;
+        private readonly ICategoryRepository _categoryRepository;
 
         public BUserService(IBUserRepository buserRepository,
             ISubscriptionRepository subscriptionRepository,
             UserManager<BUser> userManager,
-            IAuthService authService)
+            IAuthService authService,
+            ICategoryRepository categoryRepository)
         {
             _buserRepository = buserRepository;
             _subscriptionRepository = subscriptionRepository;
             _userManager = userManager;
             _authService = authService;
+            _categoryRepository = categoryRepository;
         }
         public Result<List<UserProfileDTO>> GetAll()
         {
@@ -60,6 +63,24 @@ namespace STAGGI_Budget_API.Services
                     Account = new Account()
                 };
                 finalBUser.Account.BUserId = finalBUser.Id;
+
+                var defaultCategories = new List<CategoryDTO>
+                {
+                    new CategoryDTO { Name = "Groceries", Image = "groceries" },
+                    new CategoryDTO { Name = "Transportation", Image = "transportation" },
+                    new CategoryDTO { Name = "Entertainment", Image = "entertainment" },
+                    new CategoryDTO { Name = "Miscellaneous", Image = "miscellaneous" },
+                    new CategoryDTO { Name = "Home", Image = "home" },
+                    new CategoryDTO { Name = "Salary", Image = "salary" },
+                    new CategoryDTO { Name = "Savings", Image = "savings" },
+                    new CategoryDTO { Name = "Clothing", Image = "clothing" },
+                    new CategoryDTO { Name = "Health", Image = "health" }
+                };
+                defaultCategories.ForEach(cat =>
+                {
+                    Category newCategory = new() { Name = cat.Name, Image = cat.Image, BUser = finalBUser };
+                    finalBUser.Categories.Add(newCategory);
+                });
 
                 await _userManager.CreateAsync(finalBUser, request.Password);
                 await _userManager.AddToRoleAsync(finalBUser, "User");

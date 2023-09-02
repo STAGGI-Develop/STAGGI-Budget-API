@@ -114,8 +114,33 @@ namespace STAGGI_Budget_API.Services
             try
             {
                 var user = _bUserService.GetByEmail(email);
-                var userCategories = _categoryService.GetAllUserCategories(email);
+                var userCategories = _categoryService.GetAllWithBudgets(email);
                 var categoryMatch = userCategories.FirstOrDefault(c => c.Name == request.Category);
+
+                if (request.Category is not null && categoryMatch is null)
+                {
+                    return Result<string>.Failure(new ErrorResponseDTO
+                    {
+                        Status = 404,
+                        Error = "Not Found",
+                        Message = "Selected category was not found"
+                    });
+                }
+
+                if (categoryMatch?.Budgets is not null && (
+                    request.Period == (int)BudgetPeriod.Weekly && categoryMatch.Budgets.Any(bud => bud.Period == BudgetPeriod.Weekly) ||
+                    request.Period == (int)BudgetPeriod.Monthly) && categoryMatch.Budgets.Any(bud => bud.Period == BudgetPeriod.Monthly ||
+                    request.Period == (int)BudgetPeriod.Yearly && categoryMatch.Budgets.Any(bud => bud.Period == BudgetPeriod.Yearly
+                    ))
+                )
+                {
+                    return Result<string>.Failure(new ErrorResponseDTO
+                    {
+                        Status = 400,
+                        Error = "Bad Request",
+                        Message = "You can only have one budget per period in a category"
+                    });
+                }
 
                 _budgetRepository.Save(new Budget
                 {
