@@ -107,7 +107,7 @@ namespace STAGGI_Budget_API.Services
 
         public void CheckPremium()
         {
-            _buserRepository.CheckUpdatePremium("EXECUTE SubscriptionUpdater ");
+            _buserRepository.CheckUpdatePremium("EXEC SubscriptionUpdater ");
         }
 
         public Result<UserProfileDTO> GetProfile(string email)
