@@ -41,8 +41,12 @@ namespace STAGGI_Budget_API.Repositories
 
         public IEnumerable<Transaction> SearchByKeyword(string searchParameter, string email)
         {
+            //parametrizar
+            int pagina = 1;
+            int registrosPorPag = 3; //pasar a 10
+
             var upperSearch = searchParameter.ToUpper();
-            return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch))
+            return FindByUserEmail(email).Where(tr => tr.Title.ToUpper().Contains(upperSearch)).OrderByDescending(tr => tr.CreateDate).Skip((pagina-1)*registrosPorPag).Take(registrosPorPag)
             .ToList();
         }
 

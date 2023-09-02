@@ -25,7 +25,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate, TransactionType type) //HasValue
+        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate, TransactionType type)
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
@@ -227,7 +227,6 @@ namespace STAGGI_Budget_API.Controllers
         //}
 
         [HttpGet("search")]
-        
         public IActionResult GetSearch(string searchParameter)
         {
             //string request = HttpContext.Request.Query["title"]; //Comente esto y le agregue un parametro al metodo para probar swagger
