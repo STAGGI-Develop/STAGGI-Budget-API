@@ -1,3 +1,4 @@
+//BANNER STAGGI
 # STAGGI Budget 
 
 **STAGGI Budget** is a web application designed to help you keep a detailed track of your expenses, budget appropriately, and plan your savings in a categorized manner.
@@ -13,7 +14,7 @@
 
 ## Technologies Used 
 
-- **Backend**: .NET 6.0 with MVC pattern.
+- **Backend**: .NET 6.0.
 - **Authentication**: JWT.
 - **Containerization**: Docker.
 - **Deployment**: Azure.
@@ -21,6 +22,28 @@
 - **Database**: SQL Server.
 - **ORM**: Entity Framework Core.
 - **Queries**: LINQ.
+
+## Layers
+
+STAGGI Budget contains the following layers:
+
+**Controllers**
+
+
+**Data**
+
+**DTOS**
+
+**Enums**
+
+**Helpers**
+
+**Models**
+
+**Repositories**
+
+**Services**
+
 
 ## Work Methodology 
 //SCREENSHOT TRELLO
