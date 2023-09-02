@@ -50,5 +50,10 @@ namespace STAGGI_Budget_API.Repositories
         {
             this.RepositoryContext.SaveChanges();
         }
+
+        public void Execute(string query)
+        {
+            this.RepositoryContext.Database.ExecuteSqlRaw(query);
+        }
     }
 }
