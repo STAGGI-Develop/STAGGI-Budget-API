@@ -3,7 +3,7 @@
 
 **STAGGI Budget** is a web application designed to help you keep a detailed track of your expenses, budget appropriately, and plan your savings in a categorized manner.
 
-//SCREENSHOT APP
+![Main_Page](https://github.com/STAGGI-Develop/STAGGI-Budget-Backend/assets/129558962/b6cfbdc4-34c6-4fe1-8673-5851d20e6425)
 
 ## Features 
 
