@@ -48,6 +48,7 @@ namespace STAGGI_Budget_API.Services
                     Balance = budget.Balance,
                     LimitAmount = budget.LimitAmount,
                     Period = budget.Period == 0 ? "Weekly" : "Monthly",
+                    IsDisabled = budget.IsDisabled,
                     Category = new CategoryDTO
                     {
                         Name = budget.Category.Name,
@@ -81,6 +82,7 @@ namespace STAGGI_Budget_API.Services
                 LimitAmount = result.LimitAmount,
                 Period = result.Period == 0 ? "Weekly" : "Monthly",
                 Balance = result.Balance,
+                IsDisabled = result.IsDisabled,
                 Category = new CategoryDTO
                 {
                     Id = result.Category.Id,
@@ -214,6 +216,8 @@ namespace STAGGI_Budget_API.Services
 
                 if (request.Period != null) existingBudget.Period = (BudgetPeriod)request.Period;
 
+                if (request.IsDisabled is not null && request.IsDisabled != existingBudget.IsDisabled) existingBudget.IsDisabled = request.IsDisabled.Value;
+
                 //existingBudget.CategoryId = request.Category;
 
                 _budgetRepository.Save(existingBudget);
@@ -222,6 +226,7 @@ namespace STAGGI_Budget_API.Services
                 {
                     LimitAmount = existingBudget.LimitAmount,
                     Period = existingBudget.Period == 0 ? "Weekly" : "Monthly",
+                    IsDisabled = existingBudget.IsDisabled,
                 };
 
                 return Result<BudgetDTO>.Success(updatedBudget);

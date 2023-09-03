@@ -8,5 +8,6 @@
         public string? Period { get; set; }
         public CategoryDTO? Category { get; set; }
         public List<TransactionDTO>? Transactions { get; set; }
+        public bool IsDisabled { get; set; }
     }
 }

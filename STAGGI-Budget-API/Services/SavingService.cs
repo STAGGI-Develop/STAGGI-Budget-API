@@ -28,6 +28,7 @@ namespace STAGGI_Budget_API.Services
                 Balance = s.Balance,
                 TargetAmount = s.TargetAmount,
                 DueDate = s.DueDate,
+                IsDisabled = s.IsDisabled,
             }).ToList();
 
             return Result<List<SavingDTO>>.Success(savingsDTO);
@@ -44,6 +45,7 @@ namespace STAGGI_Budget_API.Services
                 Balance = result.Balance,
                 TargetAmount = result.TargetAmount,
                 DueDate = result.DueDate,
+                IsDisabled = result.IsDisabled,
                 Transactions = result.Transactions.Select(tr => new TransactionDTO
                 {
                     Id = tr.Id,
@@ -108,9 +110,9 @@ namespace STAGGI_Budget_API.Services
                 }
 
                 if (request.Name != null) saving.Name = request.Name;
-                if (request.TargetAmount != 0) saving.TargetAmount = (double)request.TargetAmount;
+                if (request.TargetAmount is not null && request.TargetAmount != 0) saving.TargetAmount = (double)request.TargetAmount;
                 if (request.DueDate.HasValue) saving.DueDate = request.DueDate;
-                //if (request.IsDisabled =! saving.IsDisabled) saving.IsDisabled = request.IsDisabled;
+                if (request.IsDisabled is not null && request.IsDisabled != saving.IsDisabled) saving.IsDisabled = request.IsDisabled.Value;
 
                 _savingRepository.Save(saving);
 
