@@ -8,5 +8,7 @@
         public double TargetAmount { get; set; }
         public DateTime? DueDate { get; set; }
         public List<TransactionDTO>? Transactions { get; set; }
+        public bool IsDisabled { get; set; }
+
     }
 }
