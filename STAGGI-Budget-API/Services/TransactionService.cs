@@ -585,5 +585,30 @@ namespace STAGGI_Budget_API.Services
             }
             return Result<List<TransactionDTO>>.Success(transactionSearchDTO);
         }
+
+        public PaginateTransactionsDTO PaginateResult(List<TransactionDTO> transactions, int pageSize, int page)
+        {
+            transactions = transactions.OrderBy(t => t.CreateDate).ToList();
+
+            int startIndex = (page - 1) * pageSize;
+            int endIndex = Math.Min(startIndex + pageSize - 1, transactions.Count - 1);
+
+            List<TransactionDTO> pageTransactions = new List<TransactionDTO>();
+            for (int i = startIndex; i <= endIndex; i++)
+            {
+                pageTransactions.Add(transactions[i]);
+            }
+
+            PaginateTransactionsDTO result = new PaginateTransactionsDTO
+            {
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalCount = transactions.Count,
+                Data = pageTransactions
+            };
+
+            return result;
+        }
+
     }
 }
