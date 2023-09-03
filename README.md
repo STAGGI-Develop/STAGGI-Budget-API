@@ -1,4 +1,5 @@
-//BANNER STAGGI
+![Banner](https://github.com/STAGGI-Develop/STAGGI-Budget-Backend/assets/129558962/41d5b5ae-6261-429c-bbb2-8803fe940bca)
+
 # STAGGI Budget 
 
 **STAGGI Budget** is a web application designed to help you keep a detailed track of your expenses, budget appropriately, and plan your savings in a categorized manner.
@@ -112,5 +113,4 @@ For the development of this project, we adopted the **Agile** methodology using 
 
 ## Building and Deploying 
 
-Dockers
-Staggi Budget is available as a prebuilt docker image here(link de la imagen de docker)
+Staggi Budget is available as a prebuilt **Docker** image [here](https://budget-api.greendune-c3154898.brazilsouth.azurecontainerapps.io/api)
