@@ -113,5 +113,5 @@ For the development of this project, we adopted the **Agile** methodology using 
 
 ## Building and Deploying 
 
-Staggi Budget is available as a prebuilt **Docker** image [here](https://budget-api.greendune-c3154898.brazilsouth.azurecontainerapps.io/api)
+Staggi Budget is available as a prebuilt **Docker** image [here](https://hub.docker.com/r/gastonr1/budget-api)
 
