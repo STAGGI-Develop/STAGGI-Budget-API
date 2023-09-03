@@ -22,6 +22,11 @@ namespace STAGGI_Budget_API.Repositories
                 //.Include(client => client.Accounts)
                 .FirstOrDefault();
         }
+
+        public void CheckUpdatePremium(string query) 
+        {
+            Execute(query);
+        }
         public BUser? FindByEmail(string email)
         {
             return FindByCondition(budUser => budUser.Email.ToUpper() == email.ToUpper())

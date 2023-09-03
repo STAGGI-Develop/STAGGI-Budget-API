@@ -9,6 +9,7 @@ namespace STAGGI_Budget_API.Models
         public double Balance { get; set; } = 0;
         public double LimitAmount { get; set; } = 0;
         public BudgetPeriod Period { get; set; }
+        public bool IsDisabled { get; set; }
 
         //With MS doc for One to One
         public string BUserId { get; set; }

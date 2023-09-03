@@ -17,5 +17,6 @@ namespace STAGGI_Budget_API.Services.Interfaces
         public Result<string> CreateCategory(RequestCategoryDTO categoryDTO, string email);
         public Result<string> UpdateCategory(int Id, RequestCategoryDTO categoryDTO, string email);
         public List<Category> GetAllUserCategories(string email);
+        public List<Category> GetAllWithBudgets(string email);
     }
 }

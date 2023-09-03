@@ -21,21 +21,12 @@ namespace STAGGI_Budget_API.Controllers
             _userManager = userManager;
             _authService = authService;
         }
-        
-        /*
-         // usar en controlador de Admin
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpPost("admin/checkPremium")]
+        public void CheckPremiumSP()
         {
-            var result = _buserService.GetAll();
-            if (!result.IsSuccess)
-            {
-                return StatusCode(result.Error.Status, result.Error);
-            }
-            return StatusCode(200, result.Ok);
+            _buserService.CheckPremium();
         }
-        */
         
         [HttpGet]
         public IActionResult GetProfile()
@@ -95,6 +86,8 @@ namespace STAGGI_Budget_API.Controllers
             return Ok(result.Ok);
             //return Ok("ok");
         }
+
+        //SP Executer
 
         [HttpPatch("subscribe")]
         public IActionResult Subscribe()

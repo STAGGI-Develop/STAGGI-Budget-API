@@ -48,6 +48,7 @@ namespace STAGGI_Budget_API.Services
                     Balance = budget.Balance,
                     LimitAmount = budget.LimitAmount,
                     Period = budget.Period == 0 ? "Weekly" : "Monthly",
+                    IsDisabled = budget.IsDisabled,
                     Category = new CategoryDTO
                     {
                         Name = budget.Category.Name,
@@ -81,6 +82,7 @@ namespace STAGGI_Budget_API.Services
                 LimitAmount = result.LimitAmount,
                 Period = result.Period == 0 ? "Weekly" : "Monthly",
                 Balance = result.Balance,
+                IsDisabled = result.IsDisabled,
                 Category = new CategoryDTO
                 {
                     Id = result.Category.Id,
@@ -114,8 +116,33 @@ namespace STAGGI_Budget_API.Services
             try
             {
                 var user = _bUserService.GetByEmail(email);
-                var userCategories = _categoryService.GetAllUserCategories(email);
+                var userCategories = _categoryService.GetAllWithBudgets(email);
                 var categoryMatch = userCategories.FirstOrDefault(c => c.Name == request.Category);
+
+                if (request.Category is not null && categoryMatch is null)
+                {
+                    return Result<string>.Failure(new ErrorResponseDTO
+                    {
+                        Status = 404,
+                        Error = "Not Found",
+                        Message = "Selected category was not found"
+                    });
+                }
+
+                if (categoryMatch?.Budgets is not null && (
+                    request.Period == (int)BudgetPeriod.Weekly && categoryMatch.Budgets.Any(bud => bud.Period == BudgetPeriod.Weekly) ||
+                    request.Period == (int)BudgetPeriod.Monthly) && categoryMatch.Budgets.Any(bud => bud.Period == BudgetPeriod.Monthly ||
+                    request.Period == (int)BudgetPeriod.Yearly && categoryMatch.Budgets.Any(bud => bud.Period == BudgetPeriod.Yearly
+                    ))
+                )
+                {
+                    return Result<string>.Failure(new ErrorResponseDTO
+                    {
+                        Status = 400,
+                        Error = "Bad Request",
+                        Message = "You can only have one budget per period in a category"
+                    });
+                }
 
                 _budgetRepository.Save(new Budget
                 {
@@ -189,6 +216,8 @@ namespace STAGGI_Budget_API.Services
 
                 if (request.Period != null) existingBudget.Period = (BudgetPeriod)request.Period;
 
+                if (request.IsDisabled is not null && request.IsDisabled != existingBudget.IsDisabled) existingBudget.IsDisabled = request.IsDisabled.Value;
+
                 //existingBudget.CategoryId = request.Category;
 
                 _budgetRepository.Save(existingBudget);
@@ -197,6 +226,7 @@ namespace STAGGI_Budget_API.Services
                 {
                     LimitAmount = existingBudget.LimitAmount,
                     Period = existingBudget.Period == 0 ? "Weekly" : "Monthly",
+                    IsDisabled = existingBudget.IsDisabled,
                 };
 
                 return Result<BudgetDTO>.Success(updatedBudget);

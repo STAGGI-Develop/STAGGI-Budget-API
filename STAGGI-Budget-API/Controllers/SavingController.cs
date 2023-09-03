@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using STAGGI_Budget_API.DTOs.Request;
 using STAGGI_Budget_API.Services.Interfaces;
 
 namespace STAGGI_Saving_API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SavingController : ControllerBase

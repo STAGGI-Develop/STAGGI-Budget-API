@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using STAGGI_Budget_API.Data;
 
@@ -11,9 +12,10 @@ using STAGGI_Budget_API.Data;
 namespace STAGGI_Budget_API.Migrations
 {
     [DbContext(typeof(BudgetContext))]
-    partial class BudgetContextModelSnapshot : ModelSnapshot
+    [Migration("20230902182331_SP-SubscriptionUpdater")]
+    partial class SPSubscriptionUpdater
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,9 +198,6 @@ namespace STAGGI_Budget_API.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsDisabled")
-                        .HasColumnType("bit");
-
                     b.Property<double>("LimitAmount")
                         .HasColumnType("float");
 
@@ -209,7 +208,8 @@ namespace STAGGI_Budget_API.Migrations
 
                     b.HasIndex("BUserId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoryId")
+                        .IsUnique();
 
                     b.ToTable("Budgets");
                 });
@@ -337,9 +337,6 @@ namespace STAGGI_Budget_API.Migrations
 
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDisabled")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -503,8 +500,8 @@ namespace STAGGI_Budget_API.Migrations
                         .IsRequired();
 
                     b.HasOne("STAGGI_Budget_API.Models.Category", "Category")
-                        .WithMany("Budgets")
-                        .HasForeignKey("CategoryId")
+                        .WithOne("Budget")
+                        .HasForeignKey("STAGGI_Budget_API.Models.Budget", "CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -604,7 +601,7 @@ namespace STAGGI_Budget_API.Migrations
 
             modelBuilder.Entity("STAGGI_Budget_API.Models.Category", b =>
                 {
-                    b.Navigation("Budgets");
+                    b.Navigation("Budget");
 
                     b.Navigation("Transactions");
                 });

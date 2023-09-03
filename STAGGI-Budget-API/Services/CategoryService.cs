@@ -205,5 +205,11 @@ namespace STAGGI_Budget_API.Services
             var result = _categoryRepository.GetAllByUserEmail(email).ToList();
             return result;
         }
+
+        public List<Category> GetAllWithBudgets(string email)
+        {
+            var result = _categoryRepository.GetByUserWithBudgets(email).ToList();
+            return result;
+        }
     }
 }
