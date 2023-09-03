@@ -25,7 +25,7 @@ namespace STAGGI_Budget_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate, TransactionType type) //HasValue
+        public IActionResult GetAllByUserEmail(string? keyword, DateTime? fromDate, DateTime? toDate, TransactionType type, int page = 1) //HasValue
         {
             string authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Substring(7);
             string userEmail = _authService.ValidateToken(authorizationHeader);
@@ -132,7 +132,7 @@ namespace STAGGI_Budget_API.Controllers
                 return StatusCode(result.Error.Status, result.Error);
             }
 
-            return StatusCode(201, result.Ok);
+            return StatusCode(201, _transactionService.PaginateResult(result.Ok, 10, page));
         }
 
         [HttpGet("{id}")]
