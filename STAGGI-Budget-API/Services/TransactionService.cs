@@ -21,14 +21,16 @@ namespace STAGGI_Budget_API.Services
         private readonly ICategoryService _categoryService;
         private readonly IBUserService _bUserService;
         private readonly IBudgetService _budgetService;
+        private readonly ISavingService _savingService;
 
-        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetService budgetService, IAccountRepository accountRepository)
+        public TransactionService(ITransactionRepository transactionRepository, ICategoryService categoryService, IBUserService bUserService, IBudgetService budgetService, IAccountRepository accountRepository, ISavingService savingService)
         {
             _transactionRepository = transactionRepository;
             _categoryService = categoryService;
             _bUserService = bUserService;
             _budgetService = budgetService;
             _accountRepository = accountRepository;
+            _savingService = savingService;
         }
 
         public Result<List<TransactionDTO>> GetAllByUserEmail(string userEmail)
@@ -74,6 +76,8 @@ namespace STAGGI_Budget_API.Services
 
                 var userCategories = _categoryService.GetAllUserCategories(email);
                 var categoryMatch = userCategories.FirstOrDefault(c => c.Name == transactionDTO.Category);
+                var userSavings = _savingService.GetAll(email).Ok;
+                var savingMatch = userSavings.FirstOrDefault(s => s.Name == transactionDTO.Saving);
 
                 _transactionRepository.Save(new Transaction
                 {
@@ -84,7 +88,7 @@ namespace STAGGI_Budget_API.Services
                     CreateDate = DateTime.Now,
                     AccountId = user.Account.Id,
                     CategoryId = categoryMatch.Id,
-                    //Saving = transactionDTO.Saving
+                    SavingId = savingMatch.Id
                     //Budget = ,
                 });
 
